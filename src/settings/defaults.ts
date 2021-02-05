@@ -1,4 +1,4 @@
-const packageVersion = '0.0.1-canary.8';
+const packageVersion = '0.0.1-beta.1';
 
 export default {
   startup: {
