@@ -1,0 +1,12 @@
+{
+  "name": "ts-tests",
+  "version": "1.0.0",
+  "description": "SDK tests for TypeScript declaration files",
+  "author": "Nico Zelaya",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/splitio/js-browser-client.git"
+  },
+  "dependencies": {}
+}
