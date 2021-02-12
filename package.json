@@ -1,6 +1,6 @@
 {
-  "name": "@splitsoftware/splitio-browser-private",
-  "version": "0.0.1-canary.8",
+  "name": "@splitsoftware/splitio-browserjs",
+  "version": "0.0.1-beta.1",
   "description": "Split SDK for Javascript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -37,7 +37,8 @@
     "pretest-ts-decls": "npm run build:esm && npm run build:cjs && npm link",
     "test-ts-decls": "./scripts/ts-tests.sh",
     "posttest-ts-decls": "npm unlink && npm install",
-    "publish:rc": "npm run build && npm publish --tag rc"
+    "publish:rc": "npm run check && npm run build && npm publish --tag rc",
+    "publish:stable": "npm run check && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -57,7 +58,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "0.0.1-canary.10",
+    "@splitsoftware/splitio-commons": "0.0.1-beta1",
     "@types/google.analytics": "0.0.40"
   },
   "devDependencies": {

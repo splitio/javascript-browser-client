@@ -214,9 +214,9 @@ interface IBasicSDK {
 }
 /****** Exposed namespace ******/
 /**
- * Types and interfaces for @splitsoftware/splitio-browser package for usage when integrating javascript browser sdk on typescript apps.
+ * Types and interfaces for @splitsoftware/splitio-browserjs package for usage when integrating javascript browser sdk on typescript apps.
  * For the SDK package information
- * @see {@link https://www.npmjs.com/package/@splitsoftware/splitio-browser}
+ * @see {@link https://www.npmjs.com/package/@splitsoftware/splitio-browserjs}
  */
 declare namespace SplitIO {
   /**
