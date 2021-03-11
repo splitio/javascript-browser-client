@@ -22,10 +22,14 @@ module.exports = {
     'tap'
   ],
 
-  // Run on Chrome Headless. Use 'Chrome' instead to run on full browser
+  // Run on Chrome Headless. Use 'Chrome' instead to run on full browser for debugging
   browsers: [
     'ChromeHeadless'
   ],
+
+  // Continuous Integration mode
+  // if true, it capture browsers, run tests and exit. Set false for debugging
+  singleRun: true,
 
   rollupPreprocessor: {
     // `input` is handled by karma-rollup-preprocessor.
@@ -76,10 +80,6 @@ module.exports = {
   browserConsoleLogOptions: {
     terminal: false // browser console logs are not written in the terminal
   },
-
-  // Continuous Integration mode
-  // if true, it capture browsers, run tests and exit
-  singleRun: true,
 
   colors: true,
 
