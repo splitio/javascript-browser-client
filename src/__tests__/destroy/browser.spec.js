@@ -4,7 +4,7 @@ import { url } from '../testUtils';
 import map from 'lodash/map';
 import pick from 'lodash/pick';
 import { SplitFactory } from '../../splitFactory'; // SplitFactory with full features
-import { debugLogger } from '../../index';
+import { DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
 import splitChangesMock1 from './splitChanges.since.-1.json';
 import splitChangesMock2 from './splitChanges.since.1500492097547.json';
@@ -31,7 +31,7 @@ tape('SDK destroy for BrowserJS', async function (assert) {
       authorizationKey: 'fake-key',
       key: 'ut1'
     },
-    debug: debugLogger,
+    debug: DebugLogger(),
     streamingEnabled: false
   };
 

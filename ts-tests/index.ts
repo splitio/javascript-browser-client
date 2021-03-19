@@ -11,7 +11,7 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger } from '@splitsoftware/splitio-browserjs';
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -453,6 +453,10 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     impressionsMode: 'DEBUG'
   }
 };
+
+// debug property can be a Logger instance
+fullBrowserSettings.debug = DebugLogger();
+
 // fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 
 // let fullNodeSettings: SplitIO.INodeSettings = {

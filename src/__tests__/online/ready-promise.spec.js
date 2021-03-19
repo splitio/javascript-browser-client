@@ -11,7 +11,7 @@ const consoleSpy = {
 };
 
 import { SplitFactory } from '../../splitFactory'; // SplitFactory with full features
-import { warnLogger } from '../../index';
+import { WarnLogger } from '../../index';
 
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
@@ -21,7 +21,7 @@ const baseConfig = {
     authorizationKey: '<fake-token-3>',
     key: 'facundo@split.io',
   },
-  debug: warnLogger,
+  debug: WarnLogger(),
   streamingEnabled: false
 };
 
@@ -38,7 +38,7 @@ function assertGetTreatmentControlNotReady(assert, client) {
 function assertGetTreatmentControlNotReadyOnDestroy(assert, client) {
   consoleSpy.log.resetHistory();
   assert.equal(client.getTreatment('hierarchical_splits_test'), 'control', 'We should get control if client has been destroyed.');
-  assert.true(consoleSpy.log.calledWithExactly('[ERROR] splitio => Client has already been destroyed - no calls possible.'), 'Telling us that client has been destroyed. Calling getTreatment would return CONTROL.');
+  assert.true(consoleSpy.log.calledWithExactly('[ERROR] splitio => getTreatment: Client has already been destroyed - no calls possible.'), 'Telling us that client has been destroyed. Calling getTreatment would return CONTROL.');
 }
 
 /* Validate readiness state transitions, warning and error messages when using ready promises. */

@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { SplitFactory, GoogleAnalyticsToSplit, debugLogger } from '../../index';
+import { SplitFactory, GoogleAnalyticsToSplit, DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
 import { gaSpy, gaTag, addGaTag, removeGaTag } from './gaTestUtils';
 import { url } from '../testUtils';
@@ -14,7 +14,7 @@ const config = {
     eventsFirstPushWindow: 0.2,
   },
   streamingEnabled: false,
-  debug: debugLogger
+  debug: DebugLogger()
 };
 
 const settings = SettingsFactory(config);
@@ -116,7 +116,7 @@ export default function (fetchMock, assert) {
 
     // We must wait until ga is ready to get SplitTracker required and invoked, and to assert the test
     window.ga(() => {
-      t.ok(logSpy.calledWith('[WARN]  splitio => No valid identities were provided. Please check that you are passing a valid list of identities or providing a traffic type at the SDK configuration.'));
+      t.ok(logSpy.calledWith('[WARN]  splitio => ga-to-split: No valid identities were provided. Please check that you are passing a valid list of identities or providing a traffic type at the SDK configuration.'));
       t.equal(window.gaSpy.getHits().length, numberOfCustomEvents, `Number of sent hits must be equal to ${numberOfCustomEvents}`);
 
       logSpy.restore();
@@ -317,7 +317,7 @@ export default function (fetchMock, assert) {
       const sentHitsMyTracker = window.gaSpy.getHits('myTracker');
       t.equal(sentHitsT0.length, 1, 'Hits must be sent even if a custom mapper throw an exception');
       t.equal(sentHitsMyTracker.length, 1, 'Hits must be sent even if a custom mapper return an invalid event instance');
-      t.ok(logSpy.calledWith('[ERROR] splitio => splitio-ga-to-split:mapper: value must be a finite number.'));
+      t.ok(logSpy.calledWith('[ERROR] splitio => ga-to-split:mapper: value must be a finite number.'));
       client.destroy();
       logSpy.restore();
       t.end();

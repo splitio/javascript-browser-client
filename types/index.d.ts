@@ -8,7 +8,7 @@ export = JsSdk;
 declare module JsSdk {
   /**
    * Split.io sdk factory function.
-   * The settings parameter should be an object that complies with the SplitIO.IClientSideSettings.
+   * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link @TODO}
    */
   export function SplitFactory(settings: SplitIO.IBrowserSettings): SplitIO.ISDK;
@@ -31,4 +31,11 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#split-to-google-analytics}
    */
   export function SplitToGoogleAnalytics(options?: SplitIO.SplitToGoogleAnalyticsOptions): SplitIO.IntegrationFactory;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with DEBUG log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
+   */
+  export function DebugLogger(): SplitIO.ILogger;
 }
