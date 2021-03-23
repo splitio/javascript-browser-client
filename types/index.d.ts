@@ -38,4 +38,26 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
    */
   export function DebugLogger(): SplitIO.ILogger;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with INFO log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
+   */
+  export function InfoLogger(): SplitIO.ILogger;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with WARN log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
+   */
+  export function WarnLogger(): SplitIO.ILogger;
+
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with ERROR log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
+   */
+  export function ErrorLogger(): SplitIO.ILogger;
 }

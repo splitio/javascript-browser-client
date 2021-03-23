@@ -31,7 +31,7 @@ tape('## E2E Logger Tests ##', assert => {
     });
   });
 
-  assert.test('debug settings: ErrorLogger', (t) => {
+  assert.test('debug settings: Logger object', (t) => {
     const factory = SplitFactory({ ...minConfig, debug: ErrorLogger() });
     factory.client().destroy().then(() => {
       t.false(logSpy.calledWithMatch('[WARN]'), 'shouldn\'t log messages with level WARN');
@@ -43,7 +43,7 @@ tape('## E2E Logger Tests ##', assert => {
     });
   });
 
-  assert.test('debug settings: "INFO" log level', (t) => {
+  assert.test('debug settings: log level', (t) => {
     const factory = SplitFactory({ ...minConfig, debug: 'INFO' });
     factory.client().destroy().then(() => {
       t.false(logSpy.calledWithMatch('[DEBUG]'), 'shouldn\'t log messages with level DEBUG');
