@@ -6,10 +6,10 @@ import pick from 'lodash/pick';
 import { SplitFactory } from '../../splitFactory'; // SplitFactory with full features
 import { DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
-import splitChangesMock1 from './splitChanges.since.-1.json';
-import splitChangesMock2 from './splitChanges.since.1500492097547.json';
-import mySegmentsMock from './mySegments.json';
-import impressionsMock from './impressions.json';
+import splitChangesMock1 from '../mocks/splitChanges.since.-1.till.1500492097547.json';
+import splitChangesMock2 from '../mocks/splitChanges.since.1500492097547.json';
+import mySegmentsMock from '../mocks/mySegmentsEmpty.json';
+import impressionsMock from '../mocks/impressions.json';
 
 const settings = SettingsFactory({
   core: {
