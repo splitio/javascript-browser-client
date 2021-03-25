@@ -3,8 +3,7 @@ import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import map from 'lodash/map';
 import pick from 'lodash/pick';
-import { SplitFactory } from '../../splitFactory'; // SplitFactory with full features
-import { DebugLogger } from '../../index';
+import { SplitFactory, DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
 import splitChangesMock1 from '../mocks/splitChanges.since.-1.till.1500492097547.json';
 import splitChangesMock2 from '../mocks/splitChanges.since.1500492097547.json';

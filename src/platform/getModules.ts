@@ -37,11 +37,15 @@ export function getModules(settings: ISettingsInternal): ISdkFactoryParams {
     storageFactory: settings.storage,
 
     splitApiFactory: settings.mode === 'localhost' ? undefined : splitApiFactory,
+
     syncManagerFactory: settings.mode === 'localhost' ? syncManagerOfflineCSBrowserFactory : syncManagerOnlineCSFactory,
 
     sdkManagerFactory,
+
     sdkClientMethodFactory: sdkClientMethodCSFactory,
+
     SignalListener: settings.mode === 'localhost' ? undefined : BrowserSignalListener as ISdkFactoryParams['SignalListener'],
+
     impressionListener: settings.impressionListener as SplitIO.IImpressionListener,
 
     integrationsManagerFactory: settings.integrations && settings.integrations.length > 0 ? integrationsManagerFactory.bind(null, settings.integrations) : undefined,

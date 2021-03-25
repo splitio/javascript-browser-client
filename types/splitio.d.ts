@@ -787,9 +787,8 @@ declare namespace SplitIO {
      * Returns a manager instance of the SDK to explore available information.
      * @function manager
      * @returns {IManager} The manager instance.
-     * @todo at the moment it returns undefined, until the manager module could be plugged in.
      */
-    manager(): undefined
+    manager(): IManager
   }
 
   /**
