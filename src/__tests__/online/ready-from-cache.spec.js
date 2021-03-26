@@ -1,5 +1,4 @@
-import { SplitFactory } from '../../splitFactory'; // SplitFactory with full features
-import { InLocalStorage } from '../../index';
+import { SplitFactory, InLocalStorage } from '../../index';
 
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';

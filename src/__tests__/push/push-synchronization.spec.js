@@ -22,7 +22,7 @@ import includes from 'lodash/includes';
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
-import { SplitFactory } from '../../index';
+import { SplitFactory, DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
 
 const userKey = 'nicolas@split.io';
@@ -40,7 +40,7 @@ const config = {
   },
   urls: baseUrls,
   streamingEnabled: true,
-  // debug: true,
+  debug: DebugLogger(),
 };
 const settings = SettingsFactory(config);
 
