@@ -11,7 +11,7 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -424,8 +424,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     // offlineRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
-    authRetryBackoffBase: 1,
-    streamingReconnectBackoffBase: 1
+    pushRetryBackoffBase: 1,
   },
   startup: {
     readyTimeout: 1,
@@ -454,6 +453,13 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     impressionsMode: 'DEBUG'
   }
 };
+
+// debug property can be a Logger instance
+fullBrowserSettings.debug = DebugLogger();
+fullBrowserSettings.debug = InfoLogger();
+fullBrowserSettings.debug = WarnLogger();
+fullBrowserSettings.debug = ErrorLogger();
+
 // fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 
 // let fullNodeSettings: SplitIO.INodeSettings = {
@@ -470,8 +476,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
 //     offlineRefreshRate: 1,
 //     eventsPushRate: 1,
 //     eventsQueueSize: 1,
-//     authRetryBackoffBase: 1,
-//     streamingReconnectBackoffBase: 1
+//     pushRetryBackoffBase: 1
 //   },
 //   startup: {
 //     readyTimeout: 1,

@@ -5,23 +5,24 @@ import splitChangesMock4 from '../mocks/splitchanges.since.1457552649999.till.14
 import mySegmentsNicolasMock1 from '../mocks/mysegments.nicolas@split.io.json';
 import mySegmentsNicolasMock2 from '../mocks/mysegments.nicolas@split.io.mock2.json';
 import mySegmentsMarcio from '../mocks/mysegments.marcio@split.io.json';
+
 import splitUpdateMessage from '../mocks/message.SPLIT_UPDATE.1457552649999.json';
 import oldSplitUpdateMessage from '../mocks/message.SPLIT_UPDATE.1457552620999.json';
-import mySegmentsUpdateMessage from '../mocks/message.MY_SEGMENTS_UPDATE.nicolas@split.io.1457552640000.json';
+import mySegmentsUpdateMessageNoPayload from '../mocks/message.MY_SEGMENTS_UPDATE.nicolas@split.io.1457552640000.json';
 import mySegmentsUpdateMessageWithPayload from '../mocks/message.MY_SEGMENTS_UPDATE.marcio@split.io.1457552645000.json';
 import mySegmentsUpdateMessageWithEmptyPayload from '../mocks/message.MY_SEGMENTS_UPDATE.marcio@split.io.1457552646000.json';
 import splitKillMessage from '../mocks/message.SPLIT_KILL.1457552650000.json';
 import authPushEnabledNicolas from '../mocks/auth.pushEnabled.nicolas@split.io.json';
 import authPushEnabledNicolasAndMarcio from '../mocks/auth.pushEnabled.nicolas@split.io.marcio@split.io.json';
 
-import { nearlyEqual, url } from '../testUtils';
+import { nearlyEqual, url, hasNoCacheHeader } from '../testUtils';
 import includes from 'lodash/includes';
 
 // Replace original EventSource with mock
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
-import { SplitFactory } from '../../index';
+import { SplitFactory, DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
 
 const userKey = 'nicolas@split.io';
@@ -39,14 +40,14 @@ const config = {
   },
   urls: baseUrls,
   streamingEnabled: true,
-  // debug: true,
+  debug: DebugLogger(),
 };
 const settings = SettingsFactory(config);
 
 const MILLIS_SSE_OPEN = 100;
 const MILLIS_FIRST_SPLIT_UPDATE_EVENT = 200;
 const MILLIS_SECOND_SPLIT_UPDATE_EVENT = 300;
-const MILLIS_MYSEGMENT_UPDATE_EVENT = 400;
+const MILLIS_MY_SEGMENTS_UPDATE_EVENT_NO_PAYLOAD = 400;
 const MILLIS_SPLIT_KILL_EVENT = 500;
 const MILLIS_NEW_CLIENT = 600;
 const MILLIS_SECOND_SSE_OPEN = 700;
@@ -100,11 +101,11 @@ export function testSynchronization(fetchMock, assert) {
       assert.equal(client.getTreatment('splitters'), 'off', 'evaluation with initial MySegments list');
       client.once(client.Event.SDK_UPDATE, () => {
         const lapse = Date.now() - start;
-        assert.true(nearlyEqual(lapse, MILLIS_MYSEGMENT_UPDATE_EVENT), 'SDK_UPDATE due to MY_SEGMENTS_UPDATE event');
+        assert.true(nearlyEqual(lapse, MILLIS_MY_SEGMENTS_UPDATE_EVENT_NO_PAYLOAD), 'SDK_UPDATE due to MY_SEGMENTS_UPDATE event');
         assert.equal(client.getTreatment('splitters'), 'on', 'evaluation with updated MySegments list');
       });
-      eventSourceInstance.emitMessage(mySegmentsUpdateMessage);
-    }, MILLIS_MYSEGMENT_UPDATE_EVENT); // send a MY_SEGMENTS_UPDATE event with a new changeNumber after 0.4 seconds
+      eventSourceInstance.emitMessage(mySegmentsUpdateMessageNoPayload);
+    }, MILLIS_MY_SEGMENTS_UPDATE_EVENT_NO_PAYLOAD); // send a MY_SEGMENTS_UPDATE event with a new changeNumber after 0.4 seconds
 
     setTimeout(() => {
       assert.equal(client.getTreatment('whitelist'), 'allowed', 'evaluation with not killed Split');
@@ -194,44 +195,69 @@ export function testSynchronization(fetchMock, assert) {
   });
 
   // initial split and mySegments sync
-  fetchMock.getOnce(url(settings, '/splitChanges?since=-1'), function () {
+  fetchMock.getOnce(url(settings, '/splitChanges?since=-1'), function (url, opts) {
     const lapse = Date.now() - start;
     assert.true(nearlyEqual(lapse, 0), 'initial sync');
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
     return { status: 200, body: splitChangesMock1 };
   });
-  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolasMock1 });
+  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), function (url, opts) {
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
+    return { status: 200, body: mySegmentsNicolasMock1 };
+  });
 
   // split and segment sync after SSE opened
-  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552620999'), function () {
+  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552620999'), function (url, opts) {
     const lapse = Date.now() - start;
     assert.true(nearlyEqual(lapse, MILLIS_SSE_OPEN), 'sync after SSE connection is opened');
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
     return { status: 200, body: splitChangesMock2 };
   });
-  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolasMock1 });
+  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), function (url, opts) {
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
+    return { status: 200, body: mySegmentsNicolasMock1 };
+  });
 
   // fetch due to SPLIT_UPDATE event
-  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552620999'), { status: 200, body: splitChangesMock3 });
+  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552620999'), function (url, opts) {
+    if (!hasNoCacheHeader(opts)) assert.fail('request must include `Cache-Control` header');
+    return { status: 200, body: splitChangesMock3 };
+  });
 
   // fetch due to first MY_SEGMENTS_UPDATE event
-  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolasMock2 });
+  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), function (url, opts) {
+    if (!hasNoCacheHeader(opts)) assert.fail('request must include `Cache-Control` header');
+    return { status: 200, body: mySegmentsNicolasMock2 };
+  });
 
   // fetch due to SPLIT_KILL event
-  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552649999'), function () {
+  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552649999'), function (url, opts) {
+    if (!hasNoCacheHeader(opts)) assert.fail('request must include `Cache-Control` header');
     assert.equal(client.getTreatment('whitelist'), 'not_allowed', 'evaluation with split killed immediately, before fetch is done');
     return { status: 200, body: splitChangesMock4 };
   });
 
   // initial fetch of mySegments for new client
-  fetchMock.getOnce(url(settings, '/mySegments/marcio%40split.io'), { status: 200, body: mySegmentsMarcio });
+  fetchMock.getOnce(url(settings, '/mySegments/marcio%40split.io'), function (url, opts) {
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
+    return { status: 200, body: mySegmentsMarcio };
+  });
 
   // split and mySegment sync after second SSE opened
-  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552650000'), function () {
+  fetchMock.getOnce(url(settings, '/splitChanges?since=1457552650000'), function (url, opts) {
     const lapse = Date.now() - start;
     assert.true(nearlyEqual(lapse, MILLIS_SECOND_SSE_OPEN), 'sync after second SSE connection is opened');
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
     return { status: 200, body: { splits: [], since: 1457552650000, till: 1457552650000 } };
   });
-  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolasMock2 });
-  fetchMock.getOnce(url(settings, '/mySegments/marcio%40split.io'), { status: 200, body: mySegmentsMarcio });
+  fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), function (url, opts) {
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
+    return { status: 200, body: mySegmentsNicolasMock2 };
+  });
+  fetchMock.getOnce(url(settings, '/mySegments/marcio%40split.io'), function (url, opts) {
+    if (hasNoCacheHeader(opts)) assert.fail('request must not include `Cache-Control` header');
+    return { status: 200, body: mySegmentsMarcio };
+  });
 
   fetchMock.get(new RegExp('.*'), function (url) {
     assert.fail('unexpected GET request with url: ' + url);

@@ -4,8 +4,10 @@ import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsNicolas from '../mocks/mysegments.nicolas@split.io.json';
 import authPushDisabled from '../mocks/auth.pushDisabled.json';
+import authPushEnabledNicolas from '../mocks/auth.pushEnabled.nicolas@split.io.json';
 import authInvalidCredentials from '../mocks/auth.invalidCredentials.txt';
 import { nearlyEqual, url } from '../testUtils';
+import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 
 const baseUrls = {
   sdk: 'https://sdk.push-initialization-nopush/api',
@@ -22,7 +24,8 @@ const config = {
     featuresRefreshRate: 0.1,
     segmentsRefreshRate: 0.1,
     metricsRefreshRate: 3000,
-    impressionsRefreshRate: 3000
+    impressionsRefreshRate: 3000,
+    pushRetryBackoffBase: 0.01 // small value to assert rapidly that push is not retried
   },
   urls: baseUrls,
   startup: {
@@ -108,12 +111,31 @@ export function testNoEventSource(fetchMock, assert) {
 
   const originalEventSource = window.EventSource;
   window.EventSource = undefined;
-  fetchMock.getOnce(url(settings, `/auth?users=${encodeURIComponent(userKey)}`), function () {
-    assert.fail('not authenticate if EventSource is not available');
-  });
 
   testInitializationFail(fetchMock, assert, false);
 
   window.EventSource = originalEventSource;
 
+}
+
+export function testSSEWithNonRetryableError(fetchMock, assert) {
+  assert.plan(7);
+
+  // Auth successes
+  fetchMock.getOnce(url(settings, `/auth?users=${encodeURIComponent(userKey)}`), function (url, opts) {
+    if (!opts.headers['Authorization']) assert.fail('`/auth` request must include `Authorization` header');
+    assert.pass('auth successes');
+    return { status: 200, body: authPushEnabledNicolas };
+  });
+  // But SSE fails with a non-recoverable error
+  const originalEventSource = window.EventSource;
+  window.EventSource = EventSourceMock;
+  setMockListener(function (eventSourceInstance) {
+    assert.pass('sse fails');
+    const ably4XXNonRecoverableError = { data: '{"message":"Token expired","code":42910,"statusCode":429}' };
+    eventSourceInstance.emitError(ably4XXNonRecoverableError);
+  });
+
+  testInitializationFail(fetchMock, assert, true);
+  window.EventSource = originalEventSource;
 }

@@ -50,8 +50,7 @@ interface ISettings {
     segmentsRefreshRate: number,
     eventsPushRate: number,
     eventsQueueSize: number,
-    authRetryBackoffBase: number,
-    streamingReconnectBackoffBase: number
+    pushRetryBackoffBase: number,
   },
   readonly startup: {
     readyTimeout: number,
@@ -67,7 +66,7 @@ interface ISettings {
     streaming: string
   },
   readonly integrations?: SplitIO.IntegrationFactory[],
-  readonly debug: boolean,
+  readonly debug: boolean | SplitIO.ILogger,
   readonly version: string,
   readonly streamingEnabled: boolean,
   readonly sync: {
@@ -116,11 +115,14 @@ interface ILoggerAPI {
  */
 interface ISharedSettings {
   /**
-   * Whether the logger should be enabled or disabled by default.
-   * @property {Boolean} debug
+   * Boolean value to indicate whether the logger should be enabled or disabled by default, or a Logger object.
+   * Passing a logger object is required to get descriptive log messages. Otherwise most logs will print with message codes.
+   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
+   *
+   * @property {boolean | ILogger} debug
    * @default false
    */
-  debug?: boolean,
+  debug?: boolean | SplitIO.ILogger,
   /**
    * The impression listener, which is optional. Whatever you provide here needs to comply with the SplitIO.IImpressionListener interface,
    * which will check for the logImpression method.
@@ -637,6 +639,14 @@ declare namespace SplitIO {
    * @extends ISharedSettings
    * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#configuration}
    */
+  /**
+   * Logger
+   * Its interface details are not part of the public API. It shouldn't be used directly.
+   * @interface ILogger
+   */
+  interface ILogger {
+    setLogLevel(logLevel: LogLevel): void
+  }
   interface IBrowserSettings extends ISharedSettings {
     /**
      * SDK Startup settings for the Browser.
@@ -707,19 +717,12 @@ declare namespace SplitIO {
        */
       eventsQueueSize?: number,
       /**
-       * When using streaming mode, seconds to wait before re attempting to authenticate for push notifications.
+       * When using streaming mode, seconds to wait before re attempting to connect for push notifications.
        * Next attempts follow intervals in power of two: base seconds, base x 2 seconds, base x 4 seconds, ...
-       * @property {number} authRetryBackoffBase
+       * @property {number} pushRetryBackoffBase
        * @default 1
        */
-      authRetryBackoffBase?: number,
-      /**
-       * When using streaming mode, seconds to wait before re attempting to connect to streaming.
-       * Next attempts follow intervals in power of two: base seconds, base x 2 seconds, base x 4 seconds, ...
-       * @property {number} streamingReconnectBackoffBase
-       * @default 1
-       */
-      streamingReconnectBackoffBase?: number,
+      pushRetryBackoffBase?: number,
     },
     /**
      * SDK Core settings for the browser.
@@ -784,9 +787,8 @@ declare namespace SplitIO {
      * Returns a manager instance of the SDK to explore available information.
      * @function manager
      * @returns {IManager} The manager instance.
-     * @todo at the moment it returns undefined, until the manager module could be plugged in.
      */
-    manager(): undefined
+    manager(): IManager
   }
 
   /**

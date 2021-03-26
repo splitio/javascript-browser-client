@@ -2,6 +2,7 @@ import { splitApiFactory } from '@splitsoftware/splitio-commons/src/services/spl
 import { syncManagerOnlineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOnline';
 import pushManagerFactory from '@splitsoftware/splitio-commons/src/sync/streaming/pushManager';
 import pollingManagerCSFactory from '@splitsoftware/splitio-commons/src/sync/polling/pollingManagerCS';
+import { sdkManagerFactory } from '@splitsoftware/splitio-commons/src/sdkManager/index';
 import { sdkClientMethodCSFactory } from '@splitsoftware/splitio-commons/src/sdkClient/sdkClientMethodCS';
 import BrowserSignalListener from '@splitsoftware/splitio-commons/src/listeners/browser';
 import { impressionObserverCSFactory } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/impressionObserverCS';
@@ -35,6 +36,8 @@ export function getModules(settings: ISettingsInternal): ISdkFactoryParams {
     splitApiFactory,
 
     syncManagerFactory: syncManagerOnlineCSFactory,
+
+    sdkManagerFactory,
 
     sdkClientMethodFactory: sdkClientMethodCSFactory,
 

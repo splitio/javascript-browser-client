@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { SplitFactory, SplitToGoogleAnalytics } from '../../index';
+import { SplitFactory, SplitToGoogleAnalytics, DebugLogger } from '../../index';
 import SettingsFactory from '../../settings';
 import { gaSpy, gaTag, removeGaTag, addGaTag } from './gaTestUtils';
 import { SPLIT_IMPRESSION, SPLIT_EVENT, DEBUG } from '@splitsoftware/splitio-commons/src/utils/constants';
@@ -267,8 +267,8 @@ export default function (fetchMock, assert) {
           t.equal(sentHitsTracker2.length, numOfEvaluations, 'Number of sent hits must be equal to the number of impressions');
 
           setTimeout(() => {
-            t.ok(logSpy.calledWith(`[WARN]  splitio-split-to-ga => SplitToGa queue method threw: ${error}. No hit was sent.`));
-            t.ok(logSpy.calledWith('[WARN]  splitio-split-to-ga => your custom mapper returned an invalid FieldsObject instance. It must be an object with at least a `hitType` field.'));
+            t.ok(logSpy.calledWith(`[WARN]  splitio => split-to-ga: queue method threw: ${error}. No hit was sent.`));
+            t.ok(logSpy.calledWith('[WARN]  splitio => split-to-ga: your custom mapper returned an invalid FieldsObject instance. It must be an object with at least a `hitType` field.'));
             client.destroy();
             logSpy.restore();
             t.end();
@@ -288,7 +288,7 @@ export default function (fetchMock, assert) {
 
     const factory = SplitFactory({
       ...config,
-      debug: true,
+      debug: DebugLogger(),
       integrations: [SplitToGoogleAnalytics({
         mapper: function () { throw error; },
       }), SplitToGoogleAnalytics({
@@ -339,9 +339,9 @@ export default function (fetchMock, assert) {
 
     const factory = SplitFactory({
       ...config,
-      debug: true,
+      debug: DebugLogger(),
     });
-    t.ok(logSpy.calledWith('[WARN]  splitio-split-to-ga => `ga` command queue not found. No hits will be sent until it is available.'), 'warning GA not found');
+    t.ok(logSpy.calledWith('[WARN]  splitio => split-to-ga: `ga` command queue not found. No hits will be sent until it is available.'), 'warning GA not found');
 
     client = factory.client();
     client.ready().then(() => {

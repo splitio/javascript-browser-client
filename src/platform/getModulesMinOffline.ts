@@ -1,5 +1,6 @@
 import splitsParserFromSettings from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
 import { syncManagerOfflineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOffline';
+import { sdkManagerFactory } from '@splitsoftware/splitio-commons/src/sdkManager/index';
 import { sdkClientMethodCSFactory } from '@splitsoftware/splitio-commons/src/sdkClient/sdkClientMethodCS';
 import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 
@@ -23,6 +24,8 @@ export function getModules(settings: ISettingsInternal): ISdkFactoryParams {
     storageFactory: settings.storage,
 
     syncManagerFactory: syncManagerOfflineCSBrowserFactory,
+
+    sdkManagerFactory,
 
     sdkClientMethodFactory: sdkClientMethodCSFactory,
 
