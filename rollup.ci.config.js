@@ -3,6 +3,8 @@ import { terser } from 'rollup-plugin-terser';
 
 export default env => {
 
+  const fileName = (outputSuffix) => `split-browser${env.branch !== 'main' ? `-dev-${env.commit_hash}` : `-${VERSION}`}${outputSuffix ? `.${outputSuffix}` : ''}`;
+
   const createRollupConfig = (input, outputSuffix) => ({
     input,
     output: [
@@ -10,13 +12,13 @@ export default env => {
       {
         format: 'umd', // works as `cjs`, `iife` and `amd` all in one
         name: 'splitio',
-        file: `umd/split-browser${outputSuffix ? `-${outputSuffix}` : ''}${env.branch !== 'main' ? `-dev-${env.commit_hash}` : `-${VERSION}`}.js`
+        file: `umd/${fileName(outputSuffix)}.js`
       },
       // production build
       {
         format: 'umd',
         name: 'splitio',
-        file: `umd/split-browser${outputSuffix ? `-${outputSuffix}` : ''}${env.branch !== 'main' ? `-dev-${env.commit_hash}` : `-${VERSION}`}.min.js`,
+        file: `umd/${fileName(outputSuffix)}.min.js`,
         plugins: [
           terser()
         ]
@@ -26,8 +28,7 @@ export default env => {
   });
 
   return [
-
-    createRollupConfig('src/umd.ts', 'full'), // umd/split-browser-full[.min].js
-    createRollupConfig('src/umdMinOnline.ts') // umd/split-browser[.min].js
+    createRollupConfig('src/umd.ts', 'full'), // umd/split-browser-VERSION.full[.min].js
+    createRollupConfig('src/umdMinOnline.ts') // umd/split-browser-VERSION[.min].js
   ];
 };
