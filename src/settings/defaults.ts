@@ -11,8 +11,9 @@ const packageVersion = '0.0.1-beta.3';
  */
 let initialLogLevel: LogLevel | undefined;
 
+const LS_KEY = 'splitio_debug';
+
 try {
-  const LS_KEY = 'splitio_debug';
   const initialState = localStorage.getItem(LS_KEY) || '';
   // Kept to avoid a breaking change ('on', 'enable' and 'enabled' are equivalent)
   initialLogLevel = /^(enabled?|on)/i.test(initialState) ? LogLevels.DEBUG : isLogLevelString(initialState) ? initialState : LogLevels.NONE;
