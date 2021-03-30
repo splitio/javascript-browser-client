@@ -59,7 +59,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "0.0.1-beta.3",
+    "@splitsoftware/splitio-commons": "0.1.0",
     "@types/google.analytics": "0.0.40"
   },
   "devDependencies": {
