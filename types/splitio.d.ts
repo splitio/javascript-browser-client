@@ -642,7 +642,7 @@ declare namespace SplitIO {
     setLogLevel(logLevel: LogLevel): void
   }
   /**
-   * Settings interface for SDK instances created on the browser
+   * Settings interface for SDK instances created on the browser.
    * @interface IBrowserSettings
    * @extends ISharedSettings
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852#configuration}
