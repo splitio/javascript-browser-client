@@ -14,7 +14,7 @@ declare module JsSdk {
   export function SplitFactory(settings: SplitIO.IBrowserSettings): SplitIO.ISDK;
 
   /**
-   * Persistente storage based on the LocalStorage Web API for browsers.
+   * Persistent storage based on the LocalStorage Web API for browsers.
    *
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852#storage}
    */

@@ -638,7 +638,7 @@ declare namespace SplitIO {
    * Its interface details are not part of the public API. It shouldn't be used directly.
    * @interface ILogger
    */
-   interface ILogger {
+  interface ILogger {
     setLogLevel(logLevel: LogLevel): void
   }
   /**
