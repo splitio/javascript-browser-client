@@ -454,7 +454,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   }
 };
 
-// debug property can be a Logger instance
+// debug property can be a log level or Logger instance
+fullBrowserSettings.debug = 'ERROR';
 fullBrowserSettings.debug = DebugLogger();
 fullBrowserSettings.debug = InfoLogger();
 fullBrowserSettings.debug = WarnLogger();

@@ -66,7 +66,7 @@ interface ISettings {
     streaming: string
   },
   readonly integrations?: SplitIO.IntegrationFactory[],
-  readonly debug: boolean | SplitIO.ILogger,
+  readonly debug: boolean | LogLevel | SplitIO.ILogger,
   readonly version: string,
   readonly streamingEnabled: boolean,
   readonly sync: {
@@ -117,12 +117,12 @@ interface ISharedSettings {
   /**
    * Boolean value to indicate whether the logger should be enabled or disabled by default, or a Logger object.
    * Passing a logger object is required to get descriptive log messages. Otherwise most logs will print with message codes.
-   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#logging}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#logging}
    *
    * @property {boolean | ILogger} debug
    * @default false
    */
-  debug?: boolean | SplitIO.ILogger,
+  debug?: boolean | LogLevel | SplitIO.ILogger,
   /**
    * The impression listener, which is optional. Whatever you provide here needs to comply with the SplitIO.IImpressionListener interface,
    * which will check for the logImpression method.
@@ -178,9 +178,22 @@ interface IStatusInterface extends IEventEmitter {
    */
   Event: EventConsts,
   /**
-   * Returns a promise that will be resolved once the SDK has finished loading.
+   * Returns a promise that will be resolved once the SDK has finished loading (SDK_READY event emitted) or rejected if the SDK has timedout (SDK_READY_TIMED_OUT event emitted).
+   * As it's meant to provide similar flexibility to the event approach, given that the SDK might be eventually ready after a timeout event, calling the `ready` method after the
+   * SDK had timed out will return a new promise that should eventually resolve if the SDK gets ready.
+   *
+   * Caveats: the method was designed to avoid an unhandled Promise rejection if the rejection case is not handled, so that `onRejected` handler is optional when using promises.
+   * However, when using async/await syntax, the rejection should be explicitly propagated like in the following example:
+   * ```
+   * try {
+   *   await client.ready().catch((e) => { throw e; });
+   *   // SDK is ready
+   * } catch(e) {
+   *   // SDK has timedout
+   * }
+   * ```
+   *
    * @function ready
-   * @deprecated Use on(sdk.Event.SDK_READY, callback: () => void) instead.
    * @returns {Promise<void>}
    */
   ready(): Promise<void>
@@ -287,7 +300,7 @@ declare namespace SplitIO {
   /**
    * Split attributes should be on object with values of type string or number (dates should be sent as millis since epoch).
    * @typedef {Object.<number, string, boolean, string[], number[]>} Attributes
-   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#attribute-syntax}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#attribute-syntax}
    */
   type Attributes = {
     [attributeName: string]: string | number | boolean | Array<string | number>
@@ -295,7 +308,7 @@ declare namespace SplitIO {
   /**
    * Split properties should be an object with values of type string, number, boolean or null. Size limit of ~31kb.
    * @typedef {Object.<number, string, boolean, null>} Attributes
-   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#track
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#track
    */
   type Properties = {
     [propertyName: string]: string | number | boolean | null
@@ -427,7 +440,7 @@ declare namespace SplitIO {
    * Impression listener interface. This is the interface that needs to be implemented
    * by the element you provide to the SDK as impression listener.
    * @interface IImpressionListener
-   * @see {@link https://help.split.io/hc/en-us/articles/360020564931-Node-js-SDK#listener}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#listener}
    */
   interface IImpressionListener {
     logImpression(data: SplitIO.ImpressionData): void
@@ -468,7 +481,7 @@ declare namespace SplitIO {
   /**
    * Configuration params for 'Google Analytics to Split' integration plugin, to track Google Analytics hits as Split events.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#google-analytics-to-split}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#integrations}
    */
   interface GoogleAnalyticsToSplitOptions {
     /**
@@ -520,7 +533,7 @@ declare namespace SplitIO {
   /**
    * Configuration params for 'Split to Google Analytics' integration plugin, to track Split impressions and events as Google Analytics hits.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#split-to-google-analytics}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#integrations}
    */
   interface SplitToGoogleAnalyticsOptions {
     /**
@@ -634,12 +647,6 @@ declare namespace SplitIO {
   */
   type ImpressionsMode = 'OPTIMIZED' | 'DEBUG';
   /**
-   * Settings interface for SDK instances created on the browser
-   * @interface IBrowserSettings
-   * @extends ISharedSettings
-   * @see {@link https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK#configuration}
-   */
-  /**
    * Logger
    * Its interface details are not part of the public API. It shouldn't be used directly.
    * @interface ILogger
@@ -647,6 +654,12 @@ declare namespace SplitIO {
   interface ILogger {
     setLogLevel(logLevel: LogLevel): void
   }
+  /**
+   * Settings interface for SDK instances created on the browser.
+   * @interface IBrowserSettings
+   * @extends ISharedSettings
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#configuration}
+   */
   interface IBrowserSettings extends ISharedSettings {
     /**
      * SDK Startup settings for the Browser.
@@ -765,7 +778,7 @@ declare namespace SplitIO {
   }
   /**
    * This represents the interface for the SDK instance with synchronous storage and client-side API,
-   * i.e., where client instances have a binded user keys @see {@link @TODO}.
+   * i.e., where client instances have a bound user key.
    * @interface ISDK
    * @extends IBasicSDK
    */

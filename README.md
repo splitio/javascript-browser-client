@@ -42,7 +42,7 @@ client.on(client.Event.SDK_READY, function() {
 });
 ```
 
-Please refer to [JS Browser SDK](https://help.split.io/hc/en-us/articles/@TODO) to learn about all the functionality provided by our SDK as well as specifics for configuration options available for tailoring it to your current application setup.
+Please refer to [JS Browser SDK](https://help.split.io/hc/en-us/articles/360058730852) to learn about all the functionality provided by our SDK as well as specifics for configuration options available for tailoring it to your current application setup.
 
 ## Submitting issues
 The Split team monitors all issues submitted to this [issue tracker](https://github.com/splitio/javascript-browser-client/issues). We encourage you to use this issue tracker to submit any bug reports, feedback, and feature enhancements. We'll do our best to respond in a timely manner.
@@ -68,6 +68,7 @@ Split has built and maintains SDKs for:
 * Java [Github](https://github.com/splitio/java-client) [Docs](https://help.split.io/hc/en-us/articles/360020405151-Java-SDK)
 * Javascript [Github](https://github.com/splitio/javascript-client) [Docs](https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK)
 * Node [Github](https://github.com/splitio/javascript-client) [Docs](https://help.split.io/hc/en-us/articles/360020564931-Node-js-SDK)
+* Javascript for Browser [Github](https://github.com/splitio/javascript-browser-client) [Docs](https://help.split.io/hc/en-us/articles/360058730852)
 * PHP [Github](https://github.com/splitio/php-client) [Docs](https://help.split.io/hc/en-us/articles/360020350372-PHP-SDK)
 * Python [Github](https://github.com/splitio/python-client) [Docs](https://help.split.io/hc/en-us/articles/360020359652-Python-SDK)
 * React [Github](https://github.com/splitio/react-client) [Docs](https://help.split.io/hc/en-us/articles/360038825091-React-SDK)
