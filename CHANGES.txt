@@ -1,2 +1,6 @@
+0.1.1 (XXX YY, 2021)
+ - Updated Karma and a transitive dependency with vulnerabilities.
+ - Updated Javascript-commons dependency to include improvements and fix some log messages typos.
+
 0.1.0 (March 30, 2021)
  - Initial public release. Check the official documentation for details: https://help.split.io/hc/en-us/articles/360058730852

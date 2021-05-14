@@ -1,7 +1,7 @@
 import { LogLevels, isLogLevelString } from '@splitsoftware/splitio-commons/src/logger/index';
 import { LogLevel } from '@splitsoftware/splitio-commons/src/types';
 
-const packageVersion = '0.1.0';
+const packageVersion = '0.1.1-canary.0';
 
 /**
  * In browser, the default debug level, can be set via the `localStorage.splitio_debug` item.
