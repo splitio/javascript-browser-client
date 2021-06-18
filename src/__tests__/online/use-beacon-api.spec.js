@@ -3,7 +3,7 @@ import { SplitFactory } from '../../index';
 import SettingsFactory from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
-import { url } from '../testUtils';
+import { url, triggerUnloadEvent } from '../testUtils';
 import { OPTIMIZED } from '@splitsoftware/splitio-commons/src/utils/constants';
 
 const config = {
@@ -22,14 +22,6 @@ const settings = SettingsFactory(config);
 
 // Spy calls to Beacon API method
 let sendBeaconSpy;
-
-// util method to trigger 'unload' event
-function triggerUnloadEvent() {
-  const event = document.createEvent('HTMLEvents');
-  event.initEvent('unload', true, true);
-  event.eventName = 'unload';
-  window.dispatchEvent(event);
-}
 
 const assertImpressionSent = (assert, impression) => {
   assert.equal(impression.f, 'hierarchical_splits_test', 'Present impression should have the correct split name.');
