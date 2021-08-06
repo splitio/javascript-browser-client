@@ -9,7 +9,7 @@ const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
 const string = require('rollup-plugin-string').string;
 const typescript = require('typescript');
-const ts = require('@wessberg/rollup-plugin-ts');
+const ts = require('rollup-plugin-ts');
 const terser = require('rollup-plugin-terser').terser;
 const nodePolyfills = require('rollup-plugin-node-polyfills');
 
