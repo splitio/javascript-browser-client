@@ -68,6 +68,7 @@ interface ISettings {
   readonly integrations?: SplitIO.IntegrationFactory[],
   readonly debug: boolean | LogLevel | SplitIO.ILogger,
   readonly version: string,
+  features?: SplitIO.MockedFeaturesMap,
   readonly streamingEnabled: boolean,
   readonly sync: {
     splitFilters: SplitIO.SplitFilter[],
@@ -117,7 +118,7 @@ interface ISharedSettings {
   /**
    * Boolean value to indicate whether the logger should be enabled or disabled by default, or a Logger object.
    * Passing a logger object is required to get descriptive log messages. Otherwise most logs will print with message codes.
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#logging}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    *
    * @property {boolean | ILogger} debug
    * @default false
@@ -300,7 +301,7 @@ declare namespace SplitIO {
   /**
    * Split attributes should be on object with values of type string or number (dates should be sent as millis since epoch).
    * @typedef {Object.<number, string, boolean, string[], number[]>} Attributes
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#attribute-syntax}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#attribute-syntax}
    */
   type Attributes = {
     [attributeName: string]: string | number | boolean | Array<string | number>
@@ -308,7 +309,7 @@ declare namespace SplitIO {
   /**
    * Split properties should be an object with values of type string, number, boolean or null. Size limit of ~31kb.
    * @typedef {Object.<number, string, boolean, null>} Attributes
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#track
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#track
    */
   type Properties = {
     [propertyName: string]: string | number | boolean | null
@@ -440,7 +441,7 @@ declare namespace SplitIO {
    * Impression listener interface. This is the interface that needs to be implemented
    * by the element you provide to the SDK as impression listener.
    * @interface IImpressionListener
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#listener}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#listener}
    */
   interface IImpressionListener {
     logImpression(data: SplitIO.ImpressionData): void
@@ -481,7 +482,7 @@ declare namespace SplitIO {
   /**
    * Configuration params for 'Google Analytics to Split' integration plugin, to track Google Analytics hits as Split events.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#integrations}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
    */
   interface GoogleAnalyticsToSplitOptions {
     /**
@@ -533,7 +534,7 @@ declare namespace SplitIO {
   /**
    * Configuration params for 'Split to Google Analytics' integration plugin, to track Split impressions and events as Google Analytics hits.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#integrations}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
    */
   interface SplitToGoogleAnalyticsOptions {
     /**
@@ -658,7 +659,7 @@ declare namespace SplitIO {
    * Settings interface for SDK instances created on the browser.
    * @interface IBrowserSettings
    * @extends ISharedSettings
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#configuration}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
   interface IBrowserSettings extends ISharedSettings {
     /**
@@ -730,6 +731,13 @@ declare namespace SplitIO {
        */
       eventsQueueSize?: number,
       /**
+       * For mocking/testing only. The SDK will refresh the features mocked data when mode is set to "localhost" by defining the key.
+       * For more information @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+       * @property {number} offlineRefreshRate
+       * @default 15
+       */
+       offlineRefreshRate?: number,
+      /**
        * When using streaming mode, seconds to wait before re attempting to connect for push notifications.
        * Next attempts follow intervals in power of two: base seconds, base x 2 seconds, base x 4 seconds, ...
        * @property {number} pushRetryBackoffBase
@@ -759,6 +767,11 @@ declare namespace SplitIO {
        */
       labelsEnabled?: boolean
     },
+    /**
+     * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
+     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+     */
+     features?: MockedFeaturesMap,
     /**
      * Defines the factory function to instanciate the storage. If not provided, the default IN MEMORY storage is used.
      * @property {Object} storage

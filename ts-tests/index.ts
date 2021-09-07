@@ -81,7 +81,7 @@ const attributes: SplitIO.Attributes = {
 // };
 let splitKey: SplitIO.SplitKey;
 // Mocks
-let mockedFeaturesPath: SplitIO.MockedFeaturesFilePath;
+// let mockedFeaturesPath: SplitIO.MockedFeaturesFilePath;
 let mockedFeaturesMap: SplitIO.MockedFeaturesMap;
 // Split Data
 let splitView: SplitIO.SplitView;
@@ -101,11 +101,11 @@ let localStorageOptions: SplitIO.InLocalStorageOptions = {
 syncStorageFactory = InLocalStorage(localStorageOptions);
 
 // mockedFeaturesPath = 'path/to/file';
-// mockedFeaturesMap = {
-//   feature1: 'treatment',
-//   feature2: { treatment: 'treatment2', config: "{ 'prop': 'value'}" },
-//   feature3: { treatment: 'treatment3', config: null }
-// };
+mockedFeaturesMap = {
+  feature1: 'treatment',
+  feature2: { treatment: 'treatment2', config: "{ 'prop': 'value'}" },
+  feature3: { treatment: 'treatment3', config: null }
+};
 
 // Treatment can be the string or the promise which will resolve to treatment string
 treatment = 'some treatment';  // Sync case
@@ -181,9 +181,10 @@ const instantiatedSettingsStartup: { [key: string]: number } = SDK.settings.star
 const instantiatedStorage: SplitIO.StorageSync = SDK.settings.storage;
 const instantiatedSettingsUrls: { [key: string]: string } = SDK.settings.urls;
 const instantiatedSettingsVersion: string = SDK.settings.version;
-// let instantiatedSettingsFeatures: {[key: string]: string} = SDK.settings.features;
+let instantiatedSettingsFeatures = SDK.settings.features;
 // // We should be able to write on features prop. The rest are readonly props.
-// instantiatedSettingsFeatures.something = 'something';
+instantiatedSettingsFeatures.something = 'something';
+SDK.settings.features = { 'split_x': 'on' };
 
 // Client and Manager
 client = SDK.client();
@@ -421,7 +422,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     impressionsRefreshRate: 1,
     // metricsRefreshRate: 1,
     segmentsRefreshRate: 1,
-    // offlineRefreshRate: 1,
+    offlineRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
     pushRetryBackoffBase: 1,
@@ -438,7 +439,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     auth: 'https://asd.com/auth',
     streaming: 'https://asd.com/streaming'
   },
-  // features: mockedFeaturesMap,
+  features: mockedFeaturesMap,
   storage: syncStorageFactory,
   impressionListener: impressionListener,
   debug: true,
