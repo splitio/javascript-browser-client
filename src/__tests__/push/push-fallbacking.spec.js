@@ -182,8 +182,8 @@ export function testFallbacking(fetchMock, assert) {
 
   });
 
-  fetchMock.getOnce(url(settings, `/auth?users=${encodeURIComponent(userKey)}`), function (url, opts) {
-    if (!opts.headers['Authorization']) assert.fail('`/auth` request must include `Authorization` header');
+  fetchMock.getOnce(url(settings, `/v2/auth?users=${encodeURIComponent(userKey)}`), function (url, opts) {
+    if (!opts.headers['Authorization']) assert.fail('`/v2/auth` request must include `Authorization` header');
     assert.pass('auth success');
     return { status: 200, body: authPushEnabledNicolas };
   });
@@ -212,8 +212,8 @@ export function testFallbacking(fetchMock, assert) {
 
   // creating of second client during streaming: initial mysegment sync, reauth and syncAll due to new client
   fetchMock.getOnce(url(settings, '/mySegments/marcio%40split.io'), { status: 200, body: mySegmentsMarcio });
-  fetchMock.getOnce(url(settings, `/auth?users=${encodeURIComponent(userKey)}&users=${encodeURIComponent(secondUserKey)}`), function (url, opts) {
-    if (!opts.headers['Authorization']) assert.fail('`/auth` request must include `Authorization` header');
+  fetchMock.getOnce(url(settings, `/v2/auth?users=${encodeURIComponent(userKey)}&users=${encodeURIComponent(secondUserKey)}`), function (url, opts) {
+    if (!opts.headers['Authorization']) assert.fail('`/v2/auth` request must include `Authorization` header');
     assert.pass('second auth success');
     return { status: 200, body: authPushEnabledNicolasAndMarcio };
   });
@@ -236,7 +236,7 @@ export function testFallbacking(fetchMock, assert) {
   // creation of third client during polling: initial mysegment sync and authentication
   fetchMock.getOnce(url(settings, '/mySegments/facundo%40split.io'), { status: 200, body: mySegmentsMarcio });
   // authentication fail, so we keep polling. next auth attempt is scheduled in one second (after the test finishes)
-  fetchMock.getOnce(url(settings, `/auth?users=${encodeURIComponent(userKey)}&users=${encodeURIComponent(secondUserKey)}&users=${encodeURIComponent(thirdUserKey)}`), { throws: new TypeError('Network error') });
+  fetchMock.getOnce(url(settings, `/v2/auth?users=${encodeURIComponent(userKey)}&users=${encodeURIComponent(secondUserKey)}&users=${encodeURIComponent(thirdUserKey)}`), { throws: new TypeError('Network error') });
 
   // continue fetches due to second fallback to polling
   fetchMock.getOnce(url(settings, '/splitChanges?since=1457552649999'), function () {
