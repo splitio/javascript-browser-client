@@ -1,5 +1,5 @@
 import { splitApiFactory } from '@splitsoftware/splitio-commons/src/services/splitApi';
-import splitsParserFromSettings from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
+import { splitsParserFromSettingsFactory } from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
 import { syncManagerOfflineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOffline';
 import { syncManagerOnlineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOnline';
 import pushManagerFactory from '@splitsoftware/splitio-commons/src/sync/streaming/pushManager';
@@ -11,8 +11,8 @@ import { impressionObserverCSFactory } from '@splitsoftware/splitio-commons/src/
 import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integrations/pluggable';
 import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 
-import getFetch from './getFetch';
-import getEventSource from './getEventSource';
+import { getFetch } from './getFetch';
+import { getEventSource } from './getEventSource';
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { ISettingsInternal } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/types';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
@@ -24,7 +24,7 @@ const browserPlatform = {
   EventEmitter
 };
 
-const syncManagerOfflineCSBrowserFactory = syncManagerOfflineFactory(splitsParserFromSettings);
+const syncManagerOfflineCSBrowserFactory = syncManagerOfflineFactory(splitsParserFromSettingsFactory);
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
 
 export function getModules(settings: ISettingsInternal): ISdkFactoryParams {

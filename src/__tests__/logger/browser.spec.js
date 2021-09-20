@@ -6,7 +6,7 @@ import fetchMock from '../testUtils/fetchMock';
 import { SplitFactory, ErrorLogger, DebugLogger } from '../../index';
 
 // Don't care about SDK readiness
-fetchMock.get('*', 500);
+fetchMock.get('*', { throws: new TypeError('Network error') });
 fetchMock.post('*', 200);
 
 const minConfig = {

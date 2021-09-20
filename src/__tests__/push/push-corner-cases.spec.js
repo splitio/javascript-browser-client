@@ -8,7 +8,7 @@ import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
 import { SplitFactory, InLocalStorage } from '../../';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
 
@@ -27,7 +27,7 @@ const config = {
     prefix: 'pushCornerCase'
   }),
 };
-const settings = SettingsFactory(config);
+const settings = settingsValidator(config);
 
 const MILLIS_SSE_OPEN = 100;
 const MILLIS_SPLIT_KILL_EVENT = 200;
@@ -68,7 +68,7 @@ export function testSplitKillOnReadyFromCache(fetchMock, assert) {
   });
 
   // 1 auth request
-  fetchMock.getOnce(url(settings, `/auth?users=${encodeURIComponent(userKey)}`), { status: 200, body: authPushEnabledNicolas });
+  fetchMock.getOnce(url(settings, `/v2/auth?users=${encodeURIComponent(userKey)}`), { status: 200, body: authPushEnabledNicolas });
   // 2 mySegments requests: initial sync and after SSE opened
   fetchMock.get({ url: url(settings, '/mySegments/nicolas%40split.io'), repeat: 2 }, { status: 200, body: { mySegments: [] } });
 

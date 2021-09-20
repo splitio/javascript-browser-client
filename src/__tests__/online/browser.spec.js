@@ -16,7 +16,7 @@ import useBeaconApiSuite from './use-beacon-api.spec';
 import useBeaconDebugApiSuite from './use-beacon-api.debug.spec';
 import readyPromiseSuite from './ready-promise.spec';
 import fetchSpecificSplits from './fetch-specific-splits.spec';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
@@ -24,7 +24,7 @@ import mySegmentsNicolas from '../mocks/mysegments.nicolas@split.io.json';
 import mySegmentsMarcio from '../mocks/mysegments.marcio@split.io.json';
 import { InLocalStorage } from '../../index';
 
-const settings = SettingsFactory({
+const settings = settingsValidator({
   core: {
     key: 'facundo@split.io'
   },

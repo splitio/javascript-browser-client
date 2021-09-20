@@ -8,9 +8,9 @@ import mySegmentsMock from '../mocks/mySegmentsEmpty.json';
 import splitChangesMock2 from '../mocks/splitChanges.since.1500492097547.till.1500492297547.json';
 import splitChangesMock3 from '../mocks/splitChanges.since.1500492297547.json';
 import { SplitFactory, InLocalStorage } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
-const settings = SettingsFactory({
+const settings = settingsValidator({
   core: {
     authorizationKey: '<fake-token>'
   },
