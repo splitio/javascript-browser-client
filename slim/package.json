@@ -1,0 +1,6 @@
+{
+  "main": "../cjs/slim/index.js",
+  "module": "../esm/slim/index.js",
+  "types": "../types/slim/index.d.ts",
+  "sideEffects": false
+}

@@ -12,16 +12,13 @@
  */
 
 import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs';
-import { SplitFactory as SplitFactoryESM, InLocalStorage as InLocalStorageESM, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitESM, SplitToGoogleAnalytics as SplitToGoogleAnalyticsESM, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs/esm/slim';
-import { SplitFactory as SplitFactoryCJS, InLocalStorage as InLocalStorageCJS, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitCJS, SplitToGoogleAnalytics as SplitToGoogleAnalyticsCJS, DebugLogger as DebugLoggerCJS, InfoLogger as InfoLoggerCJS, WarnLogger as WarnLoggerCJS, ErrorLogger as ErrorLoggerCJS } from '@splitsoftware/splitio-browserjs/cjs/slim';
+import { SplitFactory as SplitFactorySlim, InLocalStorage as InLocalStorageSlim, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitSlim, SplitToGoogleAnalytics as SplitToGoogleAnalyticsSlim, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs/slim';
 
-// Entry points must export the same objects, except loggers which are only exported by slim entry points
-let splitFactory = SplitFactory; splitFactory = SplitFactoryCJS; splitFactory = SplitFactoryESM;
-let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageCJS; inLocalStorage = InLocalStorageESM;
-let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitCJS; gaToSplit = GoogleAnalyticsToSplitESM;
-let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsCJS; splitToGa = SplitToGoogleAnalyticsESM;
-let loggerFactory = DebugLogger; loggerFactory = InfoLogger; loggerFactory = WarnLogger; loggerFactory = ErrorLogger;
-loggerFactory = DebugLoggerCJS; loggerFactory = InfoLoggerCJS; loggerFactory = WarnLoggerCJS; loggerFactory = ErrorLoggerCJS;
+// Entry points must export the same objects
+let splitFactory = SplitFactory; splitFactory = SplitFactorySlim;
+let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageSlim;
+let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitSlim;
+let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsSlim;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -402,7 +399,7 @@ let splitFilters: SplitIO.SplitFilter[] = [{ type: 'byName', values: ['my_split_
 let fieldsObjectSample: UniversalAnalytics.FieldsObject = { hitType: 'event', eventAction: 'action' };
 let eventDataSample: SplitIO.EventData = { eventTypeId: 'someEventTypeId', value: 10, properties: {} };
 
-let minimalGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = { identities: [{key: 'user', trafficType: 'tt'}]};
+let minimalGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = { identities: [{ key: 'user', trafficType: 'tt' }] };
 let emptySplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {};
 
 let customGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = {
