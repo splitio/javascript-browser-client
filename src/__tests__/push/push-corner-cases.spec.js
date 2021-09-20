@@ -8,7 +8,7 @@ import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
 import { SplitFactory, InLocalStorage } from '../../';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
 
@@ -27,7 +27,7 @@ const config = {
     prefix: 'pushCornerCase'
   }),
 };
-const settings = SettingsFactory(config);
+const settings = settingsValidator(config);
 
 const MILLIS_SSE_OPEN = 100;
 const MILLIS_SPLIT_KILL_EVENT = 200;
