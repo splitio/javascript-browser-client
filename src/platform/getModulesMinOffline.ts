@@ -1,4 +1,4 @@
-import splitsParserFromSettings from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
+import { splitsParserFromSettingsFactory } from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
 import { syncManagerOfflineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOffline';
 import { sdkManagerFactory } from '@splitsoftware/splitio-commons/src/sdkManager/index';
 import { sdkClientMethodCSFactory } from '@splitsoftware/splitio-commons/src/sdkClient/sdkClientMethodCS';
@@ -12,7 +12,7 @@ const browserPlatform = {
   EventEmitter
 };
 
-const syncManagerOfflineCSBrowserFactory = syncManagerOfflineFactory(splitsParserFromSettings);
+const syncManagerOfflineCSBrowserFactory = syncManagerOfflineFactory(splitsParserFromSettingsFactory);
 
 export function getModules(settings: ISettingsInternal): ISdkFactoryParams {
 

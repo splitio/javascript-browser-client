@@ -1,5 +1,5 @@
 import { splitApiFactory } from '@splitsoftware/splitio-commons/src/services/splitApi';
-import splitsParserFromSettings from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
+import { splitsParserFromSettingsFactory } from '@splitsoftware/splitio-commons/src/sync/offline/splitsParser/splitsParserFromSettings';
 import { syncManagerOfflineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOffline';
 import { syncManagerOnlineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOnline';
 import pushManagerFactory from '@splitsoftware/splitio-commons/src/sync/streaming/pushManager';
@@ -24,7 +24,7 @@ const browserPlatform = {
   EventEmitter
 };
 
-const syncManagerOfflineCSBrowserFactory = syncManagerOfflineFactory(splitsParserFromSettings);
+const syncManagerOfflineCSBrowserFactory = syncManagerOfflineFactory(splitsParserFromSettingsFactory);
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
 
 export function getModules(settings: ISettingsInternal): ISdkFactoryParams {
