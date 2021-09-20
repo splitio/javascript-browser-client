@@ -1,4 +1,4 @@
-import settingsValidator from '../settings/slim';
+import { settingsValidator } from '../settings/slim';
 import { getModules } from '../platform/getModulesSlim';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';

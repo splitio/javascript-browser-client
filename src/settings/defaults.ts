@@ -20,7 +20,7 @@ try {
   // eslint-disable-next-line no-empty
 } catch { }
 
-export default {
+export const defaults = {
   startup: {
     // Stress the request time used while starting up the SDK.
     requestTimeoutBeforeReady: 5,
