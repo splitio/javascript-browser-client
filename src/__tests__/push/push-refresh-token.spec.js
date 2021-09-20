@@ -11,7 +11,7 @@ import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
 import { SplitFactory } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
 
@@ -32,7 +32,7 @@ const config = {
   },
   // debug: true,
 };
-const settings = SettingsFactory(config);
+const settings = settingsValidator(config);
 
 const MILLIS_CONNDELAY = 500;
 const MILLIS_REFRESH_TOKEN = 1000;

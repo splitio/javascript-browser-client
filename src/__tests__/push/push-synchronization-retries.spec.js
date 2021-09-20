@@ -17,7 +17,7 @@ import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
 import { SplitFactory } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
 
@@ -35,7 +35,7 @@ const config = {
   streamingEnabled: true,
   // debug: true,
 };
-const settings = SettingsFactory(config);
+const settings = settingsValidator(config);
 
 const MILLIS_SSE_OPEN = 100;
 
