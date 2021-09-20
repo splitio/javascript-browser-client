@@ -3,7 +3,7 @@ import { initialLogLevel } from './setLocalStorage';
 import tape from 'tape';
 import sinon from 'sinon';
 import fetchMock from '../testUtils/fetchMock';
-import { SplitFactory, ErrorLogger, DebugLogger } from '../../index';
+import { SplitFactory, ErrorLogger, DebugLogger } from '../../slim/index';
 
 // Don't care about SDK readiness
 fetchMock.get('*', { throws: new TypeError('Network error') });

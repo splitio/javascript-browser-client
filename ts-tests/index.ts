@@ -11,7 +11,17 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory as SplitFactoryESM, InLocalStorage as InLocalStorageESM, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitESM, SplitToGoogleAnalytics as SplitToGoogleAnalyticsESM, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs/esm/slim';
+import { SplitFactory as SplitFactoryCJS, InLocalStorage as InLocalStorageCJS, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitCJS, SplitToGoogleAnalytics as SplitToGoogleAnalyticsCJS, DebugLogger as DebugLoggerCJS, InfoLogger as InfoLoggerCJS, WarnLogger as WarnLoggerCJS, ErrorLogger as ErrorLoggerCJS } from '@splitsoftware/splitio-browserjs/cjs/slim';
+
+// Entry points must export the same objects, except loggers which are only exported by slim entry points
+let splitFactory = SplitFactory; splitFactory = SplitFactoryCJS; splitFactory = SplitFactoryESM;
+let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageCJS; inLocalStorage = InLocalStorageESM;
+let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitCJS; gaToSplit = GoogleAnalyticsToSplitESM;
+let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsCJS; splitToGa = SplitToGoogleAnalyticsESM;
+let loggerFactory = DebugLogger; loggerFactory = InfoLogger; loggerFactory = WarnLogger; loggerFactory = ErrorLogger;
+loggerFactory = DebugLoggerCJS; loggerFactory = InfoLoggerCJS; loggerFactory = WarnLoggerCJS; loggerFactory = ErrorLoggerCJS;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;

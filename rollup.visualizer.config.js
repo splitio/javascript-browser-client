@@ -27,6 +27,5 @@ const createRollupConfig = (input, outputPrefix) => ({
 
 export default [
   createRollupConfig('src/umd.ts', 'split'),
-  createRollupConfig('src/umdMinOnline.ts', 'split-min-online'),
-  createRollupConfig('src/umdMinOffline.ts', 'split-min-offline')
+  createRollupConfig('src/slim/umd.ts', 'split-slim'),
 ];

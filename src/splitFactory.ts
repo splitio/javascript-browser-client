@@ -5,6 +5,8 @@ import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory
 import { merge } from '@splitsoftware/splitio-commons/src/utils/lang';
 
 /**
+ * SplitFactory with pluggable modules for Browser.
+ * Includes localhost mode and log messages.
  *
  * @param config configuration object used to instantiates the SDK
  * @param customModules optional object of SDK modules to overwrite default ones. Use with caution since, unlike `config`, this param is not validated.

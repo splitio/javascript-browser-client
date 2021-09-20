@@ -2,12 +2,16 @@
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
-/// <reference path="./splitio.d.ts" />
+/// <reference path="../../types/splitio.d.ts" />
 export = JsSdk;
 
 declare module JsSdk {
   /**
-   * Split.io sdk factory function.
+   * Slim version of the Split.io sdk factory function.
+   *
+   * Recommended to use for bundle size reduction in production, since it doesn't include development features like localhost mode
+   * and verbose log messages by default @see {@link https://help.split.io/hc/en-us/articles/360058730852#size-optimization}.
+   *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852#configuration}
    */
@@ -33,4 +37,33 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852#integrations}
    */
   export function SplitToGoogleAnalytics(options?: SplitIO.SplitToGoogleAnalyticsOptions): SplitIO.IntegrationFactory;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with DEBUG log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#logging}
+   */
+  export function DebugLogger(): SplitIO.ILogger;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with INFO log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#logging}
+   */
+  export function InfoLogger(): SplitIO.ILogger;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with WARN log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#logging}
+   */
+  export function WarnLogger(): SplitIO.ILogger;
+
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with ERROR log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852#logging}
+   */
+  export function ErrorLogger(): SplitIO.ILogger;
 }

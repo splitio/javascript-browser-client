@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { SplitFactory } from './splitFactoryMinOffline';
+import { SplitFactory } from './splitFactory';
 
 SplitFactory.SplitFactory = SplitFactory;
 
