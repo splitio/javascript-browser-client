@@ -44,7 +44,7 @@ export function hasNoCacheHeader(fetchMockOpts) {
 }
 
 const eventsEndpointMatcher = /^\/(testImpressions|metrics|events)/;
-const authEndpointMatcher = /^\/auth/;
+const authEndpointMatcher = /^\/v2\/auth/;
 const streamingEndpointMatcher = /^\/(sse|event-stream)/;
 
 /**
