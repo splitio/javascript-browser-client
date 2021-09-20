@@ -4,9 +4,9 @@ import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import { SplitFactory } from '../../splitFactory';
 import { InLocalStorage } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
-const settings = SettingsFactory({ core: { key: 'facundo@split.io' } });
+const settings = settingsValidator({ core: { key: 'facundo@split.io' } });
 
 const spySplitChanges = sinon.spy();
 const spySegmentChanges = sinon.spy();
