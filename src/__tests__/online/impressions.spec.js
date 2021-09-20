@@ -1,5 +1,5 @@
 import { SplitFactory } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
@@ -12,7 +12,7 @@ const baseUrls = {
   events: 'https://events.baseurl/impressionsSuite'
 };
 
-const settings = SettingsFactory({
+const settings = settingsValidator({
   core: {
     key: 'asd'
   },

@@ -1,5 +1,5 @@
 import { SplitFactory } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsNicolas from '../mocks/mysegments.nicolas@split.io.json';
@@ -34,7 +34,7 @@ const config = {
   streamingEnabled: true,
   debug: true,
 };
-const settings = SettingsFactory(config);
+const settings = settingsValidator(config);
 
 /**
  * Sequence of calls:

@@ -8,7 +8,7 @@ import mySegmentsNicolasMock from '../mocks/mysegments.nicolas@split.io.json';
 import { nearlyEqual, url } from '../testUtils';
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 import { SplitFactory } from '../../index';
-import SettingsFactory from '../../settings';
+import { settingsValidator } from '../../settings';
 
 const baseUrls = {
   sdk: 'https://sdk.push-initialization-retries/api',
@@ -35,7 +35,7 @@ const config = {
   streamingEnabled: true,
   // debug: true,
 };
-const settings = SettingsFactory(config);
+const settings = settingsValidator(config);
 
 /**
  * Sequence of calls:
