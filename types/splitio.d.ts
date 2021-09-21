@@ -34,7 +34,7 @@ type EventConsts = {
 };
 /**
  * Settings interface. This is a representation of the settings the SDK expose, that's why
- * it's props are readonly.
+ * most of it's props are readonly. Only features should be rewritten when localhost mode is active.
  * @interface ISettings
  */
 interface ISettings {
@@ -48,9 +48,10 @@ interface ISettings {
     featuresRefreshRate: number,
     impressionsRefreshRate: number,
     segmentsRefreshRate: number,
+    offlineRefreshRate: number,
     eventsPushRate: number,
     eventsQueueSize: number,
-    pushRetryBackoffBase: number,
+    pushRetryBackoffBase: number
   },
   readonly startup: {
     readyTimeout: number,
@@ -68,6 +69,9 @@ interface ISettings {
   readonly integrations?: SplitIO.IntegrationFactory[],
   readonly debug: boolean | LogLevel | SplitIO.ILogger,
   readonly version: string,
+  /**
+   * Mocked features map.
+   */
   features?: SplitIO.MockedFeaturesMap,
   readonly streamingEnabled: boolean,
   readonly sync: {
@@ -116,11 +120,11 @@ interface ILoggerAPI {
  */
 interface ISharedSettings {
   /**
-   * Boolean value to indicate whether the logger should be enabled or disabled by default, or a Logger object.
-   * Passing a logger object is required to get descriptive log messages. Otherwise most logs will print with message codes.
+   * Boolean value to indicate whether the logger should be enabled or disabled by default, or a log level string or a Logger object.
+   * Passing a logger object is required when using the slim version of the SDK in order to get descriptive log messages. Otherwise most logs will print with message codes.
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    *
-   * @property {boolean | ILogger} debug
+   * @property {boolean | LogLevel | ILogger} debug
    * @default false
    */
   debug?: boolean | LogLevel | SplitIO.ILogger,
@@ -736,7 +740,7 @@ declare namespace SplitIO {
        * @property {number} offlineRefreshRate
        * @default 15
        */
-       offlineRefreshRate?: number,
+      offlineRefreshRate?: number,
       /**
        * When using streaming mode, seconds to wait before re attempting to connect for push notifications.
        * Next attempts follow intervals in power of two: base seconds, base x 2 seconds, base x 4 seconds, ...
@@ -771,7 +775,7 @@ declare namespace SplitIO {
      * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
      * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
      */
-     features?: MockedFeaturesMap,
+    features?: MockedFeaturesMap,
     /**
      * Defines the factory function to instanciate the storage. If not provided, the default IN MEMORY storage is used.
      * @property {Object} storage
