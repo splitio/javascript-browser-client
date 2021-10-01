@@ -28,7 +28,7 @@ export default env => {
   });
 
   return [
-    createRollupConfig('src/umd.ts'), // umd/split-browser-VERSION[.min].js
-    createRollupConfig('src/slim/umd.ts', 'slim') // umd/split-browser-VERSION.slim[.min].js
+    createRollupConfig('src/full/umd.ts', 'full'), // umd/split-browser-VERSION.full[.min].js
+    createRollupConfig('src/umd.ts') // umd/split-browser-VERSION[.min].js
   ];
 };

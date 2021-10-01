@@ -26,6 +26,6 @@ const createRollupConfig = (input, outputPrefix) => ({
 });
 
 export default [
-  createRollupConfig('src/umd.ts', 'split'),
-  createRollupConfig('src/slim/umd.ts', 'split-slim'),
+  createRollupConfig('src/full/umd.ts', 'split-full'),
+  createRollupConfig('src/umd.ts', 'split-slim'),
 ];

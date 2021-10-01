@@ -9,7 +9,7 @@ import { impressionObserverCSFactory } from '@splitsoftware/splitio-commons/src/
 import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integrations/pluggable';
 import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 
-import { getFetch } from './getFetchMin';
+import { getFetch } from './getFetchSlim';
 import { getEventSource } from './getEventSource';
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { ISettingsInternal } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/types';

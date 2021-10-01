@@ -11,8 +11,8 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs';
-import { SplitFactory as SplitFactorySlim, InLocalStorage as InLocalStorageSlim, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitSlim, SplitToGoogleAnalytics as SplitToGoogleAnalyticsSlim, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs/slim';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs/full';
+import { SplitFactory as SplitFactorySlim, InLocalStorage as InLocalStorageSlim, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitSlim, SplitToGoogleAnalytics as SplitToGoogleAnalyticsSlim, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactorySlim;

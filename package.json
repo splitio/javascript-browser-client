@@ -14,7 +14,7 @@
     "esm",
     "src",
     "types",
-    "slim"
+    "full"
   ],
   "scripts": {
     "check": "npm run check:lint && npm run check:types && npm run check:version",
@@ -60,7 +60,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "0.1.1-canary.16",
+    "@splitsoftware/splitio-commons": "0.1.1-canary.17",
     "@types/google.analytics": "0.0.40"
   },
   "devDependencies": {
