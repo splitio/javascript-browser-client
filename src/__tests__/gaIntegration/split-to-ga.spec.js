@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { SplitFactory, SplitToGoogleAnalytics } from '../../index';
+import { SplitFactory, SplitToGoogleAnalytics, DebugLogger } from '../../index';
 import { settingsValidator } from '../../settings';
 import { gaSpy, gaTag, removeGaTag, addGaTag } from './gaTestUtils';
 import { SPLIT_IMPRESSION, SPLIT_EVENT, DEBUG } from '@splitsoftware/splitio-commons/src/utils/constants';
@@ -288,7 +288,7 @@ export default function (fetchMock, assert) {
 
     const factory = SplitFactory({
       ...config,
-      debug: true,
+      debug: DebugLogger(),
       integrations: [SplitToGoogleAnalytics({
         mapper: function () { throw error; },
       }), SplitToGoogleAnalytics({
@@ -339,7 +339,7 @@ export default function (fetchMock, assert) {
 
     const factory = SplitFactory({
       ...config,
-      debug: true,
+      debug: DebugLogger(),
     });
     t.ok(logSpy.calledWith('[WARN]  splitio => split-to-ga: `ga` command queue not found. No hits will be sent until it is available.'), 'warning GA not found');
 

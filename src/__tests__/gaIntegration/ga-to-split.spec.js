@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { SplitFactory, GoogleAnalyticsToSplit } from '../../index';
+import { SplitFactory, GoogleAnalyticsToSplit, DebugLogger } from '../../index';
 import { settingsValidator } from '../../settings';
 import { gaSpy, gaTag, addGaTag, removeGaTag } from './gaTestUtils';
 import { url } from '../testUtils';
@@ -14,7 +14,7 @@ const config = {
     eventsFirstPushWindow: 0.2,
   },
   streamingEnabled: false,
-  debug: true
+  debug: DebugLogger()
 };
 
 const settings = settingsValidator(config);
