@@ -1,4 +1,4 @@
-import { settingsValidator } from '../settings/full';
+import { settingsValidator } from '../settings';
 import { getModules } from '../platform/getModulesFull';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
