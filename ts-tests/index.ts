@@ -11,14 +11,14 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '@splitsoftware/splitio-browserjs/full';
-import { SplitFactory as SplitFactorySlim, InLocalStorage as InLocalStorageSlim, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitSlim, SplitToGoogleAnalytics as SplitToGoogleAnalyticsSlim, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull } from '@splitsoftware/splitio-browserjs/full';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
 
 // Entry points must export the same objects
-let splitFactory = SplitFactory; splitFactory = SplitFactorySlim;
-let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageSlim;
-let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitSlim;
-let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsSlim;
+let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
+let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
+let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitFull;
+let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsFull;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -468,6 +468,10 @@ fullBrowserSettings.debug = DebugLogger();
 fullBrowserSettings.debug = InfoLogger();
 fullBrowserSettings.debug = WarnLogger();
 fullBrowserSettings.debug = ErrorLogger();
+fullBrowserSettings.debug = DebugLoggerFull();
+fullBrowserSettings.debug = InfoLoggerFull();
+fullBrowserSettings.debug = WarnLoggerFull();
+fullBrowserSettings.debug = ErrorLoggerFull();
 
 // fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 

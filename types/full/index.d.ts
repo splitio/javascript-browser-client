@@ -9,8 +9,8 @@ declare module JsSdk {
   /**
    * Full version of the Split.io sdk factory function.
    *
-   * Unlike the slim version, it includes localhost mode and verbose log messages by default, and a lightweight fetch ponyfill to
-   * simplify setup for old browsers @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#size-optimization}.
+   * Unlike the slim version, it doesn't require a 'fetch' polyfill to support old browsers @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#language-support}.
+   * and includes localhost mode by default @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
    *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
@@ -37,4 +37,33 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
    */
   export function SplitToGoogleAnalytics(options?: SplitIO.SplitToGoogleAnalyticsOptions): SplitIO.IntegrationFactory;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with DEBUG log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
+   */
+  export function DebugLogger(): SplitIO.ILogger;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with INFO log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
+   */
+  export function InfoLogger(): SplitIO.ILogger;
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with WARN log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
+   */
+  export function WarnLogger(): SplitIO.ILogger;
+
+
+  /**
+   * Creates a logger instance that enables descriptive log messages with ERROR log level when passed in the factory settings.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
+   */
+  export function ErrorLogger(): SplitIO.ILogger;
 }

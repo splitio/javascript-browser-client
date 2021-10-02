@@ -9,8 +9,8 @@ declare module JsSdk {
   /**
    * Slim version of the Split.io sdk factory function.
    *
-   * Recommended to use for bundle size reduction in production, since it doesn't include development features like localhost mode
-   * and verbose log messages by default @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#size-optimization}.
+   * Recommended to use for bundle size reduction in production, since it doesn't include localhost mode by default
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
    *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
