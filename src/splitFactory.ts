@@ -1,8 +1,13 @@
 import { settingsValidator } from './settings';
-import { getModules } from './platform/getModulesSlim';
+import { getModules } from './platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
 import { merge } from '@splitsoftware/splitio-commons/src/utils/lang';
+import { getFetch } from './platform/getFetchSlim';
+import { getEventSource } from './platform/getEventSource';
+import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
+
+const platform = { getFetch, getEventSource, EventEmitter };
 
 /**
  * Slim SplitFactory with pluggable modules for Browser.
@@ -14,6 +19,12 @@ import { merge } from '@splitsoftware/splitio-commons/src/utils/lang';
  */
 export function SplitFactory(config: any, customModules?: Partial<ISdkFactoryParams>) {
   const settings = settingsValidator(config);
-  const modules = getModules(settings);
+
+  // Slim SplitFactory has to validate that the localhost module is passed manually
+  if (settings.mode === 'localhost' && typeof settings.sync.localhost !== 'function') {
+    throw new Error('Localhost mode requires setting the localhost module at your `config.sync.localhostFactory` param');
+  }
+
+  const modules = getModules(settings, platform);
   return sdkFactory(customModules ? merge(modules, customModules) as ISdkFactoryParams : modules);
 }

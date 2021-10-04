@@ -169,6 +169,10 @@ interface ISharedSettings {
      * @default 'OPTIMIZED'
      */
     impressionsMode?: SplitIO.ImpressionsMode,
+    /**
+     * @TODO
+     */
+    localhost?: () => SplitIO.Localhost
   }
 }
 /**
@@ -441,6 +445,11 @@ declare namespace SplitIO {
      */
     prefix?: string
   }
+  /**
+   * @TODO.
+   * Its interface details are not part of the public API.
+   */
+  type Localhost = (params: {}) => {}
   /**
    * Impression listener interface. This is the interface that needs to be implemented
    * by the element you provide to the SDK as impression listener.

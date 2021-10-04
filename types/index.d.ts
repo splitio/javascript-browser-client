@@ -66,4 +66,11 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    */
   export function ErrorLogger(): SplitIO.ILogger;
+
+  /**
+   * Localhost mode.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+   */
+  export function localhost(): SplitIO.Localhost;
 }

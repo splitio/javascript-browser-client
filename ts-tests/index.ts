@@ -12,7 +12,7 @@
  */
 
 import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull } from '@splitsoftware/splitio-browserjs/full';
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, localhost } from '@splitsoftware/splitio-browserjs';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
@@ -458,7 +458,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   streamingEnabled: true,
   sync: {
     splitFilters: splitFilters,
-    impressionsMode: 'DEBUG'
+    impressionsMode: 'DEBUG',
+    localhost: localhost
   }
 };
 
