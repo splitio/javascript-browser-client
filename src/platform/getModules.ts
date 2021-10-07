@@ -9,13 +9,12 @@ import { impressionObserverCSFactory } from '@splitsoftware/splitio-commons/src/
 import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integrations/pluggable';
 
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
-import { ISettingsInternal } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/types';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
-import { SplitIO } from '@splitsoftware/splitio-commons/src/types';
+import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
 
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
 
-export function getModules(settings: ISettingsInternal, platform: IPlatform): ISdkFactoryParams {
+export function getModules(settings: ISettings, platform: IPlatform): ISdkFactoryParams {
 
   return {
     settings,
@@ -26,7 +25,7 @@ export function getModules(settings: ISettingsInternal, platform: IPlatform): IS
 
     splitApiFactory: settings.mode === 'localhost' ? undefined : splitApiFactory,
 
-    syncManagerFactory: settings.mode === 'localhost' ? settings.sync.localhost : syncManagerOnlineCSFactory,
+    syncManagerFactory: settings.mode === 'localhost' ? settings.sync.localhostMode : syncManagerOnlineCSFactory,
 
     sdkManagerFactory,
 
