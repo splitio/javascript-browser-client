@@ -1,6 +1,6 @@
 {
   "name": "@splitsoftware/splitio-browserjs",
-  "version": "0.1.1-canary.1",
+  "version": "0.1.1-canary.2",
   "description": "Split SDK for Javascript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -24,8 +24,8 @@
     "build": "npm run build:cjs && npm run build:esm && npm run build:umd",
     "build:esm": "rimraf esm && tsc -outDir esm --importHelpers && ./scripts/build_esm_replace_imports.sh",
     "build:cjs": "rimraf cjs && tsc -outDir cjs -m CommonJS --importHelpers && ./scripts/build_cjs_replace_imports.sh",
-    "build:umd": "rollup --config rollup.visualizer.config.js",
-    "build:umd-ci": "rollup --config rollup.ci.config.js --branch=$BUILD_BRANCH --commit_hash=$BUILD_COMMIT",
+    "build:umd-visualizer": "rollup --config rollup.visualizer.config.js",
+    "build:umd": "rollup --config rollup.ci.config.js --branch=$BUILD_BRANCH --commit_hash=$BUILD_COMMIT",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "npm run test:e2e-logger && npm run test:e2e-offline && npm run test:e2e-online && npm run test:e2e-destroy && npm run test:e2e-errors && npm run test:e2e-push && npm run test:e2e-gaintegration",
@@ -60,7 +60,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "0.1.1-canary.17",
+    "@splitsoftware/splitio-commons": "0.1.1-rc.18",
     "@types/google.analytics": "0.0.40"
   },
   "devDependencies": {
@@ -75,12 +75,12 @@
     "eslint": "^7.18.0",
     "eslint-plugin-compat": "^3.9.0",
     "fetch-mock": "^9.11.0",
-    "jest": "^26.6.3",
+    "jest": "^27.2.3",
     "karma": "^6.3.2",
     "karma-chrome-launcher": "^3.1.0",
     "karma-rollup-preprocessor": "^7.0.5",
     "karma-tap": "^4.2.0",
-    "replace": "^1.2.0",
+    "replace": "^1.2.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.35.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
@@ -90,7 +90,7 @@
     "sinon": "^9.2.2",
     "tape": "4.13.2",
     "tape-catch": "1.0.6",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^27.0.5",
     "typescript": "^4.1.3",
     "unfetch": "^4.2.0"
   },

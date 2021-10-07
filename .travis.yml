@@ -18,7 +18,7 @@ before_script:
 script:
   - npm run check
   - npm run test
-  - BUILD_BRANCH=$TRAVIS_BRANCH BUILD_COMMIT=$TRAVIS_COMMIT npm run build:umd-ci
+  - BUILD_BRANCH=$TRAVIS_BRANCH BUILD_COMMIT=$TRAVIS_COMMIT npm run build
 
 # after_success:
 #   - bash sonar-scanner.sh
