@@ -12,9 +12,8 @@ import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 import { getFetch } from './getFetchSlim';
 import { getEventSource } from './getEventSource';
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
-import { ISettingsInternal } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/types';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
-import { SplitIO } from '@splitsoftware/splitio-commons/src/types';
+import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
 
 const browserPlatform = {
   getFetch,
@@ -24,7 +23,7 @@ const browserPlatform = {
 
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
 
-export function getModules(settings: ISettingsInternal): ISdkFactoryParams {
+export function getModules(settings: ISettings): ISdkFactoryParams {
 
   return {
     settings,

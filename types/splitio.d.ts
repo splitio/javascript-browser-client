@@ -33,6 +33,11 @@ type EventConsts = {
   SDK_UPDATE: 'state::update'
 };
 /**
+ * Storage types.
+ * @typedef {string} StorageType
+ */
+type StorageType = 'MEMORY' | 'LOCALSTORAGE';
+/**
  * Settings interface. This is a representation of the settings the SDK expose, that's why
  * most of it's props are readonly. Only features should be rewritten when localhost mode is active.
  * @interface ISettings
@@ -121,7 +126,7 @@ interface ILoggerAPI {
 interface ISharedSettings {
   /**
    * Boolean value to indicate whether the logger should be enabled or disabled by default, or a log level string or a Logger object.
-   * Passing a logger object is required when using the slim version of the SDK in order to get descriptive log messages. Otherwise most logs will print with message codes.
+   * Passing a logger object is required to get descriptive log messages. Otherwise most logs will print with message codes.
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    *
    * @property {boolean | LogLevel | ILogger} debug
@@ -429,7 +434,10 @@ declare namespace SplitIO {
    * By returning undefined, the SDK will use the default IN MEMORY storage.
    * Input parameter details are not part of the public API.
    */
-  type StorageSyncFactory = (params: {}) => (StorageSync | undefined)
+  type StorageSyncFactory = {
+    type: StorageType
+    (params: {}): (StorageSync | undefined)
+  }
   /**
    * Configuration params for InLocalStorage plugable storage
    */
