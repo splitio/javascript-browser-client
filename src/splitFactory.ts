@@ -19,12 +19,6 @@ const platform = { getFetch, getEventSource, EventEmitter };
  */
 export function SplitFactory(config: any, customModules?: Partial<ISdkFactoryParams>) {
   const settings = settingsValidator(config);
-
-  // Slim SplitFactory has to validate that the localhost module is passed manually
-  if (settings.mode === 'localhost' && typeof settings.sync.localhost !== 'function') {
-    throw new Error('Localhost mode requires setting the localhost module at your `config.sync.localhostFactory` param');
-  }
-
   const modules = getModules(settings, platform);
   return sdkFactory(customModules ? merge(modules, customModules) as ISdkFactoryParams : modules);
 }

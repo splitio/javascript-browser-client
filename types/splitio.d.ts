@@ -129,6 +129,12 @@ interface ISharedSettings {
    * Passing a logger object is required to get descriptive log messages. Otherwise most logs will print with message codes.
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    *
+   * Examples:
+   * ```typescript
+   * config.debug = true
+   * config.debug = 'WARN'
+   * config.debug = ErrorLogger()
+   * ```
    * @property {boolean | LogLevel | ILogger} debug
    * @default false
    */
@@ -157,6 +163,7 @@ interface ISharedSettings {
      * This configuration is only meaningful when the SDK is working in "standalone" mode.
      *
      * At the moment, two types of split filters are supported: by name and by prefix.
+     *
      * Example:
      *  `splitFilter: [
      *    { type: 'byName', values: ['my_split_1', 'my_split_2'] }, // will fetch splits named 'my_split_1' and 'my_split_2'
@@ -175,9 +182,21 @@ interface ISharedSettings {
      */
     impressionsMode?: SplitIO.ImpressionsMode,
     /**
-     * @TODO
+     * Defines the factory function to instanciate the SDK in localhost mode.
+     * NOTE: this is only required if using the slim entry point of the library to init the SDK in localhost mode.
+     * For more information @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+     *
+     * Example:
+     * ```typescript
+     * config: {
+     *   sync: {
+     *     localhostMode: LocalhostFromObject()
+     *   }
+     * }
+     * ```
+     * @property {Object} localhostMode
      */
-    localhost?: () => SplitIO.Localhost
+    localhostMode?: SplitIO.LocalhostFactory
   }
 }
 /**
@@ -345,6 +364,11 @@ declare namespace SplitIO {
     [featureName: string]: string | TreatmentWithConfig
   };
   /**
+   * Localhost types.
+   * @typedef {string} LocalhostType
+   */
+  type LocalhostType = 'FROM_OBJECT' | 'FROM_FILE'
+  /**
    * Object with information about an impression. It contains the generated impression DTO as well as
    * complementary information around where and how it was generated in that way.
    * @typedef {Object} ImpressionData
@@ -454,10 +478,13 @@ declare namespace SplitIO {
     prefix?: string
   }
   /**
-   * @TODO.
+   * Localhost mode factory.
    * Its interface details are not part of the public API.
    */
-  type Localhost = (params: {}) => {}
+  type LocalhostFactory = {
+    type: LocalhostType
+    (params: {}): {}
+  }
   /**
    * Impression listener interface. This is the interface that needs to be implemented
    * by the element you provide to the SDK as impression listener.
@@ -795,6 +822,13 @@ declare namespace SplitIO {
     features?: MockedFeaturesMap,
     /**
      * Defines the factory function to instanciate the storage. If not provided, the default IN MEMORY storage is used.
+     *
+     * Example:
+     * ```typescript
+     * config: {
+     *   storage: InLocalStorage()
+     * }
+     * ```
      * @property {Object} storage
      */
     storage?: StorageSyncFactory,
@@ -806,6 +840,13 @@ declare namespace SplitIO {
     urls?: UrlSettings,
     /**
      * Defines an optional list of factory functions used to instantiate SDK integrations.
+     *
+     * Example:
+     * ```typescript
+     * config: {
+     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
+     * }
+     * ```
      * @property {Object} integrations
      */
     integrations?: IntegrationFactory[],
