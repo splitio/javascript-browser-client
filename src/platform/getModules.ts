@@ -11,27 +11,28 @@ import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integ
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
 import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
+import { LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
 
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
 
 export function getModules(settings: ISettings, platform: IPlatform): ISdkFactoryParams {
 
-  return {
+  const modules: ISdkFactoryParams = {
     settings,
 
     platform,
 
     storageFactory: settings.storage,
 
-    splitApiFactory: settings.mode === 'localhost' ? undefined : splitApiFactory,
+    splitApiFactory: splitApiFactory,
 
-    syncManagerFactory: settings.mode === 'localhost' ? settings.sync.localhostMode : syncManagerOnlineCSFactory,
+    syncManagerFactory: syncManagerOnlineCSFactory,
 
     sdkManagerFactory,
 
     sdkClientMethodFactory: sdkClientMethodCSFactory,
 
-    SignalListener: settings.mode === 'localhost' ? undefined : BrowserSignalListener as ISdkFactoryParams['SignalListener'],
+    SignalListener: BrowserSignalListener as ISdkFactoryParams['SignalListener'],
 
     impressionListener: settings.impressionListener as SplitIO.IImpressionListener,
 
@@ -39,4 +40,12 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     impressionsObserverFactory: shouldAddPt(settings) ? impressionObserverCSFactory : undefined,
   };
+
+  if (settings.mode === LOCALHOST_MODE) {
+    modules.splitApiFactory = undefined;
+    modules.syncManagerFactory = settings.sync.localhostMode;
+    modules.SignalListener = undefined;
+  }
+
+  return modules;
 }

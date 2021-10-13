@@ -11,7 +11,7 @@ const platform = { getFetch, getEventSource, EventEmitter };
 
 /**
  * SplitFactory with pluggable modules for Browser.
- * Includes localhost mode, verbose log messages and fetch ponyfill for old browsers.
+ * Includes localhost mode and fetch polyfill out-of-the-box.
  *
  * @param config configuration object used to instantiates the SDK
  * @param customModules optional object of SDK modules to overwrite default ones. Use with caution since, unlike `config`, this param is not validated.
