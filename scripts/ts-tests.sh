@@ -11,10 +11,43 @@ echo "Running tsc compiler."
 if [ $? -eq 0 ]
 then
   echo "✅  Successfully compiled TS tests."
+
+  npm run test-cjs-and-umd
+  if [ $? -ne 0 ]
+  then
+    echo "☠️  Error testing modules in CJS and UMD builds."
+    npm unlink @splitsoftware/splitio-browserjs
+    exit 1
+  fi
+
+  npm run test-esm
+  if [ $? -ne 0 ]
+  then
+    echo "☠️  Error testing modules in ESM build."
+    npm unlink @splitsoftware/splitio-browserjs
+    exit 1
+  fi
+
+  SIZE_FULL_BUNDLE=$(wc -c ./bundleESM.js | awk '{print $1}')
+  SIZE_SLIM_WITH_LOCALHOST_BUNDLE=$(wc -c ./bundleESM_TreeShaking.js | awk '{print $1}')
+
+  if [[ $SIZE_FULL_BUNDLE > 110000 ]] ;then
+    echo "Minified file with all modules shouldn't be larger than 110KB"
+    npm unlink @splitsoftware/splitio-browserjs
+    exit 1
+  fi
+
+  if [[ $SIZE_SLIM_WITH_LOCALHOST_BUNDLE > 85000 ]] ;then
+    echo "Minified file with tree-shaking shouldn't be larger than 85KB"
+    npm unlink @splitsoftware/splitio-browserjs
+    exit 1
+  fi
+
+  echo "✅  Successfully run modules tests."
   npm unlink @splitsoftware/splitio-browserjs
   exit 0
-else
-  echo "☠️  Error compiling TS tests."
-  npm unlink @splitsoftware/splitio-browserjs
-  exit 1
 fi
+
+echo "☠️  Error compiling TS tests."
+npm unlink @splitsoftware/splitio-browserjs
+exit 1

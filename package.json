@@ -36,7 +36,7 @@
     "test:e2e-errors": "karma start karma/e2e.errors.karma.conf.js",
     "test:e2e-push": "karma start karma/e2e.push.karma.conf.js",
     "test:e2e-gaintegration": "karma start karma/e2e.gaintegration.karma.conf.js",
-    "pretest-ts-decls": "npm run build:esm && npm run build:cjs && npm link",
+    "pretest-ts-decls": "npm run build && npm link",
     "test-ts-decls": "./scripts/ts-tests.sh",
     "posttest-ts-decls": "npm unlink && npm install",
     "publish:rc": "npm run check && npm run build && npm publish --tag rc",

@@ -8,5 +8,9 @@
     "type": "git",
     "url": "git+https://github.com/splitio/javascript-browser-client.git"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "test-cjs-and-umd": "node testCJSandUMD.js",
+    "test-esm": "rollup -c && node bundleESM.js && node bundleESM_TreeShaking.js"
+  }
 }
