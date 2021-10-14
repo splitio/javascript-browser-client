@@ -10,7 +10,7 @@ declare module JsSdk {
    * Full version of the Split.io sdk factory function.
    *
    * Unlike the slim version, it doesn't require a 'fetch' polyfill to support old browsers @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#language-support}.
-   * and includes localhost mode by default @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
+   * and includes localhost mode out-of-the-box @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
    *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
