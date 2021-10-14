@@ -3,9 +3,7 @@ import { defaults } from './defaults';
 import { validateStorageCS } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/storage/storageCS';
 import { validatePluggableIntegrations } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/integrations/pluggable';
 import { validateLogger } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/logger/pluggableLogger';
-import { LocalhostFromObject } from '@splitsoftware/splitio-commons/src/sync/offline/LocalhostFromObject';
-import { validateLocalhost } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/localhost';
-import { ISettings } from '@splitsoftware/splitio-commons/src/types';
+import { validateLocalhostWithDefault } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/localhost/builtin';
 
 const params = {
   defaults,
@@ -13,9 +11,7 @@ const params = {
   integrations: validatePluggableIntegrations,
   logger: validateLogger,
   // Full SplitFactory returns a default instance, except a valid one is provided
-  localhost: (settings: ISettings) => {
-    return validateLocalhost(settings) || LocalhostFromObject();
-  }
+  localhost: validateLocalhostWithDefault
 };
 
 export function settingsValidator(config: any) {
