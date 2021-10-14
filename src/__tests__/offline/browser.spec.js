@@ -120,7 +120,6 @@ tape('Browser offline mode', function (assert) {
     client.on(client.Event.SDK_UPDATE, () => {
       assert.deepEqual(manager.names(), ['testing_split', 'testing_split_2', 'testing_split_3', 'testing_split_with_config']);
       assert.equal(client.getTreatment('testing_split_with_config'), 'nope');
-      client.__hasUpdated = true;
       updateCount++;
     });
     client.on(client.Event.SDK_READY_TIMED_OUT, () => {
@@ -239,9 +238,9 @@ tape('Browser offline mode', function (assert) {
           config: null
         }
       };
-      // Update the features in all ready factories except the last one
-      for (let i = 0; i < factoriesReady.length - 1; i++) {
-        factoriesReady[i].settings.features = factory.settings.features;
+      // Update the features in all factories except one
+      for (let i = 1; i < factories.length; i++) {
+        factories[i].settings.features = factory.settings.features;
       }
     }, 1000);
 
