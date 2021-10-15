@@ -82,7 +82,7 @@ interface ISettings {
   readonly sync: {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
-    localhostMode: SplitIO.LocalhostFactory
+    localhostMode?: SplitIO.LocalhostFactory
   }
 }
 /**
@@ -184,16 +184,19 @@ interface ISharedSettings {
     impressionsMode?: SplitIO.ImpressionsMode,
     /**
      * Defines the factory function to instanciate the SDK in localhost mode.
+     *
      * NOTE: this is only required if using the slim entry point of the library to init the SDK in localhost mode.
+     *
      * For more information @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
      *
      * Example:
      * ```typescript
-     * config: {
+     * SplitFactory({
+     *   ...
      *   sync: {
      *     localhostMode: LocalhostFromObject()
      *   }
-     * }
+     * })
      * ```
      * @property {Object} localhostMode
      */
@@ -826,9 +829,10 @@ declare namespace SplitIO {
      *
      * Example:
      * ```typescript
-     * config: {
+     * SplitFactory({
+     *   ...
      *   storage: InLocalStorage()
-     * }
+     * })
      * ```
      * @property {Object} storage
      */
@@ -844,9 +848,10 @@ declare namespace SplitIO {
      *
      * Example:
      * ```typescript
-     * config: {
+     * SplitFactory({
+     *   ...
      *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
-     * }
+     * })
      * ```
      * @property {Object} integrations
      */
