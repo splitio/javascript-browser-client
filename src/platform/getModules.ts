@@ -24,7 +24,7 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     storageFactory: settings.storage,
 
-    splitApiFactory: splitApiFactory,
+    splitApiFactory,
 
     syncManagerFactory: syncManagerOnlineCSFactory,
 
