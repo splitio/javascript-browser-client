@@ -11,7 +11,14 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull } from '@splitsoftware/splitio-browserjs/full';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject } from '@splitsoftware/splitio-browserjs';
+
+// Entry points must export the same objects
+let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
+let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
+let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitFull;
+let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsFull;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -81,7 +88,7 @@ const attributes: SplitIO.Attributes = {
 // };
 let splitKey: SplitIO.SplitKey;
 // Mocks
-let mockedFeaturesPath: SplitIO.MockedFeaturesFilePath;
+// let mockedFeaturesPath: SplitIO.MockedFeaturesFilePath;
 let mockedFeaturesMap: SplitIO.MockedFeaturesMap;
 // Split Data
 let splitView: SplitIO.SplitView;
@@ -101,11 +108,11 @@ let localStorageOptions: SplitIO.InLocalStorageOptions = {
 syncStorageFactory = InLocalStorage(localStorageOptions);
 
 // mockedFeaturesPath = 'path/to/file';
-// mockedFeaturesMap = {
-//   feature1: 'treatment',
-//   feature2: { treatment: 'treatment2', config: "{ 'prop': 'value'}" },
-//   feature3: { treatment: 'treatment3', config: null }
-// };
+mockedFeaturesMap = {
+  feature1: 'treatment',
+  feature2: { treatment: 'treatment2', config: "{ 'prop': 'value'}" },
+  feature3: { treatment: 'treatment3', config: null }
+};
 
 // Treatment can be the string or the promise which will resolve to treatment string
 treatment = 'some treatment';  // Sync case
@@ -181,9 +188,10 @@ const instantiatedSettingsStartup: { [key: string]: number } = SDK.settings.star
 const instantiatedStorage: SplitIO.StorageSync = SDK.settings.storage;
 const instantiatedSettingsUrls: { [key: string]: string } = SDK.settings.urls;
 const instantiatedSettingsVersion: string = SDK.settings.version;
-// let instantiatedSettingsFeatures: {[key: string]: string} = SDK.settings.features;
+let instantiatedSettingsFeatures = SDK.settings.features;
 // // We should be able to write on features prop. The rest are readonly props.
-// instantiatedSettingsFeatures.something = 'something';
+instantiatedSettingsFeatures.something = 'something';
+SDK.settings.features = { 'split_x': 'on' };
 
 // Client and Manager
 client = SDK.client();
@@ -391,7 +399,7 @@ let splitFilters: SplitIO.SplitFilter[] = [{ type: 'byName', values: ['my_split_
 let fieldsObjectSample: UniversalAnalytics.FieldsObject = { hitType: 'event', eventAction: 'action' };
 let eventDataSample: SplitIO.EventData = { eventTypeId: 'someEventTypeId', value: 10, properties: {} };
 
-let minimalGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = { identities: [{key: 'user', trafficType: 'tt'}]};
+let minimalGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = { identities: [{ key: 'user', trafficType: 'tt' }] };
 let emptySplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {};
 
 let customGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = {
@@ -421,7 +429,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     impressionsRefreshRate: 1,
     // metricsRefreshRate: 1,
     segmentsRefreshRate: 1,
-    // offlineRefreshRate: 1,
+    offlineRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
     pushRetryBackoffBase: 1,
@@ -438,7 +446,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     auth: 'https://asd.com/auth',
     streaming: 'https://asd.com/streaming'
   },
-  // features: mockedFeaturesMap,
+  features: mockedFeaturesMap,
   storage: syncStorageFactory,
   impressionListener: impressionListener,
   debug: true,
@@ -450,7 +458,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   streamingEnabled: true,
   sync: {
     splitFilters: splitFilters,
-    impressionsMode: 'DEBUG'
+    impressionsMode: 'DEBUG',
+    localhostMode: LocalhostFromObject()
   }
 };
 
@@ -460,6 +469,10 @@ fullBrowserSettings.debug = DebugLogger();
 fullBrowserSettings.debug = InfoLogger();
 fullBrowserSettings.debug = WarnLogger();
 fullBrowserSettings.debug = ErrorLogger();
+fullBrowserSettings.debug = DebugLoggerFull();
+fullBrowserSettings.debug = InfoLoggerFull();
+fullBrowserSettings.debug = WarnLoggerFull();
+fullBrowserSettings.debug = ErrorLoggerFull();
 
 // fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 

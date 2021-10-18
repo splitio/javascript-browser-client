@@ -2,15 +2,15 @@
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
-/// <reference path="./splitio.d.ts" />
+/// <reference path="../splitio.d.ts" />
 export = JsSdk;
 
 declare module JsSdk {
   /**
-   * Slim version of the Split.io sdk factory function.
+   * Full version of the Split.io sdk factory function.
    *
-   * Recommended to use for bundle size reduction in production, since it doesn't include a 'fetch' polyfill and localhost mode out-of-the-box
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
+   * Unlike the slim version, it doesn't require a 'fetch' polyfill to support old browsers @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#language-support}.
+   * and includes localhost mode out-of-the-box @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
    *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
@@ -66,12 +66,4 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    */
   export function ErrorLogger(): SplitIO.ILogger;
-
-  /**
-   * Required to enable localhost mode when importing the SDK from the slim entry point of the library.
-   * It uses the mocked features map defined in the 'features' config object.
-   *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
-   */
-  export function LocalhostFromObject(): SplitIO.LocalhostFactory;
 }

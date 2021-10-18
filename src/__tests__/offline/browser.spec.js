@@ -2,8 +2,8 @@ import tape from 'tape-catch';
 import sinon from 'sinon';
 import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
-import { SplitFactory } from '../../splitFactory';
-import { InLocalStorage } from '../../index';
+import { SplitFactory, InLocalStorage } from '../../full';
+import { SplitFactory as SplitFactorySlim, LocalhostFromObject } from '../../';
 import { settingsValidator } from '../../settings';
 
 const settings = settingsValidator({ core: { key: 'facundo@split.io' } });
@@ -60,7 +60,8 @@ tape('Browser offline mode', function (assert) {
       offlineRefreshRate: 0.19
     },
     startup: {
-      eventsFirstPushWindow: 0
+      eventsFirstPushWindow: 0,
+      readyTimeout: 0.001
     },
     features: originalFeaturesMap
   };
@@ -90,14 +91,23 @@ tape('Browser offline mode', function (assert) {
     sharedUpdateCount++;
   });
 
-  // Multiple factories must handle their own `features` mock, even if instantiated with the same config.
-  const factories = [
+  const factoriesReadyFromCache = [
+    SplitFactory({ ...config, storage: InLocalStorage() }),
+    SplitFactorySlim({ ...config, storage: InLocalStorage(), sync: { localhostMode: LocalhostFromObject() } }) // slim factory requires localhostFromObject module
+  ];
+  const factoriesReady = [ // Multiple factories must handle their own `features` mock, even if instantiated with the same config.
     SplitFactory(config),
     SplitFactory({ ...config }),
-    SplitFactory({ ...config, features: { ...config.features } }),
-    SplitFactory({ ...config, storage: InLocalStorage() })
+    SplitFactory({ ...config, features: { ...config.features }, storage: InLocalStorage /* invalid */, sync: { localhostMode: LocalhostFromObject /* invalid */ } }),
+    ...factoriesReadyFromCache
   ];
-  let readyCount = 0, updateCount = 0, readyFromCacheCount = 0;
+  const factoriesTimeout = [ // slim factory without a valid localhostFromObject module will timeout
+    SplitFactorySlim(config),
+    SplitFactorySlim({ ...config, sync: { localhostMode: LocalhostFromObject /* invalid */ } }),
+  ];
+  const factories = [...factoriesReady, ...factoriesTimeout];
+
+  let readyCount = 0, updateCount = 0, readyFromCacheCount = 0, timeoutCount = 0;
 
   for (let i = 0; i < factories.length; i++) {
     const factory = factories[i], client = factory.client(), manager = factory.manager(), client2 = factory.client('other');
@@ -112,8 +122,14 @@ tape('Browser offline mode', function (assert) {
       assert.equal(client.getTreatment('testing_split_with_config'), 'nope');
       updateCount++;
     });
+    client.on(client.Event.SDK_READY_TIMED_OUT, () => {
+      assert.equal(factory.settings.sync.localhostMode, undefined);
+      timeoutCount++;
+    });
 
     const sdkReadyFromCache = (client) => () => {
+      assert.equal(factory.settings.storage.type, 'MEMORY', 'In localhost mode, storage must fallback to memory storage');
+
       const clientStatus = client.__getStatus();
       assert.equal(clientStatus.isReadyFromCache, true, 'If ready from cache, READY_FROM_CACHE status must be true');
       assert.equal(clientStatus.isReady, false, 'READY status must not be set before READY_FROM_CACHE');
@@ -222,8 +238,8 @@ tape('Browser offline mode', function (assert) {
           config: null
         }
       };
-      // Update the features in all factories except the last one
-      for (let i = 0; i < factories.length - 1; i++) {
+      // Update the features in all factories except one
+      for (let i = 1; i < factories.length; i++) {
         factories[i].settings.features = factory.settings.features;
       }
     }, 1000);
@@ -336,9 +352,10 @@ tape('Browser offline mode', function (assert) {
           assert.equal(sharedUpdateCount, 1, 'Shared client should have emitted SDK_UPDATE event once');
 
           // SDK events on other factory clients
-          assert.equal(readyCount, factories.length, 'Each factory client should have emitted SDK_READY event once');
-          assert.equal(updateCount, factories.length - 1, 'Each factory client except one should have emitted SDK_UPDATE event once');
-          assert.equal(readyFromCacheCount, 2, 'The main and shared client of the factory with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
+          assert.equal(readyCount, factoriesReady.length, 'Each factory client should have emitted SDK_READY event once');
+          assert.equal(updateCount, factoriesReady.length - 1, 'Each factory client except one should have emitted SDK_UPDATE event once');
+          assert.equal(readyFromCacheCount, factoriesReadyFromCache.length * 2, 'The main and shared client of the factories with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
+          assert.equal(timeoutCount, factoriesTimeout.length, 'The wrongly configured slim factories should have emitted SDK_READY_TIMED_OUT event');
 
           assert.end();
         });
