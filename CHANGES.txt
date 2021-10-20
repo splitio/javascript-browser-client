@@ -1,5 +1,5 @@
 0.2.0 (October 20, 2021)
- - Added localhost mode support (See https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode).
+ - Added localhost mode support (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode).
  - Updated @splitsoftware/splitio-commons dependency to version 1.0.0, which includes:
       - Updated localhost mode to emit SDK_READY_FROM_CACHE event in Browser when using localStorage (Related to issue https://github.com/splitio/react-client/issues/34).
       - Updated streaming logic to use the newest version of our streaming service, including:
