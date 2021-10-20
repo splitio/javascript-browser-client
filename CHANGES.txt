@@ -1,5 +1,5 @@
-0.2.0 (October 19, 2021)
- - Added localhost mode support for testing (See https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode)
+0.2.0 (October 20, 2021)
+ - Added localhost mode support (See https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode).
  - Updated @splitsoftware/splitio-commons dependency to version 1.0.0, which includes:
       - Updated localhost mode to emit SDK_READY_FROM_CACHE event in Browser when using localStorage (Related to issue https://github.com/splitio/react-client/issues/34).
       - Updated streaming logic to use the newest version of our streaming service, including:
@@ -7,7 +7,7 @@
             - Implemented handling of the new MySegmentsV2 notification types (SegmentRemoval, KeyList, Bounded and Unbounded)
             - New control notification for environment scoped streaming reset.
       - Fix of some log messages typos, among other improvements.
- - Updated some NPM dependencies mostly for vulnerability fixes.
+ - Updated some NPM dependencies for vulnerability fixes.
 
 0.1.0 (March 30, 2021)
  - Initial public release. Check the official documentation for details: https://help.split.io/hc/en-us/articles/360058730852
