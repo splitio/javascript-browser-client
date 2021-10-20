@@ -1,7 +1,7 @@
 import { LogLevels, isLogLevelString } from '@splitsoftware/splitio-commons/src/logger/index';
 import { LogLevel } from '@splitsoftware/splitio-commons/src/types';
 
-const packageVersion = '0.1.0';
+const packageVersion = '0.2.0';
 
 /**
  * In browser, the default debug level, can be set via the `localStorage.splitio_debug` item.
@@ -20,7 +20,7 @@ try {
   // eslint-disable-next-line no-empty
 } catch { }
 
-export default {
+export const defaults = {
   startup: {
     // Stress the request time used while starting up the SDK.
     requestTimeoutBeforeReady: 5,

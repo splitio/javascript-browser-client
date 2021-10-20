@@ -3,7 +3,7 @@ import { terser } from 'rollup-plugin-terser';
 
 export default env => {
 
-  const fileName = (outputSuffix) => `split-browser${env.branch !== 'main' ? `-dev-${env.commit_hash}` : `-${VERSION}`}${outputSuffix ? `.${outputSuffix}` : ''}`;
+  const fileName = (outputSuffix) => `split-browser${env.branch !== 'main' ? `-dev-${env.commit_hash || VERSION}` : `-${VERSION}`}${outputSuffix ? `.${outputSuffix}` : ''}`;
 
   const createRollupConfig = (input, outputSuffix) => ({
     input,
@@ -28,7 +28,7 @@ export default env => {
   });
 
   return [
-    createRollupConfig('src/umd.ts', 'full'), // umd/split-browser-VERSION.full[.min].js
-    createRollupConfig('src/umdMinOnline.ts') // umd/split-browser-VERSION[.min].js
+    createRollupConfig('src/full/umd.ts', 'full'), // umd/split-browser-VERSION.full[.min].js
+    createRollupConfig('src/umd.ts') // umd/split-browser-VERSION[.min].js
   ];
 };
