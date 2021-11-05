@@ -66,4 +66,9 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#logging}
    */
   export function ErrorLogger(): SplitIO.ILogger;
+
+  /**
+   * @TODO
+   */
+  export function DataLoaderFactory(preloadedData: SplitIO.PreloadedData): SplitIO.DataLoader;
 }

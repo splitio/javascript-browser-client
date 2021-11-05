@@ -11,9 +11,10 @@ import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integ
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
 import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
-import { LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
+import { CONSUMER_MODE, LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
 
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
+const syncManagerSubmittersFactory = syncManagerOnlineFactory(undefined, undefined);
 
 export function getModules(settings: ISettings, platform: IPlatform): ISdkFactoryParams {
 
@@ -26,7 +27,11 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     splitApiFactory,
 
-    syncManagerFactory: syncManagerOnlineCSFactory,
+    syncManagerFactory: settings.sync.onlyImpressionsAndEvents ?
+      syncManagerSubmittersFactory : // partial consumer mode or standalone mode without splits/segments synchronization but data loader
+      settings.mode === CONSUMER_MODE ?
+        undefined :                  // consumer mode
+        syncManagerOnlineCSFactory,  // standalone mode
 
     sdkManagerFactory,
 

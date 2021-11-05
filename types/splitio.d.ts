@@ -65,6 +65,7 @@ interface ISettings {
     eventsFirstPushWindow: number
   },
   readonly storage?: SplitIO.StorageSyncFactory,
+  readonly dataLoader?: SplitIO.DataLoader,
   readonly urls: {
     events: string,
     sdk: string,
@@ -82,7 +83,8 @@ interface ISettings {
   readonly sync: {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
-    localhostMode?: SplitIO.LocalhostFactory
+    localhostMode?: SplitIO.LocalhostFactory,
+    onlyImpressionsAndEvents?: boolean
   }
 }
 /**
@@ -183,7 +185,7 @@ interface ISharedSettings {
      */
     impressionsMode?: SplitIO.ImpressionsMode,
     /**
-     * Defines the factory function to instanciate the SDK in localhost mode.
+     * Defines the factory function to instantiate the SDK in localhost mode.
      *
      * NOTE: this is only required if using the slim entry point of the library to init the SDK in localhost mode.
      *
@@ -200,7 +202,16 @@ interface ISharedSettings {
      * ```
      * @property {Object} localhostMode
      */
-    localhostMode?: SplitIO.LocalhostFactory
+    localhostMode?: SplitIO.LocalhostFactory,
+    /*
+     * @TODO
+     *
+     * false by default
+     * if true:
+     * - In standalone mode, it will DISABLE splits and segments synchronization (i.e., polling and streaming)
+     * - In consumer mode, it will ENABLE events and impressions synchronization (i.e., submitters)
+     */
+    onlyImpressionsAndEvents?: boolean
   }
 }
 /**
@@ -482,6 +493,10 @@ declare namespace SplitIO {
     prefix?: string
   }
   /**
+   * @TODO
+   */
+  type DataLoader = (storage: StorageSync, key?: string) => void
+  /**
    * Localhost mode factory.
    * Its interface details are not part of the public API.
    */
@@ -700,6 +715,42 @@ declare namespace SplitIO {
   */
   type ImpressionsMode = 'OPTIMIZED' | 'DEBUG';
   /**
+   * Defines the format of Split data to preload on the factory storage (cache).
+   */
+  interface PreloadedData {
+    /**
+     * Timestamp of the last moment the data was synchronized with Split servers.
+     * If this value is older than 10 days ago (expiration time policy), the data is not used to update the storage content.
+     * @TODO configurable expiration time policy?
+     */
+    lastUpdated: number,
+    /**
+     * Change number of the preloaded data.
+     * If this value is older than the current changeNumber at the storage, the data is not used to update the storage content.
+     */
+    since: number,
+    /**
+     * Map of splits to their serialized definitions.
+     */
+    splitsData: {
+      [splitName: string]: string
+    },
+    /**
+     * Optional map of user keys to their list of segments.
+     * @TODO remove when releasing first version
+     */
+    mySegmentsData?: {
+      [key: string]: string[]
+    },
+    /**
+     * Optional map of segments to their serialized definitions.
+     * This property is ignored if `mySegmentsData` was provided.
+     */
+    segmentsData?: {
+      [segmentName: string]: string
+    },
+  }
+  /**
    * Logger
    * Its interface details are not part of the public API. It shouldn't be used directly.
    * @interface ILogger
@@ -825,7 +876,7 @@ declare namespace SplitIO {
      */
     features?: MockedFeaturesMap,
     /**
-     * Defines the factory function to instanciate the storage. If not provided, the default IN MEMORY storage is used.
+     * Defines the factory function to instantiate the storage. If not provided, the default IN MEMORY storage is used.
      *
      * Example:
      * ```typescript
@@ -837,6 +888,10 @@ declare namespace SplitIO {
      * @property {Object} storage
      */
     storage?: StorageSyncFactory,
+    /**
+     * @TODO
+     */
+    dataLoader?: DataLoader,
     /**
      * List of URLs that the SDK will use as base for it's synchronization functionalities, applicable only when running as standalone.
      * Do not change these settings unless you're working an advanced use case, like connecting to the Split proxy.
