@@ -11,9 +11,10 @@ import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integ
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
 import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
-import { CONSUMER_MODE, LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
+import { CONSUMER_MODE, CONSUMER_PARTIAL_MODE, LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
 
 const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
+const syncManagerSubmittersFactory = syncManagerOnlineFactory(undefined, undefined);
 
 export function getModules(settings: ISettings, platform: IPlatform): ISdkFactoryParams {
 
@@ -49,6 +50,9 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
       break;
     case CONSUMER_MODE:
       modules.syncManagerFactory = undefined;
+      break;
+    case CONSUMER_PARTIAL_MODE:
+      modules.syncManagerFactory = syncManagerSubmittersFactory;
   }
 
   return modules;
