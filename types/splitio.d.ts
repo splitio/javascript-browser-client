@@ -1,4 +1,4 @@
-// Type definitions for Javascript Browser Split Software SDK v1.0.0
+// Type definitions for Javascript Browser Split Software SDK
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
@@ -36,7 +36,7 @@ type EventConsts = {
  * SDK Modes.
  * @typedef {string} SDKMode
  */
-type SDKMode = 'standalone' | 'consumer';
+type SDKMode = 'standalone' | 'localhost' | 'consumer' | 'consumer_partial';
 /**
  * Storage types.
  * @typedef {string} StorageType
@@ -88,8 +88,7 @@ interface ISettings {
   readonly sync: {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
-    localhostMode?: SplitIO.LocalhostFactory,
-    onlyImpressionsAndEvents?: boolean
+    localhostMode?: SplitIO.LocalhostFactory
   }
 }
 /**
@@ -207,16 +206,7 @@ interface ISharedSettings {
      * ```
      * @property {Object} localhostMode
      */
-    localhostMode?: SplitIO.LocalhostFactory,
-    /*
-     * @TODO
-     *
-     * false by default
-     * if true:
-     * - In standalone mode, it will DISABLE splits and segments synchronization (i.e., polling and streaming)
-     * - In consumer mode, it will ENABLE events and impressions synchronization (i.e., submitters)
-     */
-    onlyImpressionsAndEvents?: boolean
+    localhostMode?: SplitIO.LocalhostFactory
   }
 }
 /**
@@ -892,6 +882,13 @@ declare namespace SplitIO {
    */
   interface IBrowserSettings extends IBrowserBasicSettings {
     /**
+     * @TODO review description
+     * The SDK mode. Possible value are "standalone" (which is the default) and "consumer". For "localhost" mode, use "localhost" as authorizationKey.
+     * @property {SDKMode} mode
+     * @default standalone
+     */
+    mode?: 'standalone',
+    /**
      * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
      * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
      */
@@ -918,6 +915,13 @@ declare namespace SplitIO {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
   interface IBrowserSettingsAsync extends IBrowserBasicSettings {
+    /**
+     * @TODO review description
+     * The SDK mode. Possible value are "standalone" (which is the default) and "consumer". For "localhost" mode, use "localhost" as authorizationKey.
+     * @property {SDKMode} mode
+     * @default standalone
+     */
+    mode: 'consumer' | 'consumer_partial',
     /**
      * Defines the factory function to instantiate the storage.
      *
