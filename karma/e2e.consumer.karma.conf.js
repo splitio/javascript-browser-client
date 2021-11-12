@@ -6,11 +6,12 @@ module.exports = function(config) {
   config.set(assign({}, require('./config'), {
     // list of files / patterns to load in the browser
     files: [
-      '__tests__/consumerMode/browser_custom.spec.js'
+      '__tests__/consumerMode/browser_custom.spec.js',
+      '__tests__/consumerMode/browser_custom_partial.spec.js'
     ],
     // prepare code for the browser using rollup
     preprocessors: {
-      '__tests__/consumerMode/browser_custom.spec.js': ['rollup']
+      '__tests__/consumerMode/*.spec.js': ['rollup']
     },
 
     // level of logging

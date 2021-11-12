@@ -1,9 +1,11 @@
 import tape from 'tape-catch';
 import sinon from 'sinon';
+import fetchMock from '../testUtils/fetchMock';
 import { inMemoryWrapperFactory } from '@splitsoftware/splitio-commons/src/storages/pluggable/inMemoryWrapper';
-import { SDK_NOT_READY, EXCEPTION } from '@splitsoftware/splitio-commons/src/utils/labels';
+import { OPTIMIZED } from '@splitsoftware/splitio-commons/src/utils/constants';
+import { SDK_NOT_READY } from '@splitsoftware/splitio-commons/src/utils/labels';
+import { url } from '../testUtils';
 import { applyOperations } from './wrapper-commands';
-import { nearlyEqual } from '../testUtils';
 
 import { SplitFactory, PluggableStorage } from '../../index';
 
@@ -12,6 +14,8 @@ const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType:
 
 const wrapperPrefix = 'CUSTOM_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory(0);
+const TOTAL_RAW_IMPRESSIONS = 17;
+const TOTAL_EVENTS = 5;
 
 /** @type SplitIO.IBrowserAsyncSettings */
 const config = {
@@ -19,16 +23,44 @@ const config = {
     authorizationKey: 'SOME API KEY', // in consumer mode, api key is only used to identify the sdk instance
     key: 'UT_Segment_member'
   },
-  mode: 'consumer',
+  mode: 'consumer_partial',
   storage: PluggableStorage({
     prefix: wrapperPrefix,
     wrapper: wrapperInstance
-  })
+  }),
+  // sync: {
+  //   impressionsMode: 'OPTIMIZED'
+  // },
+  urls: {
+    sdk: 'https://sdk.baseurl/impressionsSuite',
+    events: 'https://events.baseurl/impressionsSuite'
+  }
 };
 
-tape('Browser Consumer mode with custom storage', function (t) {
+tape('Browser Consumer Partial mode with custom storage', function (t) {
 
+  /**
+   * We only validates regular usage.
+   * Corner cases, such as wrapper connection timeout and operation errors, are validated in `browser_custom.spec.js`
+   */
   t.test('Regular usage', async (assert) => {
+
+    fetchMock.postOnce(url(config, '/testImpressions/bulk'), (url, req) => {
+      assert.equal(req.headers.SplitSDKImpressionsMode, OPTIMIZED, 'Impressions mode is OPTIMIZED by default');
+      const resp = JSON.parse(req.body);
+      assert.equal(resp.reduce((prev, cur) => {
+        return prev + cur.i.length;
+      }, 0), TOTAL_RAW_IMPRESSIONS - 1, 'Impressions were deduped');
+      return 200;
+    });
+
+    fetchMock.postOnce(url(config, '/testImpressions/count'), 200);
+
+    fetchMock.postOnce(url(config, '/events/bulk'), (url, req) => {
+      const resp = JSON.parse(req.body);
+      assert.equal(resp.length, TOTAL_EVENTS, 'All successfully tracked events were sent');
+      return 200;
+    });
 
     // Load wrapper with data to do the proper tests
     await applyOperations(wrapperInstance);
@@ -141,110 +173,20 @@ tape('Browser Consumer mode with custom storage', function (t) {
     await client.ready(); // promise already resolved
     await newClient.destroy();
     await otherClient.destroy();
+
+    assert.false(fetchMock.called(), 'fetch hasn\'t been called yet');
     await client.destroy();
+    assert.equal(fetchMock.calls().length, 3, 'fetch has been called 3 times, for posting events, impressions and impression counts, after main client is destroyed');
 
     assert.equal(closeSpy.callCount, 1, 'Wrapper close method should be called only once, when the main client is destroyed');
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, 17, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
     });
   });
-
-  t.test('Connection timeout and then ready', assert => {
-    const connDelay = 110;
-    const readyTimeout = 0.1; // 100 millis
-    const configWithShortTimeout = { ...config, startup: { readyTimeout } };
-    wrapperInstance._setConnDelay(connDelay);
-    const sdk = SplitFactory(configWithShortTimeout);
-    wrapperInstance._setConnDelay(0); // restore
-    const client = sdk.client();
-    const otherClient = sdk.client('other');
-
-    const start = Date.now();
-    assert.plan(12);
-
-    client.getTreatment('always-on').then(treatment => {
-      assert.equal(treatment, 'control', 'Evaluations using custom storage should be control if SDK is not ready');
-    });
-    client.track('user', 'test.event', 18).then(result => {
-      assert.true(result, 'If the wrapper operation success to queue the event, the promise will resolve to true, even if the SDK is not ready');
-    });
-
-    // SDK_READY_TIMED_OUT event must be emitted after 100 millis
-    [client, otherClient].forEach(client => client.on(client.Event.SDK_READY_TIMED_OUT, () => {
-      const delay = Date.now() - start;
-      assert.true(nearlyEqual(delay, readyTimeout * 1000), 'SDK_READY_TIMED_OUT event must be emitted after 100 millis');
-    }));
-
-    // Also, ready promise must be rejected after 100 millis
-    [client, otherClient].forEach(client => client.ready().catch(() => {
-      const delay = Date.now() - start;
-      assert.true(nearlyEqual(delay, readyTimeout * 1000), 'Ready promise must be rejected after 100 millis');
-    }));
-
-    // subscribe to SDK_READY event to assert regular usage
-    client.on(client.Event.SDK_READY, async () => {
-      const delay = Date.now() - start;
-      assert.true(nearlyEqual(delay, connDelay), 'SDK_READY event must be emitted once wrapper is connected');
-
-      await client.ready();
-      assert.pass('Ready promise is resolved once SDK_READY is emitted');
-
-      // some asserts to test regular usage
-      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', 'Evaluations using custom storage should be correct.');
-      assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'off', 'Evaluations using custom storage should be correct.');
-      assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-      assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
-
-      await client.destroy();
-      assert.end();
-    });
-
-  });
-
-  t.test('Wrapper errors', async (assert) => {
-    const impressions = [];
-
-    const sdk = SplitFactory({
-      ...config,
-      impressionListener: {
-        logImpression(data) { impressions.push(data); }
-      }
-    });
-    const client = sdk.client();
-    const manager = sdk.manager();
-    await client.ready();
-    assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', '`getTreatment` evaluation correct.');
-    assert.true(await client.track('user', 'test.event', 18), 'Event queued');
-
-    // Stubbing wrapper methods to make client and manager methods fail
-    const methods = ['pushItems', 'get', 'getKeysByPrefix'];
-    methods.forEach(method => sinon.stub(wrapperInstance, method).callsFake(() => { Promise.reject(); }));
-
-    assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'control', '`getTreatment` evaluation correct.');
-    assert.false(await client.track('user', 'test.event', 18), 'If the event failed to be queued due to a wrapper operation failure, the promise will resolve to false');
-    assert.deepEqual(await manager.names(), [], 'manager `names` method returns an empty list of split names if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await manager.split(expectedSplitName), null, 'manager `split` method returns a null split view if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await manager.splits(), [], 'manager `splits` method returns an empty list of split views if called before SDK_READY or wrapper operation fail');
-
-    // Restore wrapper
-    methods.forEach(method => wrapperInstance[method].restore());
-
-    await client.destroy();
-
-    // Assert impressionsListener
-    setTimeout(() => {
-      assert.equal(impressions.length, 2, 'Each evaluation has its corresponting impression');
-      assert.equal(impressions[1].impression.label, EXCEPTION, 'The last impression is control with label "exception"');
-
-      assert.end();
-    });
-
-  });
-
 
 });
