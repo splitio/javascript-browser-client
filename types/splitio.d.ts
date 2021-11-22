@@ -477,7 +477,7 @@ declare namespace SplitIO {
     (params: {}): (StorageSync | undefined)
   }
   /**
-   * Configuration params for InLocalStorage plugable storage
+   * Configuration params for InLocalStorage
    */
   type InLocalStorageOptions = {
     /**
@@ -497,12 +497,11 @@ declare namespace SplitIO {
    * Input parameter details are not part of the public API.
    */
   type StorageAsyncFactory = {
-    readonly type: 'CUSTOM'
+    readonly type: 'PLUGGABLE'
     (params: {}): StorageAsync
   }
   /**
-   * @TODO check name: PluggableStorage or CustomStorage ?
-   * Configuration params for PluggableStorage plugable storage
+   * Configuration params for PluggableStorage
    */
   type PluggableStorageOptions = {
     /**
@@ -512,7 +511,7 @@ declare namespace SplitIO {
      */
     prefix?: string,
     /**
-     * Custom storage wrapper.
+     * Storage wrapper.
      * @property {Object} wrapper
      */
     wrapper: Object
