@@ -10,7 +10,7 @@ import { SplitFactory, PluggableStorage } from '../../index';
 const expectedSplitName = 'hierarchical_splits_testing_on';
 const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {} };
 
-const wrapperPrefix = 'CUSTOM_STORAGE_UT';
+const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory(0);
 
 /** @type SplitIO.IBrowserAsyncSettings */
@@ -26,7 +26,7 @@ const config = {
   })
 };
 
-tape('Browser Consumer mode with custom storage', function (t) {
+tape('Browser Consumer mode with pluggable storage', function (t) {
 
   t.test('Regular usage', async (assert) => {
 
@@ -35,7 +35,7 @@ tape('Browser Consumer mode with custom storage', function (t) {
 
     /** @type SplitIO.ImpressionData[] */
     const impressions = [];
-    const closeSpy = sinon.spy(wrapperInstance, 'close');
+    const disconnectSpy = sinon.spy(wrapperInstance, 'disconnect');
 
     const expectedConfig = '{"color":"brown"}';
     const sdk = SplitFactory({
@@ -58,7 +58,7 @@ tape('Browser Consumer mode with custom storage', function (t) {
 
     assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
     // @TODO caveat: if wrapper.connect is resolved before wrapper operations, next evaluation might be different than control
-    assert.equal(await getTreatmentResult, 'control', 'Evaluations using custom storage should be control if initiated before SDK_READY.');
+    assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
     assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
     assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
 
@@ -76,43 +76,43 @@ tape('Browser Consumer mode with custom storage', function (t) {
     await client.ready();
     await otherClient.ready(); // waiting to avoid 'control' with label 'sdk not ready'
 
-    assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', '`getTreatment` evaluation using custom storage should be correct.');
-    assert.equal((await otherClient.getTreatmentWithConfig('UT_IN_SEGMENT')).treatment, 'off', '`getTreatmentWithConfig` evaluation using custom storage should be correct.');
+    assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', '`getTreatment` evaluation using pluggable storage should be correct.');
+    assert.equal((await otherClient.getTreatmentWithConfig('UT_IN_SEGMENT')).treatment, 'off', '`getTreatmentWithConfig` evaluation using pluggable storage should be correct.');
 
-    assert.equal((await client.getTreatments(['UT_NOT_IN_SEGMENT']))['UT_NOT_IN_SEGMENT'], 'off', '`getTreatments` evaluation using custom storage should be correct.');
-    assert.equal((await otherClient.getTreatmentsWithConfig(['UT_NOT_IN_SEGMENT']))['UT_NOT_IN_SEGMENT'].treatment, 'on', '`getTreatmentsWithConfig` evaluation using custom storage should be correct.');
+    assert.equal((await client.getTreatments(['UT_NOT_IN_SEGMENT']))['UT_NOT_IN_SEGMENT'], 'off', '`getTreatments` evaluation using pluggable storage should be correct.');
+    assert.equal((await otherClient.getTreatmentsWithConfig(['UT_NOT_IN_SEGMENT']))['UT_NOT_IN_SEGMENT'].treatment, 'on', '`getTreatmentsWithConfig` evaluation using pluggable storage should be correct.');
 
     assert.equal(await client.getTreatment('UT_SET_MATCHER', {
       permissions: ['admin']
-    }), 'on', 'Evaluations using custom storage should be correct.');
+    }), 'on', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('UT_SET_MATCHER', {
       permissions: ['not_matching']
-    }), 'off', 'Evaluations using custom storage should be correct.');
+    }), 'off', 'Evaluations using pluggable storage should be correct.');
 
     assert.equal(await client.getTreatment('UT_NOT_SET_MATCHER', {
       permissions: ['create']
-    }), 'off', 'Evaluations using custom storage should be correct.');
+    }), 'off', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('UT_NOT_SET_MATCHER', {
       permissions: ['not_matching']
-    }), 'on', 'Evaluations using custom storage should be correct.');
+    }), 'on', 'Evaluations using pluggable storage should be correct.');
     assert.deepEqual(await client.getTreatmentWithConfig('UT_NOT_SET_MATCHER', {
       permissions: ['not_matching']
     }), {
       treatment: 'on',
       config: null
-    }, 'Evaluations using custom storage should be correct, including configs.');
+    }, 'Evaluations using pluggable storage should be correct, including configs.');
     assert.deepEqual(await client.getTreatmentWithConfig('always-on-with-config'), {
       treatment: 'on',
       config: expectedConfig
-    }, 'Evaluations using custom storage should be correct, including configs.');
+    }, 'Evaluations using pluggable storage should be correct, including configs.');
 
-    assert.equal(await client.getTreatment('always-on'), 'on', 'Evaluations using custom storage should be correct.');
+    assert.equal(await client.getTreatment('always-on'), 'on', 'Evaluations using pluggable storage should be correct.');
 
     // Below splits were added manually.
     // They are all_keys (always evaluate to on) which depend from always-on split. the _on/off is what treatment they are expecting there.
-    assert.equal(await client.getTreatment('hierarchical_splits_testing_on'), 'on', 'Evaluations using custom storage should be correct.');
-    assert.equal(await client.getTreatment('hierarchical_splits_testing_off'), 'off', 'Evaluations using custom storage should be correct.');
-    assert.equal(await client.getTreatment('hierarchical_splits_testing_on_negated'), 'off', 'Evaluations using custom storage should be correct.');
+    assert.equal(await client.getTreatment('hierarchical_splits_testing_on'), 'on', 'Evaluations using pluggable storage should be correct.');
+    assert.equal(await client.getTreatment('hierarchical_splits_testing_off'), 'off', 'Evaluations using pluggable storage should be correct.');
+    assert.equal(await client.getTreatment('hierarchical_splits_testing_on_negated'), 'off', 'Evaluations using pluggable storage should be correct.');
 
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
@@ -136,14 +136,14 @@ tape('Browser Consumer mode with custom storage', function (t) {
 
     await newClient.ready();
     assert.true(await newClient.track('user', 'test.event', 18), 'Track should attempt to track, whether SDK_READY has been emitted or not.');
-    assert.equal((await newClient.getTreatment('UT_IN_SEGMENT')), 'off', '`getTreatment` evaluation using custom storage should be correct.');
+    assert.equal((await newClient.getTreatment('UT_IN_SEGMENT')), 'off', '`getTreatment` evaluation using pluggable storage should be correct.');
 
     await client.ready(); // promise already resolved
     await newClient.destroy();
     await otherClient.destroy();
     await client.destroy();
 
-    assert.equal(closeSpy.callCount, 1, 'Wrapper close method should be called only once, when the main client is destroyed');
+    assert.equal(disconnectSpy.callCount, 1, 'Wrapper disconnect method should be called only once, when the main client is destroyed');
 
     // Assert impressionsListener
     setTimeout(() => {
@@ -168,7 +168,7 @@ tape('Browser Consumer mode with custom storage', function (t) {
     assert.plan(12);
 
     client.getTreatment('always-on').then(treatment => {
-      assert.equal(treatment, 'control', 'Evaluations using custom storage should be control if SDK is not ready');
+      assert.equal(treatment, 'control', 'Evaluations using pluggable storage should be control if SDK is not ready');
     });
     client.track('user', 'test.event', 18).then(result => {
       assert.true(result, 'If the wrapper operation success to queue the event, the promise will resolve to true, even if the SDK is not ready');
@@ -195,8 +195,8 @@ tape('Browser Consumer mode with custom storage', function (t) {
       assert.pass('Ready promise is resolved once SDK_READY is emitted');
 
       // some asserts to test regular usage
-      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', 'Evaluations using custom storage should be correct.');
-      assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'off', 'Evaluations using custom storage should be correct.');
+      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', 'Evaluations using pluggable storage should be correct.');
+      assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'off', 'Evaluations using pluggable storage should be correct.');
       assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
       assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
 

@@ -6,8 +6,8 @@ module.exports = function(config) {
   config.set(assign({}, require('./config'), {
     // list of files / patterns to load in the browser
     files: [
-      '__tests__/consumerMode/browser_custom.spec.js',
-      '__tests__/consumerMode/browser_custom_partial.spec.js'
+      '__tests__/consumerMode/browser_consumer.spec.js',
+      '__tests__/consumerMode/browser_consumer_partial.spec.js'
     ],
     // prepare code for the browser using rollup
     preprocessors: {
