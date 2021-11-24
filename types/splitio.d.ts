@@ -881,8 +881,11 @@ declare namespace SplitIO {
    */
   interface IBrowserSettings extends IBrowserBasicSettings {
     /**
-     * @TODO review description
-     * The SDK mode. Possible value are "standalone" (which is the default) and "consumer". For "localhost" mode, use "localhost" as authorizationKey.
+     * The SDK mode. When using the default in memory storage or InLocalStorage as storage, the only possible mode value is "standalone" (which is the default).
+     * For "localhost" mode, use "localhost" as authorizationKey.
+     *
+     * @see {@link @TODO}
+     *
      * @property {SDKMode} mode
      * @default standalone
      */
@@ -915,8 +918,10 @@ declare namespace SplitIO {
    */
   interface IBrowserSettingsAsync extends IBrowserBasicSettings {
     /**
-     * @TODO review description
-     * The SDK mode. Possible value are "standalone" (which is the default) and "consumer". For "localhost" mode, use "localhost" as authorizationKey.
+     * The SDK mode. When using PluggableStorage as storage, possible mode values are "consumer" and "consumer_partial".
+     *
+     * @see {@link @TODO}
+     *
      * @property {SDKMode} mode
      * @default standalone
      */
