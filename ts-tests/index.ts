@@ -11,14 +11,15 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull } from '@splitsoftware/splitio-browserjs/full';
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
+import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject, PluggableStorage } from '@splitsoftware/splitio-browserjs';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
 let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
 let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitFull;
 let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsFull;
+let pluggableStorage = PluggableStorage; pluggableStorage = PluggableStorageFull;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -27,23 +28,24 @@ let splitViewsPromise: Promise<SplitIO.SplitViews>;
 let treatmentsPromise: Promise<SplitIO.Treatments>;
 let treatmentWithConfigPromise: Promise<SplitIO.TreatmentWithConfig>;
 let treatmentsWithConfigPromise: Promise<SplitIO.TreatmentsWithConfig>;
-// let trackPromise: Promise<boolean>;
+let trackPromise: Promise<boolean>;
 
 /**** Interfaces ****/
 
 // Facade return interface
 // let SDK: SplitIO.ISDK;
-// let AsyncSDK: SplitIO.IAsyncSDK;
+let AsyncSDK: SplitIO.IAsyncSDK;
 let SDK: SplitIO.ISDK;
 // Settings interfaces
 // let nodeSettings: SplitIO.INodeSettings;
 // let asyncSettings: SplitIO.INodeAsyncSettings;
 let browserSettings: SplitIO.IBrowserSettings;
+let browserAsyncSettings: SplitIO.IBrowserAsyncSettings;
 // Client & Manager APIs
 // let client: SplitIO.IClient;
 let client: SplitIO.IClient;
 let manager: SplitIO.IManager;
-// let asyncClient: SplitIO.IAsyncClient;
+let asyncClient: SplitIO.IAsyncClient;
 let asyncManager: SplitIO.IAsyncManager;
 // Utility interfaces
 let impressionListener: SplitIO.IImpressionListener;
@@ -169,8 +171,20 @@ browserSettings = {
     key: 'customer-key'
   }
 };
+// For browser with async storage
+browserAsyncSettings = {
+  core: {
+    authorizationKey: 'api-key',
+    key: 'customer-key'
+  },
+  mode: 'consumer',
+  storage: PluggableStorage({
+    wrapper: {}
+  })
+};
 // With sync settings should return ISDK, if settings have async storage it should return IAsyncSDK
 SDK = SplitFactory(browserSettings);
+AsyncSDK = SplitFactory(browserAsyncSettings);
 // SDK = SplitFactory(nodeSettings);
 // AsyncSDK = SplitFactory(asyncSettings);
 
@@ -199,8 +213,8 @@ client = SDK.client('a customer key');
 // client = SDK.client('a customer key', 'a traffic type'); // Not valid in Browser JS SDK
 manager = SDK.manager();
 // // Today async clients are only possible on Node. Shared client creation not available here.
-// asyncClient = AsyncSDK.client();
-// asyncManager = AsyncSDK.manager();
+asyncClient = AsyncSDK.client();
+asyncManager = AsyncSDK.manager();
 
 // Logger
 SDK.Logger.enable();
@@ -211,13 +225,13 @@ SDK.Logger.setLogLevel(SDK.Logger.LogLevel.ERROR);
 SDK.Logger.setLogLevel(SDK.Logger.LogLevel.NONE);
 SDK.Logger.disable();
 
-// AsyncSDK.Logger.enable();
-// AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.DEBUG);
-// AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.INFO);
-// AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.WARN);
-// AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.ERROR);
-// AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.NONE);
-// AsyncSDK.Logger.disable();
+AsyncSDK.Logger.enable();
+AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.DEBUG);
+AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.INFO);
+AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.WARN);
+AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.ERROR);
+AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.NONE);
+AsyncSDK.Logger.disable();
 
 /**** Tests for IClient interface ****/
 
@@ -280,51 +294,62 @@ tracked = client.track('myTrafficType', 'myEventType', 10);
 tracked = client.track('myTrafficType', 'myEventType', null, { prop1: 1, prop2: '2', prop3: false, prop4: null });
 // tracked = client.track('myEventType', undefined, { prop1: 1, prop2: '2', prop3: false, prop4: null }); // Not valid in Browser JS SDK
 
-// /*** Repeating tests for Async Client ***/
+/*** Repeating tests for Async Client ***/
 
-// // Events constants we get (same as for sync client, just for interface checking)
-// const eventConstsAsymc: {[key: string]: SplitIO.Event} = client.Event;
-// splitEvent = client.Event.SDK_READY;
-// splitEvent = client.Event.SDK_READY_FROM_CACHE;
-// splitEvent = client.Event.SDK_READY_TIMED_OUT;
-// splitEvent = client.Event.SDK_UPDATE;
+// Events constants we get (same as for sync client, just for interface checking)
+const eventConstsAsync: {[key: string]: SplitIO.Event} = asyncClient.Event;
+splitEvent = asyncClient.Event.SDK_READY;
+splitEvent = asyncClient.Event.SDK_READY_FROM_CACHE;
+splitEvent = asyncClient.Event.SDK_READY_TIMED_OUT;
+splitEvent = asyncClient.Event.SDK_UPDATE;
 
-// // Client implements methods from NodeJS.Events. (same as for sync client, just for interface checking)
-// client = client.on(splitEvent, () => {});
-// const a1: boolean = client.emit(splitEvent);
-// client = client.removeAllListeners(splitEvent);
-// client = client.removeAllListeners();
-// const b1: number = client.listenerCount(splitEvent);
+// Client implements methods from NodeJS.Events. (same as for sync client, just for interface checking)
+asyncClient = asyncClient.on(splitEvent, () => {});
+const a1: boolean = asyncClient.emit(splitEvent);
+asyncClient = asyncClient.removeAllListeners(splitEvent);
+asyncClient = asyncClient.removeAllListeners();
+// const b1: number = asyncClient.listenerCount(splitEvent); // Not part of IEventEmitter
 
-// // Ready and destroy (same as for sync client, just for interface checking)
-// const readyPromise1: Promise<void> = client.ready();
-// client.destroy();
+// Ready and destroy (same as for sync client, just for interface checking)
+const readyPromise1: Promise<void> = asyncClient.ready();
+asyncClient.destroy();
 
-// // We can call getTreatment but always with a key.
+// We can call getTreatment
+asyncTreatment = asyncClient.getTreatment('mySplit');
 // asyncTreatment = asyncClient.getTreatment(splitKey, 'mySplit');
-// // Attributes parameter is optional
+// Attributes parameter is optional
+asyncTreatment = asyncClient.getTreatment('mySplit', attributes);
 // asyncTreatment = asyncClient.getTreatment(splitKey, 'mySplit', attributes);
 
-// // We can call getTreatments but always with a key.
+// We can call getTreatments
+asyncTreatments = asyncClient.getTreatments(['mySplit']);
 // asyncTreatments = asyncClient.getTreatments(splitKey, ['mySplit']);
-// // Attributes parameter is optional
+// Attributes parameter is optional
+asyncTreatments = asyncClient.getTreatments(['mySplit'], attributes);
 // asyncTreatments = asyncClient.getTreatments(splitKey, ['mySplit'], attributes);
 
-// // We can call getTreatmentWithConfig but always with a key.
+// We can call getTreatmentWithConfig
+asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig('mySplit');
 // asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig(splitKey, 'mySplit');
-// // Attributes parameter is optional
+// Attributes parameter is optional
+asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig('mySplit', attributes);
 // asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig(splitKey, 'mySplit', attributes);
 
-// // We can call getTreatments but always with a key.
+// We can call getTreatments but always with a key.
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit']);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(splitKey, ['mySplit']);
-// // Attributes parameter is optional
+// Attributes parameter is optional
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit'], attributes);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(splitKey, ['mySplit'], attributes);
 
-// // We can call track only with a key.
+// We can call track.
+trackPromise = asyncClient.track('myTrafficType', 'myEventType'); // all required params
 // trackPromise = asyncClient.track(splitKey, 'myTrafficType', 'myEventType'); // all required params
-// // Value parameter is optional.
+// Value parameter is optional.
+trackPromise = asyncClient.track('myTrafficType', 'myEventType', 10);
 // trackPromise = asyncClient.track(splitKey, 'myTrafficType', 'myEventType', 10);
-// // Properties parameter is optional
+// Properties parameter is optional
+trackPromise = asyncClient.track('myTrafficType', 'myEventType', 10, { prop1: 1, prop2: '2', prop3: true, prop4: null });
 // trackPromise = asyncClient.track(splitKey, 'myTrafficType', 'myEventType', 10, { prop1: 1, prop2: '2', prop3: true, prop4: null });
 
 /**** Tests for IManager interface ****/

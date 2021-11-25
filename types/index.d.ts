@@ -16,7 +16,7 @@ declare module JsSdk {
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
   export function SplitFactory(settings: SplitIO.IBrowserSettings): SplitIO.ISDK;
-  export function SplitFactory(settings: SplitIO.IBrowserSettingsAsync): SplitIO.IAsyncSDK;
+  export function SplitFactory(settings: SplitIO.IBrowserAsyncSettings): SplitIO.IAsyncSDK;
 
   /**
    * Persistent storage based on the LocalStorage Web API for browsers.
@@ -30,7 +30,7 @@ declare module JsSdk {
    *
    * @see {@link @TODO}
    */
-  export function PluggableStorage(options?: SplitIO.PluggableStorageOptions): SplitIO.StorageAsyncFactory;
+  export function PluggableStorage(options: SplitIO.PluggableStorageOptions): SplitIO.StorageAsyncFactory;
 
   /**
    * Enable 'Google Analytics to Split' integration, to track Google Analytics hits as Split events.

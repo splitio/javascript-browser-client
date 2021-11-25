@@ -477,7 +477,7 @@ declare namespace SplitIO {
     (params: {}): (StorageSync | undefined)
   }
   /**
-   * Configuration params for InLocalStorage
+   * Configuration params for `InLocalStorage`
    */
   type InLocalStorageOptions = {
     /**
@@ -501,7 +501,7 @@ declare namespace SplitIO {
     (params: {}): StorageAsync
   }
   /**
-   * Configuration params for PluggableStorage
+   * Configuration params for `PluggableStorage`
    */
   type PluggableStorageOptions = {
     /**
@@ -881,12 +881,10 @@ declare namespace SplitIO {
    */
   interface IBrowserSettings extends IBrowserBasicSettings {
     /**
-     * The SDK mode. When using the default in memory storage or InLocalStorage as storage, the only possible mode value is "standalone" (which is the default).
+     * The SDK mode. When using the default in memory storage or `InLocalStorage` as storage, the only possible value is "standalone", which is the default.
      * For "localhost" mode, use "localhost" as authorizationKey.
      *
-     * @see {@link @TODO}
-     *
-     * @property {SDKMode} mode
+     * @property {'standalone'} mode
      * @default standalone
      */
     mode?: 'standalone',
@@ -912,18 +910,17 @@ declare namespace SplitIO {
   /**
    * Settings interface with async storage for SDK instances created on the browser.
    * If your storage is synchronous (by defaut we use memory, which is sync) use SplitIO.IBrowserSettings instead.
-   * @interface IBrowserSettingsAsync
+   * @interface IBrowserAsyncSettings
    * @extends IBrowserBasicSettings
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
-  interface IBrowserSettingsAsync extends IBrowserBasicSettings {
+  interface IBrowserAsyncSettings extends IBrowserBasicSettings {
     /**
-     * The SDK mode. When using PluggableStorage as storage, possible mode values are "consumer" and "consumer_partial".
+     * The SDK mode. When using `PluggableStorage` as storage, the possible values are "consumer" and "consumer_partial".
      *
      * @see {@link @TODO}
      *
-     * @property {SDKMode} mode
-     * @default standalone
+     * @property {'consumer' | 'consumer_partial'} mode
      */
     mode: 'consumer' | 'consumer_partial',
     /**
