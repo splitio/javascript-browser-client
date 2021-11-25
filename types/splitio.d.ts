@@ -11,11 +11,11 @@ export = SplitIO;
  * EventEmitter interface based on a subset of the NodeJS.EventEmitter methods.
  */
 interface IEventEmitter {
-  addListener(event: string, listener: (...args: any[]) => void): this;
+  addListener(event: string, listener: (...args: any[]) => void): this
   on(event: string, listener: (...args: any[]) => void): this
   once(event: string, listener: (...args: any[]) => void): this
-  removeListener(event: string, listener: (...args: any[]) => void): this;
-  off(event: string, listener: (...args: any[]) => void): this;
+  removeListener(event: string, listener: (...args: any[]) => void): this
+  off(event: string, listener: (...args: any[]) => void): this
   removeAllListeners(event?: string): this
   emit(event: string, ...args: any[]): boolean
 }
@@ -749,6 +749,81 @@ declare namespace SplitIO {
    */
   interface IBrowserBasicSettings extends ISharedSettings {
     /**
+     * SDK Core settings for the browser.
+     * @property {Object} core
+     */
+    core: {
+      /**
+       * Your API key. More information: @see {@link https://help.split.io/hc/en-us/articles/360019916211-API-keys}
+       * @property {string} authorizationKey
+       */
+      authorizationKey: string,
+      /**
+       * Customer identifier. Whatever this means to you. @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
+       * @property {SplitKey} key
+       */
+      key: SplitKey,
+      /**
+       * Disable labels from being sent to Split backend. Labels may contain sensitive information.
+       * @property {boolean} labelsEnabled
+       * @default true
+       */
+      labelsEnabled?: boolean
+    },
+    /**
+     * List of URLs that the SDK will use as base for it's synchronization functionalities, applicable only when running as standalone.
+     * Do not change these settings unless you're working an advanced use case, like connecting to the Split proxy.
+     * @property {Object} urls
+     */
+    urls?: UrlSettings,
+    /**
+     * Defines an optional list of factory functions used to instantiate SDK integrations.
+     *
+     * Example:
+     * ```typescript
+     * SplitFactory({
+     *   ...
+     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
+     * })
+     * ```
+     * @property {Object} integrations
+     */
+    integrations?: IntegrationFactory[],
+  }
+  /**
+   * Settings interface for SDK instances created on the browser.
+   * @interface IBrowserSettings
+   * @extends ISharedSettings
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
+   */
+  interface IBrowserSettings extends IBrowserBasicSettings {
+    /**
+     * The SDK mode. When using the default in memory storage or `InLocalStorage` as storage, the only possible value is "standalone", which is the default.
+     * For "localhost" mode, use "localhost" as authorizationKey.
+     *
+     * @property {'standalone'} mode
+     * @default standalone
+     */
+    mode?: 'standalone',
+    /**
+     * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
+     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+     */
+    features?: MockedFeaturesMap,
+    /**
+     * Defines the factory function to instantiate the storage. If not provided, the default IN MEMORY storage is used.
+     *
+     * Example:
+     * ```typescript
+     * SplitFactory({
+     *   ...
+     *   storage: InLocalStorage()
+     * })
+     * ```
+     * @property {Object} storage
+     */
+    storage?: StorageSyncFactory,
+    /**
      * SDK Startup settings for the Browser.
      * @property {Object} startup
      */
@@ -830,82 +905,7 @@ declare namespace SplitIO {
        * @default 1
        */
       pushRetryBackoffBase?: number,
-    },
-    /**
-     * SDK Core settings for the browser.
-     * @property {Object} core
-     */
-    core: {
-      /**
-       * Your API key. More information: @see {@link https://help.split.io/hc/en-us/articles/360019916211-API-keys}
-       * @property {string} authorizationKey
-       */
-      authorizationKey: string,
-      /**
-       * Customer identifier. Whatever this means to you. @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
-       * @property {SplitKey} key
-       */
-      key: SplitKey,
-      /**
-       * Disable labels from being sent to Split backend. Labels may contain sensitive information.
-       * @property {boolean} labelsEnabled
-       * @default true
-       */
-      labelsEnabled?: boolean
-    },
-    /**
-     * List of URLs that the SDK will use as base for it's synchronization functionalities, applicable only when running as standalone.
-     * Do not change these settings unless you're working an advanced use case, like connecting to the Split proxy.
-     * @property {Object} urls
-     */
-    urls?: UrlSettings,
-    /**
-     * Defines an optional list of factory functions used to instantiate SDK integrations.
-     *
-     * Example:
-     * ```typescript
-     * SplitFactory({
-     *   ...
-     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
-     * })
-     * ```
-     * @property {Object} integrations
-     */
-    integrations?: IntegrationFactory[],
-  }
-  /**
-   * Settings interface for SDK instances created on the browser.
-   * @interface IBrowserSettings
-   * @extends ISharedSettings
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
-   */
-  interface IBrowserSettings extends IBrowserBasicSettings {
-    /**
-     * The SDK mode. When using the default in memory storage or `InLocalStorage` as storage, the only possible value is "standalone", which is the default.
-     * For "localhost" mode, use "localhost" as authorizationKey.
-     *
-     * @property {'standalone'} mode
-     * @default standalone
-     */
-    mode?: 'standalone',
-    /**
-     * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
-     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
-     */
-    features?: MockedFeaturesMap,
-    /**
-     * Defines the factory function to instantiate the storage. If not provided, the default IN MEMORY storage is used.
-     *
-     * Example:
-     * ```typescript
-     * SplitFactory({
-     *   ...
-     *   storage: InLocalStorage()
-     * })
-     * ```
-     * @property {Object} storage
-     */
-    storage?: StorageSyncFactory
+    }
   }
   /**
    * Settings interface with async storage for SDK instances created on the browser.
@@ -935,7 +935,59 @@ declare namespace SplitIO {
      * ```
      * @property {Object} storage
      */
-    storage: StorageAsyncFactory
+    storage: StorageAsyncFactory,
+    /**
+     * SDK Startup settings for the Browser.
+     * @property {Object} startup
+     */
+    startup?: {
+      /**
+       * Maximum amount of time used before notify a timeout.
+       * @property {number} readyTimeout
+       * @default 1.5
+       */
+      readyTimeout?: number,
+      /**
+       * For SDK posts the queued events data in bulks with a given rate, but the first push window is defined separately,
+       * to better control on browsers. This number defines that window before the first events push.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} eventsFirstPushWindow
+       * @default 10
+       */
+      eventsFirstPushWindow?: number,
+    },
+    /**
+     * SDK scheduler settings.
+     * @property {Object} scheduler
+     */
+    scheduler?: {
+      /**
+       * The SDK sends information on who got what treatment at what time back to Split servers to power analytics. This parameter controls how often this data is sent to Split servers. The parameter should be in seconds.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} impressionsRefreshRate
+       * @default 60
+       */
+      impressionsRefreshRate?: number,
+      /**
+       * The SDK posts the queued events data in bulks. This parameter controls the posting rate in seconds.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} eventsPushRate
+       * @default 60
+       */
+      eventsPushRate?: number,
+      /**
+       * The maximum number of event items we want to queue. If we queue more values, it will trigger a flush and reset the timer.
+       * If you use a 0 here, the queue will have no maximum size.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} eventsQueueSize
+       * @default 500
+       */
+      eventsQueueSize?: number,
+    }
   }
   /**
    * This represents the interface for the SDK instance with synchronous storage and client-side API,
@@ -1208,20 +1260,20 @@ declare namespace SplitIO {
      * @function names
      * @returns {SplitNames} The lists of Split names.
      */
-    names(): SplitNames;
+    names(): SplitNames,
     /**
      * Get the array of splits data in SplitView format.
      * @function splits
      * @returns {SplitViews} The list of SplitIO.SplitView.
      */
-    splits(): SplitViews;
+    splits(): SplitViews,
     /**
      * Get the data of a split in SplitView format.
      * @function split
      * @param {string} splitName The name of the split we wan't to get info of.
      * @returns {SplitView} The SplitIO.SplitView of the given split.
      */
-    split(splitName: string): SplitView;
+    split(splitName: string): SplitView,
   }
   /**
    * Representation of a manager instance with asynchronous storage of the SDK.
@@ -1234,19 +1286,19 @@ declare namespace SplitIO {
      * @function names
      * @returns {SplitNamesAsync} A promise that will resolve to the array of Splitio.SplitNames.
      */
-    names(): SplitNamesAsync;
+    names(): SplitNamesAsync,
     /**
      * Get the array of splits data in SplitView format.
      * @function splits
      * @returns {SplitViewsAsync} A promise that will resolve to the SplitIO.SplitView list.
      */
-    splits(): SplitViewsAsync;
+    splits(): SplitViewsAsync,
     /**
      * Get the data of a split in SplitView format.
      * @function split
      * @param {string} splitName The name of the split we wan't to get info of.
      * @returns {SplitViewAsync} A promise that will resolve to the SplitIO.SplitView value.
      */
-    split(splitName: string): SplitViewAsync;
+    split(splitName: string): SplitViewAsync,
   }
 }

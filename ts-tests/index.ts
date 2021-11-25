@@ -488,6 +488,48 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   }
 };
 
+let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
+  mode: 'consumer',
+  core: {
+    authorizationKey: 'asd',
+    key: 'asd',
+    // trafficType: 'myTT', // Not valid in Browser JS SDK
+    labelsEnabled: false
+  },
+  scheduler: {
+    impressionsRefreshRate: 1,
+    // metricsRefreshRate: 1,
+    eventsPushRate: 1,
+    eventsQueueSize: 1,
+  },
+  startup: {
+    readyTimeout: 1,
+    eventsFirstPushWindow: 1
+  },
+  urls: {
+    sdk: 'https://asd.com/sdk',
+    events: 'https://asd.com/events',
+    auth: 'https://asd.com/auth',
+    streaming: 'https://asd.com/streaming'
+  },
+  storage: PluggableStorage({
+    prefix: 'MY_PREFIX',
+    wrapper: {}
+  }),
+  impressionListener: impressionListener,
+  debug: true,
+  integrations: [
+    GoogleAnalyticsToSplit(), SplitToGoogleAnalytics(),
+    GoogleAnalyticsToSplit(minimalGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(emptySplitToGoogleAnalyticsConfig),
+    GoogleAnalyticsToSplit(customGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(customSplitToGoogleAnalyticsConfig)
+  ],
+  streamingEnabled: true,
+  sync: {
+    impressionsMode: 'DEBUG',
+  }
+};
+fullBrowserAsyncSettings.mode = 'consumer_partial';
+
 // debug property can be a log level or Logger instance
 fullBrowserSettings.debug = 'ERROR';
 fullBrowserSettings.debug = DebugLogger();
