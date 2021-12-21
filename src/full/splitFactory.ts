@@ -5,7 +5,7 @@ import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory
 import { merge } from '@splitsoftware/splitio-commons/src/utils/lang';
 import { getFetch } from '../platform/getFetchFull';
 import { getEventSource } from '../platform/getEventSource';
-import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
+import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 
 const platform = { getFetch, getEventSource, EventEmitter };
 

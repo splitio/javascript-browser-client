@@ -133,8 +133,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
       treatment: 'on',
       config: null
     }, 'Evaluations using pluggable storage should be correct, including configs.');
-    assert.deepEqual(await client.getTreatmentWithConfig('always-on-with-config'), {
-      treatment: 'on',
+    assert.deepEqual(await client.getTreatmentWithConfig('always-o.n-with-config'), {
+      treatment: 'o.n',
       config: expectedConfig
     }, 'Evaluations using pluggable storage should be correct, including configs.');
 

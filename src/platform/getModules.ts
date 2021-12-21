@@ -13,10 +13,12 @@ import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src
 import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
 import { CONSUMER_MODE, CONSUMER_PARTIAL_MODE, LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
 
-const syncManagerOnlineCSFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
-const syncManagerSubmittersFactory = syncManagerOnlineFactory(undefined, undefined);
+let syncManagerStandaloneFactory: ISdkFactoryParams['syncManagerFactory'];
+let syncManagerSubmittersFactory: ISdkFactoryParams['syncManagerFactory'];
 
 export function getModules(settings: ISettings, platform: IPlatform): ISdkFactoryParams {
+
+  if (!syncManagerStandaloneFactory) syncManagerStandaloneFactory = syncManagerOnlineFactory(pollingManagerCSFactory, pushManagerFactory);
 
   const modules: ISdkFactoryParams = {
     settings,
@@ -27,7 +29,7 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     splitApiFactory,
 
-    syncManagerFactory: syncManagerOnlineCSFactory,
+    syncManagerFactory: syncManagerStandaloneFactory,
 
     sdkManagerFactory,
 
@@ -52,6 +54,7 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
       modules.syncManagerFactory = undefined;
       break;
     case CONSUMER_PARTIAL_MODE:
+      if (!syncManagerSubmittersFactory) syncManagerSubmittersFactory = syncManagerOnlineFactory(undefined, undefined);
       modules.syncManagerFactory = syncManagerSubmittersFactory;
   }
 
