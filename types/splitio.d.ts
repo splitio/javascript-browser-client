@@ -918,7 +918,7 @@ declare namespace SplitIO {
     /**
      * The SDK mode. When using `PluggableStorage` as storage, the possible values are "consumer" and "consumer_partial".
      *
-     * @see {@link @TODO}
+     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#advanced-consumer-mode}
      *
      * @property {'consumer' | 'consumer_partial'} mode
      */

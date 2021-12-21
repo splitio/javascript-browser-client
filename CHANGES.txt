@@ -1,3 +1,11 @@
+0.3.0 (December 22, 2021)
+ - Added support for the SDK to run in "consumer" and "partial consumer" modes, with a pluggable implementation of it's internal storage,
+  enabling customers to implement this caching with any storage technology of choice and connect it to the SDK instance to use instead of
+  its in-memory storage (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#advanced-consumer-mode).
+ - Updated @splitsoftware/splitio-commons dependency to version 1.1.0, which includes:
+      - Updated multiple modules due to general polishing and improvements.
+      - Bugfixing - Fixed issue returning dynamic configs if treatment name contains a dot (".").
+
 0.2.0 (October 20, 2021)
  - Added localhost mode support (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode).
  - Updated @splitsoftware/splitio-commons dependency to version 1.0.0, which includes:
