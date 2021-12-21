@@ -1,6 +1,6 @@
 # Split JavaScript SDK for Browsers
 
-[![npm version](https://badge.fury.io/js/%40splitsoftware%2Fsplitio-browserjs.svg)](https://badge.fury.io/js/%40splitsoftware%2Fsplitio) [![Build Status](https://travis-ci.com/splitio/javascript-browser-client.svg?branch=main)](https://travis-ci.com/splitio/javascript-browser-client)
+[![npm version](https://badge.fury.io/js/%40splitsoftware%2Fsplitio-browserjs.svg)](https://badge.fury.io/js/%40splitsoftware%2Fsplitio) [![Build Status](https://github.com/splitio/javascript-browser-client/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/splitio/javascript-browser-client/actions/workflows/ci-cd.yml)
 
 ## Overview
 This SDK is designed to work with Split, the platform for controlled rollouts, which serves features to your users via a Split feature flag to manage your complete customer experience.
