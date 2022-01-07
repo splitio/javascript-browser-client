@@ -1,12 +1,12 @@
 import { splitApiFactory } from '@splitsoftware/splitio-commons/src/services/splitApi';
 import { syncManagerOnlineFactory } from '@splitsoftware/splitio-commons/src/sync/syncManagerOnline';
-import pushManagerFactory from '@splitsoftware/splitio-commons/src/sync/streaming/pushManager';
-import pollingManagerCSFactory from '@splitsoftware/splitio-commons/src/sync/polling/pollingManagerCS';
+import { pushManagerFactory } from '@splitsoftware/splitio-commons/src/sync/streaming/pushManager';
+import { pollingManagerCSFactory } from '@splitsoftware/splitio-commons/src/sync/polling/pollingManagerCS';
 import { sdkManagerFactory } from '@splitsoftware/splitio-commons/src/sdkManager/index';
 import { sdkClientMethodCSFactory } from '@splitsoftware/splitio-commons/src/sdkClient/sdkClientMethodCS';
-import BrowserSignalListener from '@splitsoftware/splitio-commons/src/listeners/browser';
+import { BrowserSignalListener } from '@splitsoftware/splitio-commons/src/listeners/browser';
 import { impressionObserverCSFactory } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/impressionObserverCS';
-import integrationsManagerFactory from '@splitsoftware/splitio-commons/src/integrations/pluggable';
+import { pluggableIntegrationsManagerFactory } from '@splitsoftware/splitio-commons/src/integrations/pluggable';
 
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
@@ -39,7 +39,7 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     impressionListener: settings.impressionListener as SplitIO.IImpressionListener,
 
-    integrationsManagerFactory: settings.integrations && settings.integrations.length > 0 ? integrationsManagerFactory.bind(null, settings.integrations) : undefined,
+    integrationsManagerFactory: settings.integrations && settings.integrations.length > 0 ? pluggableIntegrationsManagerFactory.bind(null, settings.integrations) : undefined,
 
     impressionsObserverFactory: shouldAddPt(settings) ? impressionObserverCSFactory : undefined,
   };
