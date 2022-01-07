@@ -3,7 +3,8 @@
   enabling customers to implement this caching with any storage technology of choice and connect it to the SDK instance to use instead of
   its in-memory storage (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#advanced-consumer-mode).
  - Updated @splitsoftware/splitio-commons dependency to version 1.1.0, which includes:
-      - Updated multiple modules due to general polishing and improvements.
+      - Updated multiple modules due to general polishing and improvements, including the replacement of default exports with named exports,
+      to avoid runtime errors with some particular configurations of Webpack projects.
       - Bugfixing - Fixed issue returning dynamic configs if treatment name contains a dot (".").
 
 0.2.0 (October 20, 2021)
