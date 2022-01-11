@@ -1,4 +1,4 @@
-// Type definitions for Javascript Browser Split Software SDK v1.0.0
+// Type definitions for Javascript Browser Split Software SDK
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
@@ -11,11 +11,11 @@ export = SplitIO;
  * EventEmitter interface based on a subset of the NodeJS.EventEmitter methods.
  */
 interface IEventEmitter {
-  addListener(event: string, listener: (...args: any[]) => void): this;
+  addListener(event: string, listener: (...args: any[]) => void): this
   on(event: string, listener: (...args: any[]) => void): this
   once(event: string, listener: (...args: any[]) => void): this
-  removeListener(event: string, listener: (...args: any[]) => void): this;
-  off(event: string, listener: (...args: any[]) => void): this;
+  removeListener(event: string, listener: (...args: any[]) => void): this
+  off(event: string, listener: (...args: any[]) => void): this
   removeAllListeners(event?: string): this
   emit(event: string, ...args: any[]): boolean
 }
@@ -33,6 +33,11 @@ type EventConsts = {
   SDK_UPDATE: 'state::update'
 };
 /**
+ * SDK Modes.
+ * @typedef {string} SDKMode
+ */
+type SDKMode = 'standalone' | 'localhost' | 'consumer' | 'consumer_partial';
+/**
  * Storage types.
  * @typedef {string} StorageType
  */
@@ -49,6 +54,7 @@ interface ISettings {
     labelsEnabled: boolean,
     IPAddressesEnabled: boolean
   },
+  readonly mode: SDKMode,
   readonly scheduler: {
     featuresRefreshRate: number,
     impressionsRefreshRate: number,
@@ -64,7 +70,7 @@ interface ISettings {
     retriesOnFailureBeforeReady: number,
     eventsFirstPushWindow: number
   },
-  readonly storage?: SplitIO.StorageSyncFactory,
+  readonly storage?: SplitIO.StorageSyncFactory | SplitIO.StorageAsyncFactory,
   readonly urls: {
     events: string,
     sdk: string,
@@ -183,7 +189,7 @@ interface ISharedSettings {
      */
     impressionsMode?: SplitIO.ImpressionsMode,
     /**
-     * Defines the factory function to instanciate the SDK in localhost mode.
+     * Defines the factory function to instantiate the SDK in localhost mode.
      *
      * NOTE: this is only required if using the slim entry point of the library to init the SDK in localhost mode.
      *
@@ -471,7 +477,7 @@ declare namespace SplitIO {
     (params: {}): (StorageSync | undefined)
   }
   /**
-   * Configuration params for InLocalStorage plugable storage
+   * Configuration params for `InLocalStorage`
    */
   type InLocalStorageOptions = {
     /**
@@ -480,6 +486,35 @@ declare namespace SplitIO {
      * @default SPLITIO
      */
     prefix?: string
+  }
+  /**
+   * Storage for asynchronous (consumer) SDK.
+   * Its interface details are not part of the public API.
+   */
+  type StorageAsync = {}
+  /**
+   * Storage builder for asynchronous (consumer) SDK.
+   * Input parameter details are not part of the public API.
+   */
+  type StorageAsyncFactory = {
+    readonly type: 'PLUGGABLE'
+    (params: {}): StorageAsync
+  }
+  /**
+   * Configuration params for `PluggableStorage`
+   */
+  type PluggableStorageOptions = {
+    /**
+     * Optional prefix to prevent any kind of data collision when having multiple factories using the same storage wrapper.
+     * @property {string} prefix
+     * @default SPLITIO
+     */
+    prefix?: string,
+    /**
+     * Storage wrapper.
+     * @property {Object} wrapper
+     */
+    wrapper: Object
   }
   /**
    * Localhost mode factory.
@@ -708,12 +743,86 @@ declare namespace SplitIO {
     setLogLevel(logLevel: LogLevel): void
   }
   /**
+   * Common settings interface for SDK instances created on the browser.
+   * @interface IBrowserBasicSettings
+   * @extends ISharedSettings
+   */
+  interface IBrowserBasicSettings extends ISharedSettings {
+    /**
+     * SDK Core settings for the browser.
+     * @property {Object} core
+     */
+    core: {
+      /**
+       * Your API key. More information: @see {@link https://help.split.io/hc/en-us/articles/360019916211-API-keys}
+       * @property {string} authorizationKey
+       */
+      authorizationKey: string,
+      /**
+       * Customer identifier. Whatever this means to you. @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
+       * @property {SplitKey} key
+       */
+      key: SplitKey,
+      /**
+       * Disable labels from being sent to Split backend. Labels may contain sensitive information.
+       * @property {boolean} labelsEnabled
+       * @default true
+       */
+      labelsEnabled?: boolean
+    },
+    /**
+     * List of URLs that the SDK will use as base for it's synchronization functionalities, applicable only when running as standalone.
+     * Do not change these settings unless you're working an advanced use case, like connecting to the Split proxy.
+     * @property {Object} urls
+     */
+    urls?: UrlSettings,
+    /**
+     * Defines an optional list of factory functions used to instantiate SDK integrations.
+     *
+     * Example:
+     * ```typescript
+     * SplitFactory({
+     *   ...
+     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
+     * })
+     * ```
+     * @property {Object} integrations
+     */
+    integrations?: IntegrationFactory[],
+  }
+  /**
    * Settings interface for SDK instances created on the browser.
    * @interface IBrowserSettings
    * @extends ISharedSettings
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
-  interface IBrowserSettings extends ISharedSettings {
+  interface IBrowserSettings extends IBrowserBasicSettings {
+    /**
+     * The SDK mode. When using the default in memory storage or `InLocalStorage` as storage, the only possible value is "standalone", which is the default.
+     * For "localhost" mode, use "localhost" as authorizationKey.
+     *
+     * @property {'standalone'} mode
+     * @default standalone
+     */
+    mode?: 'standalone',
+    /**
+     * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
+     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+     */
+    features?: MockedFeaturesMap,
+    /**
+     * Defines the factory function to instantiate the storage. If not provided, the default IN MEMORY storage is used.
+     *
+     * Example:
+     * ```typescript
+     * SplitFactory({
+     *   ...
+     *   storage: InLocalStorage()
+     * })
+     * ```
+     * @property {Object} storage
+     */
+    storage?: StorageSyncFactory,
     /**
      * SDK Startup settings for the Browser.
      * @property {Object} startup
@@ -796,66 +905,89 @@ declare namespace SplitIO {
        * @default 1
        */
       pushRetryBackoffBase?: number,
-    },
+    }
+  }
+  /**
+   * Settings interface with async storage for SDK instances created on the browser.
+   * If your storage is synchronous (by defaut we use memory, which is sync) use SplitIO.IBrowserSettings instead.
+   * @interface IBrowserAsyncSettings
+   * @extends IBrowserBasicSettings
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
+   */
+  interface IBrowserAsyncSettings extends IBrowserBasicSettings {
     /**
-     * SDK Core settings for the browser.
-     * @property {Object} core
+     * The SDK mode. When using `PluggableStorage` as storage, the possible values are "consumer" and "consumer_partial".
+     *
+     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#advanced-consumer-mode}
+     *
+     * @property {'consumer' | 'consumer_partial'} mode
      */
-    core: {
-      /**
-       * Your API key. More information: @see {@link https://help.split.io/hc/en-us/articles/360019916211-API-keys}
-       * @property {string} authorizationKey
-       */
-      authorizationKey: string,
-      /**
-       * Customer identifier. Whatever this means to you. @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
-       * @property {SplitKey} key
-       */
-      key: SplitKey,
-      /**
-       * Disable labels from being sent to Split backend. Labels may contain sensitive information.
-       * @property {boolean} labelsEnabled
-       * @default true
-       */
-      labelsEnabled?: boolean
-    },
+    mode: 'consumer' | 'consumer_partial',
     /**
-     * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
-     * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
-     */
-    features?: MockedFeaturesMap,
-    /**
-     * Defines the factory function to instanciate the storage. If not provided, the default IN MEMORY storage is used.
+     * Defines the factory function to instantiate the storage.
      *
      * Example:
      * ```typescript
      * SplitFactory({
      *   ...
-     *   storage: InLocalStorage()
+     *   storage: PluggableStorage({ wrapper: SomeWrapper })
      * })
      * ```
      * @property {Object} storage
      */
-    storage?: StorageSyncFactory,
+    storage: StorageAsyncFactory,
     /**
-     * List of URLs that the SDK will use as base for it's synchronization functionalities, applicable only when running as standalone.
-     * Do not change these settings unless you're working an advanced use case, like connecting to the Split proxy.
-     * @property {Object} urls
+     * SDK Startup settings for the Browser.
+     * @property {Object} startup
      */
-    urls?: UrlSettings,
+    startup?: {
+      /**
+       * Maximum amount of time used before notify a timeout.
+       * @property {number} readyTimeout
+       * @default 1.5
+       */
+      readyTimeout?: number,
+      /**
+       * For SDK posts the queued events data in bulks with a given rate, but the first push window is defined separately,
+       * to better control on browsers. This number defines that window before the first events push.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} eventsFirstPushWindow
+       * @default 10
+       */
+      eventsFirstPushWindow?: number,
+    },
     /**
-     * Defines an optional list of factory functions used to instantiate SDK integrations.
-     *
-     * Example:
-     * ```typescript
-     * SplitFactory({
-     *   ...
-     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
-     * })
-     * ```
-     * @property {Object} integrations
+     * SDK scheduler settings.
+     * @property {Object} scheduler
      */
-    integrations?: IntegrationFactory[],
+    scheduler?: {
+      /**
+       * The SDK sends information on who got what treatment at what time back to Split servers to power analytics. This parameter controls how often this data is sent to Split servers. The parameter should be in seconds.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} impressionsRefreshRate
+       * @default 60
+       */
+      impressionsRefreshRate?: number,
+      /**
+       * The SDK posts the queued events data in bulks. This parameter controls the posting rate in seconds.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} eventsPushRate
+       * @default 60
+       */
+      eventsPushRate?: number,
+      /**
+       * The maximum number of event items we want to queue. If we queue more values, it will trigger a flush and reset the timer.
+       * If you use a 0 here, the queue will have no maximum size.
+       *
+       * NOTE: this param is ignored in 'consumer' mode.
+       * @property {number} eventsQueueSize
+       * @default 500
+       */
+      eventsQueueSize?: number,
+    }
   }
   /**
    * This represents the interface for the SDK instance with synchronous storage and client-side API,
@@ -863,7 +995,7 @@ declare namespace SplitIO {
    * @interface ISDK
    * @extends IBasicSDK
    */
-  export interface ISDK extends IBasicSDK {
+  interface ISDK extends IBasicSDK {
     /**
      * Returns the default client instance of the SDK, associated with the key and optional traffic type from settings.
      * @function client
@@ -884,7 +1016,26 @@ declare namespace SplitIO {
      */
     manager(): IManager
   }
-
+  /**
+   * This represents the interface for the SDK instance with asynchronous storage and client-side API,
+   * i.e., where client instances have a bound user key.
+   * @interface IAsyncSDK
+   * @extends IBasicSDK
+   */
+  interface IAsyncSDK extends IBasicSDK {
+    /**
+     * Returns the default client instance of the SDK.
+     * @function client
+     * @returns {IAsyncClient} The asynchronous client instance.
+     */
+    client(): IAsyncClient,
+    /**
+     * Returns a manager instance of the SDK to explore available information.
+     * @function manager
+     * @returns {IManager} The manager instance.
+     */
+    manager(): IAsyncManager
+  }
   /**
    * This represents the interface for the Client instance with synchronous storage for server-side SDK, where we don't have only one key.
    * @interface IClient
@@ -892,35 +1043,35 @@ declare namespace SplitIO {
    */
   interface IClientSS extends IBasicClient {
     /**
-     * Returns a Treatment value, which will be (or eventually be) the treatment string for the given feature.
+     * Returns a Treatment value, which is the treatment string for the given feature.
      * @function getTreatment
      * @param {string} key - The string key representing the consumer.
      * @param {string} splitName - The string that represents the split we wan't to get the treatment.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {Treatment} The treatment or treatment promise which will resolve to the treatment string.
+     * @returns {Treatment} The treatment string.
      */
     getTreatment(key: SplitKey, splitName: string, attributes?: Attributes): Treatment,
     /**
-     * Returns a TreatmentWithConfig value (a map of treatment and config), which will be (or eventually be) the map with treatment and config for the given feature.
+     * Returns a TreatmentWithConfig value, which is an object with both treatment and config string for the given feature.
      * @function getTreatmentWithConfig
      * @param {string} key - The string key representing the consumer.
      * @param {string} splitName - The string that represents the split we wan't to get the treatment.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {TreatmentWithConfig} The TreatmentWithConfig or TreatmentWithConfig promise which will resolve to the map containing
-     *                                the treatment and the configuration stringified JSON (or null if there was no config for that treatment).
+     * @returns {TreatmentWithConfig} The TreatmentWithConfig, the object containing the treatment string and the
+     *                                configuration stringified JSON (or null if there was no config for that treatment).
      */
     getTreatmentWithConfig(key: SplitKey, splitName: string, attributes?: Attributes): TreatmentWithConfig,
     /**
-     * Returns a Treatments value, whick will be (or eventually be) an object with the treatments for the given features.
+     * Returns a Treatments value, which is an object map with the treatments for the given features.
      * @function getTreatments
      * @param {string} key - The string key representing the consumer.
      * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {Treatments} The treatments or treatments promise which will resolve to the treatments object.
+     * @returns {Treatments} The treatments object map.
      */
     getTreatments(key: SplitKey, splitNames: string[], attributes?: Attributes): Treatments,
     /**
-     * Returns a TreatmentsWithConfig value, whick will be an object with the TreatmentWithConfig (a map with both treatment and config string) for the given features.
+     * Returns a TreatmentsWithConfig value, which is an object map with the TreatmentWithConfig (an object with both treatment and config string) for the given features.
      * @function getTreatmentsWithConfig
      * @param {string} key - The string key representing the consumer.
      * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
@@ -936,7 +1087,7 @@ declare namespace SplitIO {
      * @param {string} eventType - The event type corresponding to this event.
      * @param {number=} value - The value of this event.
      * @param {Properties=} properties - The properties of this event. Values can be string, number, boolean or null.
-     * @returns {boolean} Whether the event was added to the queue succesfully or not.
+     * @returns {boolean} Whether the event was added to the queue successfully or not.
      */
     track(key: SplitIO.SplitKey, trafficType: string, eventType: string, value?: number, properties?: Properties): boolean,
   }
@@ -958,7 +1109,7 @@ declare namespace SplitIO {
      */
     getTreatment(key: SplitKey, splitName: string, attributes?: Attributes): AsyncTreatment,
     /**
-     * Returns a TreatmentWithConfig value, which will be (or eventually be) a map with both treatment and config string for the given feature.
+     * Returns a TreatmentWithConfig value, which will be (or eventually be) an object with both treatment and config string for the given feature.
      * For usage on NodeJS as we don't have only one key.
      * NOTE: Treatment will be a promise only in async storages, like REDIS.
      * @function getTreatmentWithConfig
@@ -969,17 +1120,17 @@ declare namespace SplitIO {
      */
     getTreatmentWithConfig(key: SplitKey, splitName: string, attributes?: Attributes): AsyncTreatmentWithConfig,
     /**
-     * Returns a Treatments value, whick will be (or eventually be) an object with the treatments for the given features.
+     * Returns a Treatments value, which will be (or eventually be) an object map with the treatments for the given features.
      * For usage on NodeJS as we don't have only one key.
      * @function getTreatments
      * @param {string} key - The string key representing the consumer.
      * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {AsyncTreatments} Treatments promise which will resolve to the treatments object.
+     * @returns {AsyncTreatments} Treatments promise which will resolve to the treatments object map.
      */
     getTreatments(key: SplitKey, splitNames: string[], attributes?: Attributes): AsyncTreatments,
     /**
-     * Returns a Treatments value, whick will be (or eventually be) an object with all the maps of treatment and config string for the given features.
+     * Returns a TreatmentsWithConfig value, which will be (or eventually be) an object map with the TreatmentWithConfig (an object with both treatment and config string) for the given features.
      * For usage on NodeJS as we don't have only one key.
      * @function getTreatmentsWithConfig
      * @param {string} key - The string key representing the consumer.
@@ -996,7 +1147,7 @@ declare namespace SplitIO {
      * @param {string} eventType - The event type corresponding to this event.
      * @param {number=} value - The value of this event.
      * @param {Properties=} properties - The properties of this event. Values can be string, number, boolean or null.
-     * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the event was added to the queue succesfully or not.
+     * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the event was added to the queue successfully or not.
      */
     track(key: SplitIO.SplitKey, trafficType: string, eventType: string, value?: number, properties?: Properties): Promise<boolean>
   }
@@ -1007,31 +1158,31 @@ declare namespace SplitIO {
    */
   interface IClient extends IBasicClient {
     /**
-     * Returns a Treatment value, which will be the treatment string for the given feature.
+     * Returns a Treatment value, which is the treatment string for the given feature.
      * @function getTreatment
      * @param {string} splitName - The string that represents the split we wan't to get the treatment.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {Treatment} The treatment result.
+     * @returns {Treatment} The treatment string.
      */
     getTreatment(splitName: string, attributes?: Attributes): Treatment,
     /**
-     * Returns a TreatmentWithConfig value, which will be a map of treatment and the config for that treatment.
-     * @function getTreatment
+     * Returns a TreatmentWithConfig value, which is an object with both treatment and config string for the given feature.
+     * @function getTreatmentWithConfig
      * @param {string} splitName - The string that represents the split we wan't to get the treatment.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {TreatmentWithConfig} The treatment or treatment promise which will resolve to the treatment string.
+     * @returns {TreatmentWithConfig} The map containing the treatment and the configuration stringified JSON (or null if there was no config for that treatment).
      */
     getTreatmentWithConfig(splitName: string, attributes?: Attributes): TreatmentWithConfig,
     /**
-     * Returns a Treatments value, whick will be (or eventually be) an object with the treatments for the given features.
+     * Returns a Treatments value, which is an object map with the treatments for the given features.
      * @function getTreatments
      * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {Treatments} The treatments or treatments promise which will resolve to the treatments object.
+     * @returns {Treatments} The treatments object map.
      */
     getTreatments(splitNames: string[], attributes?: Attributes): Treatments,
     /**
-     * Returns a TreatmentsWithConfig value, whick will be an object with the TreatmentWithConfig (a map with both treatment and config string) for the given features.
+     * Returns a TreatmentsWithConfig value, which is an object map with the TreatmentWithConfig (an object with both treatment and config string) for the given features.
      * @function getTreatmentsWithConfig
      * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
@@ -1045,9 +1196,58 @@ declare namespace SplitIO {
      * @param {string} eventType - The event type corresponding to this event.
      * @param {number=} value - The value of this event.
      * @param {Properties=} properties - The properties of this event. Values can be string, number, boolean or null.
-     * @returns {boolean} Whether the event was added to the queue succesfully or not.
+     * @returns {boolean} Whether the event was added to the queue successfully or not.
      */
     track(trafficType: string, eventType: string, value?: number, properties?: Properties): boolean,
+  }
+  /**
+   * This represents the interface for the Client instance with asynchronous storage for client-side SDK, where each client has associated a key.
+   * @interface IAsyncClient
+   * @extends IBasicClient
+   */
+  interface IAsyncClient extends IBasicClient {
+    /**
+     * Returns a Treatment value, which will be (or eventually be) the treatment string for the given feature.
+     * @function getTreatment
+     * @param {string} splitName - The string that represents the split we wan't to get the treatment.
+     * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
+     * @returns {AsyncTreatment} Treatment promise which will resolve to the treatment string.
+     */
+    getTreatment(splitName: string, attributes?: Attributes): AsyncTreatment,
+    /**
+     * Returns a TreatmentWithConfig value, which will be (or eventually be) an object with both treatment and config string for the given feature.
+     * @function getTreatmentWithConfig
+     * @param {string} splitName - The string that represents the split we wan't to get the treatment.
+     * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
+     * @returns {AsyncTreatmentWithConfig} TreatmentWithConfig promise which will resolve to the TreatmentWithConfig object.
+     */
+    getTreatmentWithConfig(splitName: string, attributes?: Attributes): AsyncTreatmentWithConfig,
+    /**
+     * Returns a Treatments value, which will be (or eventually be) an object map with the treatments for the given features.
+     * @function getTreatments
+     * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
+     * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
+     * @returns {AsyncTreatments} Treatments promise which will resolve to the treatments object map.
+     */
+    getTreatments(splitNames: string[], attributes?: Attributes): AsyncTreatments,
+    /**
+     * Returns a TreatmentsWithConfig value, which will be (or eventually be) an object map with the TreatmentWithConfig (an object with both treatment and config string) for the given features.
+     * @function getTreatmentsWithConfig
+     * @param {Array<string>} splitNames - An array of the split names we wan't to get the treatments.
+     * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
+     * @returns {TreatmentsWithConfig} TreatmentsWithConfig promise which will resolve to the map of TreatmentsWithConfig objects.
+     */
+    getTreatmentsWithConfig(splitNames: string[], attributes?: Attributes): AsyncTreatmentsWithConfig,
+    /**
+     * Tracks an event to be fed to the results product on Split Webconsole and returns a promise to signal when the event was successfully queued (or not).
+     * @function track
+     * @param {string} trafficType - The traffic type of the entity related to this event.
+     * @param {string} eventType - The event type corresponding to this event.
+     * @param {number=} value - The value of this event.
+     * @param {Properties=} properties - The properties of this event. Values can be string, number, boolean or null.
+     * @returns {boolean} A promise that resolves to a boolean indicating if the event was added to the queue successfully or not.
+     */
+    track(trafficType: string, eventType: string, value?: number, properties?: Properties): Promise<boolean>,
   }
   /**
    * Representation of a manager instance with synchronous storage of the SDK.
@@ -1060,20 +1260,20 @@ declare namespace SplitIO {
      * @function names
      * @returns {SplitNames} The lists of Split names.
      */
-    names(): SplitNames;
+    names(): SplitNames,
     /**
      * Get the array of splits data in SplitView format.
      * @function splits
      * @returns {SplitViews} The list of SplitIO.SplitView.
      */
-    splits(): SplitViews;
+    splits(): SplitViews,
     /**
      * Get the data of a split in SplitView format.
      * @function split
      * @param {string} splitName The name of the split we wan't to get info of.
      * @returns {SplitView} The SplitIO.SplitView of the given split.
      */
-    split(splitName: string): SplitView;
+    split(splitName: string): SplitView,
   }
   /**
    * Representation of a manager instance with asynchronous storage of the SDK.
@@ -1086,19 +1286,19 @@ declare namespace SplitIO {
      * @function names
      * @returns {SplitNamesAsync} A promise that will resolve to the array of Splitio.SplitNames.
      */
-    names(): SplitNamesAsync;
+    names(): SplitNamesAsync,
     /**
      * Get the array of splits data in SplitView format.
      * @function splits
      * @returns {SplitViewsAsync} A promise that will resolve to the SplitIO.SplitView list.
      */
-    splits(): SplitViewsAsync;
+    splits(): SplitViewsAsync,
     /**
      * Get the data of a split in SplitView format.
      * @function split
      * @param {string} splitName The name of the split we wan't to get info of.
      * @returns {SplitViewAsync} A promise that will resolve to the SplitIO.SplitView value.
      */
-    split(splitName: string): SplitViewAsync;
+    split(splitName: string): SplitViewAsync,
   }
 }
