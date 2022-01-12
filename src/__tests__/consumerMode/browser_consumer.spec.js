@@ -82,25 +82,26 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.equal((await client.getTreatments(['UT_NOT_IN_SEGMENT']))['UT_NOT_IN_SEGMENT'], 'off', '`getTreatments` evaluation using pluggable storage should be correct.');
     assert.equal((await otherClient.getTreatmentsWithConfig(['UT_NOT_IN_SEGMENT']))['UT_NOT_IN_SEGMENT'].treatment, 'on', '`getTreatmentsWithConfig` evaluation using pluggable storage should be correct.');
 
+    client.setAttribute('permissions', ['not_matching']);
     assert.equal(await client.getTreatment('UT_SET_MATCHER', {
       permissions: ['admin']
     }), 'on', 'Evaluations using pluggable storage should be correct.');
+    client.setAttributes({ permissions: ['admin'] });
     assert.equal(await client.getTreatment('UT_SET_MATCHER', {
       permissions: ['not_matching']
     }), 'off', 'Evaluations using pluggable storage should be correct.');
+    assert.equal(await client.getTreatment('UT_SET_MATCHER'), 'on', 'Evaluations using pluggable storage and attributes binding should be correct.');
 
+    client.setAttribute('permissions', ['not_matching']);
     assert.equal(await client.getTreatment('UT_NOT_SET_MATCHER', {
       permissions: ['create']
     }), 'off', 'Evaluations using pluggable storage should be correct.');
-    assert.equal(await client.getTreatment('UT_NOT_SET_MATCHER', {
-      permissions: ['not_matching']
-    }), 'on', 'Evaluations using pluggable storage should be correct.');
-    assert.deepEqual(await client.getTreatmentWithConfig('UT_NOT_SET_MATCHER', {
-      permissions: ['not_matching']
-    }), {
+    assert.equal(await client.getTreatment('UT_NOT_SET_MATCHER'), 'on', 'Evaluations using pluggable storage should be correct.');
+    assert.deepEqual(await client.getTreatmentWithConfig('UT_NOT_SET_MATCHER'), {
       treatment: 'on',
       config: null
     }, 'Evaluations using pluggable storage should be correct, including configs.');
+    client.clearAttributes();
     assert.deepEqual(await client.getTreatmentWithConfig('always-o.n-with-config'), {
       treatment: 'o.n',
       config: expectedConfig
@@ -147,7 +148,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, 17, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, 18, 'Each evaluation has its corresponting impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
