@@ -170,16 +170,15 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   nicolasClient.ready().then(() => {
     assert.comment('Shared instance - nicolas@split.io');
     getTreatmentsAssertions(nicolasClient, ['off', 'on', 'off', 'on']);
-    assert.equal(matiasClient.getTreatment('user_attr_gte_10'), 'off');
+    assert.equal(nicolasClient.getTreatment('user_attr_gte_10'), 'off');
   });
   marcioClient.ready().then(() => {
     assert.comment('Shared instance - marcio@split.io');
     getTreatmentsAssertions(marcioClient, ['off', 'on', 'off', 'off']);
-    assert.equal(matiasClient.getTreatment('user_attr_gte_10'), 'off');
+    assert.equal(marcioClient.getTreatment('user_attr_gte_10'), 'off');
   });
   matiasClient.on(matiasClient.Event.SDK_READY_TIMED_OUT, () => {
     getTreatmentsAssertions(matiasClient, expectControls);
-    assert.equal(matiasClient.getTreatment('user_attr_gte_10'), 'off');
   });
   matiasClient.ready().catch(() => {
     matiasClient.on(matiasClient.Event.SDK_READY, () => {
@@ -187,6 +186,7 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
       matiasClient.ready().then(() => {
         assert.comment('Shared instance - matias%split.io');
         getTreatmentsAssertions(matiasClient, ['off', 'on', 'off', 'off']);
+        assert.equal(matiasClient.getTreatment('user_attr_gte_10'), 'off');
       });
     });
     assert.comment('Shared instance - matias%split.io');
@@ -194,6 +194,6 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   });
   emmanuelClient.ready().then(() => {
     assert.comment('Shared instance - emmanuel@split.io');
-    assert.equal(matiasClient.getTreatment('user_attr_gte_10'), 'on');
+    assert.equal(emmanuelClient.getTreatment('user_attr_gte_10'), 'on');
   });
 }
