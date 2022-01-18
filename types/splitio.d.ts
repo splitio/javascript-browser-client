@@ -349,6 +349,11 @@ declare namespace SplitIO {
     [attributeName: string]: string | number | boolean | Array<string | number>
   };
   /**
+   * Type of an attribute value
+   * @typedef {string | number | boolean | Array<string | number>} AttributeType
+   */
+  type AttributeType = string | number | boolean | Array<string | number>;
+  /**
    * Split properties should be an object with values of type string, number, boolean or null. Size limit of ~31kb.
    * @typedef {Object.<number, string, boolean, null>} Attributes
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#track
@@ -1200,44 +1205,46 @@ declare namespace SplitIO {
      */
     track(trafficType: string, eventType: string, value?: number, properties?: Properties): boolean,
     /**
-     * Add an attribute to client's in memory attributes storage
-     * @function setAttribute
+     * Add an attribute to client's in memory attributes storage.
+     *
      * @param {string} attributeName Attrinute name
-     * @param {string, number, boolean, list} attributeValue Attribute value
-     * @returns {boolean} true if the attribute was stored and false otherways
+     * @param {AttributeType} attributeValue Attribute value
+     * @returns {boolean} true if the attribute was stored and false otherwise
      */
-    setAttribute(attributeName: string, attributeValue: Object): boolean,
+    setAttribute(attributeName: string, attributeValue: AttributeType): boolean,
     /**
-     * Returns the attribute with the given key
-     * @function getAttribute
+     * Returns the attribute with the given key.
+     *
      * @param {string} attributeName Attribute name
-     * @returns {Object} Attribute with the given key
+     * @returns {AttributeType} Attribute with the given key
      */
-    getAttribute(attributeName: string): Object,
+    getAttribute(attributeName: string): AttributeType,
     /**
-     * Add to client's in memory attributes storage the attributes in 'attributes'
-     * @function setAttributes
-     * @param {Object} attributes Object with attributes to store
-     * @returns true if attributes were stored an false otherways
-     */
-    setAttributes(attributes: Record<string, Object>): boolean,
-    /**
-     * Return all the attributes stored in client's in memory attributes storage
-     * @function getAttributes
-     * @returns {Object} returns all the stored attributes
-     */
-    getAttributes(): Record<string, Object>,
-    /**
-     * Removes from client's in memory attributes storage the attribute with the given key
-     * @function removeAttribute
-     * @param {string} attributeName 
-     * @returns {boolean} true if attribute was removed and false otherways
+     * Removes from client's in memory attributes storage the attribute with the given key.
+     *
+     * @param {string} attributeName
+     * @returns {boolean} true if attribute was removed and false otherwise
      */
     removeAttribute(attributeName: string): boolean,
     /**
-     * Remove all the stored attributes in the client's in memory attribute storage
+     * Add to client's in memory attributes storage the attributes in 'attributes'.
+     *
+     * @param {Attributes} attributes Object with attributes to store
+     * @returns true if attributes were stored an false otherwise
      */
-    clearAttributes(): any
+    setAttributes(attributes: Attributes): boolean,
+    /**
+     * Return all the attributes stored in client's in memory attributes storage.
+     *
+     * @returns {Attributes} returns all the stored attributes
+     */
+    getAttributes(): Attributes,
+    /**
+     * Remove all the stored attributes in the client's in memory attribute storage.
+     *
+     * @returns {boolean} true if all attribute were removed and false otherwise
+     */
+    clearAttributes(): boolean
   }
   /**
    * This represents the interface for the Client instance with asynchronous storage for client-side SDK, where each client has associated a key.
@@ -1287,6 +1294,47 @@ declare namespace SplitIO {
      * @returns {boolean} A promise that resolves to a boolean indicating if the event was added to the queue successfully or not.
      */
     track(trafficType: string, eventType: string, value?: number, properties?: Properties): Promise<boolean>,
+    /**
+     * Add an attribute to client's in memory attributes storage.
+     *
+     * @param {string} attributeName Attrinute name
+     * @param {AttributeType} attributeValue Attribute value
+     * @returns {boolean} true if the attribute was stored and false otherwise
+     */
+    setAttribute(attributeName: string, attributeValue: AttributeType): boolean,
+    /**
+     * Returns the attribute with the given key.
+     *
+     * @param {string} attributeName Attribute name
+     * @returns {AttributeType} Attribute with the given key
+     */
+    getAttribute(attributeName: string): AttributeType,
+    /**
+     * Removes from client's in memory attributes storage the attribute with the given key.
+     *
+     * @param {string} attributeName
+     * @returns {boolean} true if attribute was removed and false otherwise
+     */
+    removeAttribute(attributeName: string): boolean,
+    /**
+     * Add to client's in memory attributes storage the attributes in 'attributes'.
+     *
+     * @param {Attributes} attributes Object with attributes to store
+     * @returns true if attributes were stored an false otherwise
+     */
+    setAttributes(attributes: Attributes): boolean,
+    /**
+     * Return all the attributes stored in client's in memory attributes storage.
+     *
+     * @returns {Attributes} returns all the stored attributes
+     */
+    getAttributes(): Attributes,
+    /**
+     * Remove all the stored attributes in the client's in memory attribute storage.
+     *
+     * @returns {boolean} true if all attribute were removed and false otherwise
+     */
+    clearAttributes(): boolean
   }
   /**
    * Representation of a manager instance with synchronous storage of the SDK.
