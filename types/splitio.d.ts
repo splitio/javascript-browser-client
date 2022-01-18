@@ -346,7 +346,7 @@ declare namespace SplitIO {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#attribute-syntax}
    */
   type Attributes = {
-    [attributeName: string]: string | number | boolean | Array<string | number>
+    [attributeName: string]: AttributeType
   };
   /**
    * Type of an attribute value
