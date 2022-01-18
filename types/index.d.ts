@@ -28,7 +28,7 @@ declare module JsSdk {
   /**
    * Pluggable storage to use the SDK in consumer mode.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#advanced-sharing-state-with-a-pluggable-storage}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#sharing-state-with-a-pluggable-storage}
    */
   export function PluggableStorage(options: SplitIO.PluggableStorageOptions): SplitIO.StorageAsyncFactory;
 
