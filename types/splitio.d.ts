@@ -342,7 +342,7 @@ declare namespace SplitIO {
   type Event = 'init::timeout' | 'init::ready' | 'init::cache-ready' | 'state::update';
   /**
    * Split attributes should be on object with values of type string or number (dates should be sent as millis since epoch).
-   * @typedef {Object.<number, string, boolean, string[], number[]>} Attributes
+   * @typedef {Object.<AttributeType>} Attributes
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#attribute-syntax}
    */
   type Attributes = {
