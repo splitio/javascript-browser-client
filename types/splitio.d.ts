@@ -342,12 +342,17 @@ declare namespace SplitIO {
   type Event = 'init::timeout' | 'init::ready' | 'init::cache-ready' | 'state::update';
   /**
    * Split attributes should be on object with values of type string or number (dates should be sent as millis since epoch).
-   * @typedef {Object.<number, string, boolean, string[], number[]>} Attributes
+   * @typedef {Object.<AttributeType>} Attributes
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#attribute-syntax}
    */
   type Attributes = {
-    [attributeName: string]: string | number | boolean | Array<string | number>
+    [attributeName: string]: AttributeType
   };
+  /**
+   * Type of an attribute value
+   * @typedef {string | number | boolean | Array<string | number>} AttributeType
+   */
+  type AttributeType = string | number | boolean | Array<string | number>;
   /**
    * Split properties should be an object with values of type string, number, boolean or null. Size limit of ~31kb.
    * @typedef {Object.<number, string, boolean, null>} Attributes
@@ -1199,6 +1204,47 @@ declare namespace SplitIO {
      * @returns {boolean} Whether the event was added to the queue successfully or not.
      */
     track(trafficType: string, eventType: string, value?: number, properties?: Properties): boolean,
+    /**
+     * Add an attribute to client's in memory attributes storage.
+     *
+     * @param {string} attributeName Attrinute name
+     * @param {AttributeType} attributeValue Attribute value
+     * @returns {boolean} true if the attribute was stored and false otherwise
+     */
+    setAttribute(attributeName: string, attributeValue: AttributeType): boolean,
+    /**
+     * Returns the attribute with the given key.
+     *
+     * @param {string} attributeName Attribute name
+     * @returns {AttributeType} Attribute with the given key
+     */
+    getAttribute(attributeName: string): AttributeType,
+    /**
+     * Removes from client's in memory attributes storage the attribute with the given key.
+     *
+     * @param {string} attributeName
+     * @returns {boolean} true if attribute was removed and false otherwise
+     */
+    removeAttribute(attributeName: string): boolean,
+    /**
+     * Add to client's in memory attributes storage the attributes in 'attributes'.
+     *
+     * @param {Attributes} attributes Object with attributes to store
+     * @returns true if attributes were stored an false otherwise
+     */
+    setAttributes(attributes: Attributes): boolean,
+    /**
+     * Return all the attributes stored in client's in memory attributes storage.
+     *
+     * @returns {Attributes} returns all the stored attributes
+     */
+    getAttributes(): Attributes,
+    /**
+     * Remove all the stored attributes in the client's in memory attribute storage.
+     *
+     * @returns {boolean} true if all attribute were removed and false otherwise
+     */
+    clearAttributes(): boolean
   }
   /**
    * This represents the interface for the Client instance with asynchronous storage for client-side SDK, where each client has associated a key.
@@ -1248,6 +1294,47 @@ declare namespace SplitIO {
      * @returns {boolean} A promise that resolves to a boolean indicating if the event was added to the queue successfully or not.
      */
     track(trafficType: string, eventType: string, value?: number, properties?: Properties): Promise<boolean>,
+    /**
+     * Add an attribute to client's in memory attributes storage.
+     *
+     * @param {string} attributeName Attrinute name
+     * @param {AttributeType} attributeValue Attribute value
+     * @returns {boolean} true if the attribute was stored and false otherwise
+     */
+    setAttribute(attributeName: string, attributeValue: AttributeType): boolean,
+    /**
+     * Returns the attribute with the given key.
+     *
+     * @param {string} attributeName Attribute name
+     * @returns {AttributeType} Attribute with the given key
+     */
+    getAttribute(attributeName: string): AttributeType,
+    /**
+     * Removes from client's in memory attributes storage the attribute with the given key.
+     *
+     * @param {string} attributeName
+     * @returns {boolean} true if attribute was removed and false otherwise
+     */
+    removeAttribute(attributeName: string): boolean,
+    /**
+     * Add to client's in memory attributes storage the attributes in 'attributes'.
+     *
+     * @param {Attributes} attributes Object with attributes to store
+     * @returns true if attributes were stored an false otherwise
+     */
+    setAttributes(attributes: Attributes): boolean,
+    /**
+     * Return all the attributes stored in client's in memory attributes storage.
+     *
+     * @returns {Attributes} returns all the stored attributes
+     */
+    getAttributes(): Attributes,
+    /**
+     * Remove all the stored attributes in the client's in memory attribute storage.
+     *
+     * @returns {boolean} true if all attribute were removed and false otherwise
+     */
+    clearAttributes(): boolean
   }
   /**
    * Representation of a manager instance with synchronous storage of the SDK.
