@@ -253,6 +253,13 @@ client = client.removeAllListeners();
 const readyPromise: Promise<void> = client.ready();
 const destroyPromise: Promise<void> = client.destroy();
 
+const setAttribute: boolean = client.setAttribute('attrName', 'attrValue');
+const getAttribute: Object = client.getAttribute('attrName');
+const setAttributes: boolean = client.setAttributes({ attr: 'attr' });
+const getAttributes: Record<string, Object> = client.getAttributes();
+const removeAttribute: boolean = client.removeAttribute('attrName');
+const clearAttributes: boolean = client.clearAttributes();
+
 // We can call getTreatment without a key.
 // treatment = client.getTreatment(splitKey, 'mySplit');
 treatment = client.getTreatment('mySplit');
@@ -297,14 +304,14 @@ tracked = client.track('myTrafficType', 'myEventType', null, { prop1: 1, prop2: 
 /*** Repeating tests for Async Client ***/
 
 // Events constants we get (same as for sync client, just for interface checking)
-const eventConstsAsync: {[key: string]: SplitIO.Event} = asyncClient.Event;
+const eventConstsAsync: { [key: string]: SplitIO.Event } = asyncClient.Event;
 splitEvent = asyncClient.Event.SDK_READY;
 splitEvent = asyncClient.Event.SDK_READY_FROM_CACHE;
 splitEvent = asyncClient.Event.SDK_READY_TIMED_OUT;
 splitEvent = asyncClient.Event.SDK_UPDATE;
 
 // Client implements methods from NodeJS.Events. (same as for sync client, just for interface checking)
-asyncClient = asyncClient.on(splitEvent, () => {});
+asyncClient = asyncClient.on(splitEvent, () => { });
 const a1: boolean = asyncClient.emit(splitEvent);
 asyncClient = asyncClient.removeAllListeners(splitEvent);
 asyncClient = asyncClient.removeAllListeners();

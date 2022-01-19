@@ -1,7 +1,11 @@
+0.4.0 (January 19, 2022)
+ - Added support to SDK clients on browser to optionally bind attributes to the client, keeping these loaded within the SDK along with the user ID, for easier usage when requesting flag.
+ - Updated some transitive dependencies for vulnerability fixes.
+
 0.3.0 (January 11, 2022)
  - Added support for the SDK to run in "consumer" and "partial consumer" modes, with a pluggable implementation of it's internal storage,
   enabling customers to implement this caching with any storage technology of choice and connect it to the SDK instance to be used instead of
-  its in-memory storage (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#advanced-consumer-mode).
+  its in-memory storage (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#sharing-state-with-a-pluggable-storage).
  - Updated @splitsoftware/splitio-commons dependency to version 1.1.0, which includes:
       - Updated multiple modules due to general polishing and improvements, including the replacement of default exports with named exports,
       to avoid runtime errors with some particular configurations of Webpack projects.
