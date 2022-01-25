@@ -31,14 +31,14 @@ then
   SIZE_FULL_BUNDLE=$(wc -c ./bundleESM.js | awk '{print $1}')
   SIZE_SLIM_WITH_LOCALHOST_BUNDLE=$(wc -c ./bundleESM_TreeShaking.js | awk '{print $1}')
 
-  if [[ $SIZE_FULL_BUNDLE > 110000 ]] ;then
-    echo "Minified file with all modules shouldn't be larger than 110KB"
+  echo "Minified file with all modules shouldn't be larger than 120KB. Current size: $SIZE_FULL_BUNDLE"
+  if [[ $SIZE_FULL_BUNDLE > 120000 ]] ;then
     npm unlink @splitsoftware/splitio-browserjs
     exit 1
   fi
 
-  if [[ $SIZE_SLIM_WITH_LOCALHOST_BUNDLE > 85000 ]] ;then
-    echo "Minified file with tree-shaking shouldn't be larger than 85KB"
+  echo "Minified file with tree-shaking shouldn't be larger than 90KB. Current size: $SIZE_SLIM_WITH_LOCALHOST_BUNDLE"
+  if [[ $SIZE_SLIM_WITH_LOCALHOST_BUNDLE > 90000 ]] ;then
     npm unlink @splitsoftware/splitio-browserjs
     exit 1
   fi

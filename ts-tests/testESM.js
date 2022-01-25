@@ -17,6 +17,7 @@ const modules = [
   { name: 'InfoLogger', inFull: true, inSlim: true, inSlimUMD: false },
   { name: 'DebugLogger', inFull: true, inSlim: true, inSlimUMD: false },
   { name: 'LocalhostFromObject', inFull: false, inSlim: true, inSlimUMD: false },
+  { name: 'PluggableStorage', inFull: true, inSlim: true, inSlimUMD: false },
 ];
 
 modules.forEach(({ name, inFull, inSlim }) => {
