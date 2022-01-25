@@ -11,4 +11,5 @@ SplitFactory.WarnLogger = WarnLogger;
 SplitFactory.InfoLogger = InfoLogger;
 SplitFactory.DebugLogger = DebugLogger;
 
+// eslint-disable-next-line import/no-default-export
 export default SplitFactory;

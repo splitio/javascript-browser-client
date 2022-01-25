@@ -38,6 +38,7 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   let marcioClient = factory.client('marcio@split.io');
   let emilianoClient = factory.client('emiliano/split.io');
   let matiasClient = factory.client('matias%split.io');
+  let emmanuelClient = factory.client('emmanuel@split.io');
 
   assert.throws(factory.client.bind(factory, null), 'Calling factory.client() with a key parameter that is not a valid key should throw.');
   assert.throws(factory.client.bind(factory, {}), 'Calling factory.client() with a key parameter that is not a valid key should throw.');
@@ -70,6 +71,7 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
     mainClient.destroy();
     emilianoClient.destroy();
     matiasClient.destroy();
+    emmanuelClient.destroy();
 
     assert.end();
   })();
@@ -141,6 +143,9 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   /* Assert client.track(), no need to wait for ready. */
   trackAssertions();
 
+  emmanuelClient.setAttribute('attr', 10);
+  nicolasClient.setAttributes({ attr: 9 });
+
   /* Assert getTreatment/s */
   const expectControls = ['control', 'control', 'control', 'control'];
   // If main is not ready and returning controls, they all return controls.
@@ -148,6 +153,7 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   getTreatmentsAssertions(nicolasClient, expectControls);
   getTreatmentsAssertions(marcioClient, expectControls);
   getTreatmentsAssertions(emilianoClient, expectControls);
+  getTreatmentsAssertions(emmanuelClient, expectControls);
 
   // Each client is ready when splits and its segments are fetched
   mainClient.ready().then(() => {
@@ -164,10 +170,12 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   nicolasClient.ready().then(() => {
     assert.comment('Shared instance - nicolas@split.io');
     getTreatmentsAssertions(nicolasClient, ['off', 'on', 'off', 'on']);
+    assert.equal(nicolasClient.getTreatment('user_attr_gte_10'), 'off');
   });
   marcioClient.ready().then(() => {
     assert.comment('Shared instance - marcio@split.io');
     getTreatmentsAssertions(marcioClient, ['off', 'on', 'off', 'off']);
+    assert.equal(marcioClient.getTreatment('user_attr_gte_10'), 'off');
   });
   matiasClient.on(matiasClient.Event.SDK_READY_TIMED_OUT, () => {
     getTreatmentsAssertions(matiasClient, expectControls);
@@ -178,9 +186,14 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
       matiasClient.ready().then(() => {
         assert.comment('Shared instance - matias%split.io');
         getTreatmentsAssertions(matiasClient, ['off', 'on', 'off', 'off']);
+        assert.equal(matiasClient.getTreatment('user_attr_gte_10'), 'off');
       });
     });
     assert.comment('Shared instance - matias%split.io');
     getTreatmentsAssertions(matiasClient, expectControls);
+  });
+  emmanuelClient.ready().then(() => {
+    assert.comment('Shared instance - emmanuel@split.io');
+    assert.equal(emmanuelClient.getTreatment('user_attr_gte_10'), 'on');
   });
 }

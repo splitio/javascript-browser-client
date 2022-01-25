@@ -1,4 +1,4 @@
-// Declaration file for Javascript Browser Split Software SDK v1.0.0
+// Declaration file for Javascript Browser Split Software SDK
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
@@ -16,6 +16,7 @@ declare module JsSdk {
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
   export function SplitFactory(settings: SplitIO.IBrowserSettings): SplitIO.ISDK;
+  export function SplitFactory(settings: SplitIO.IBrowserAsyncSettings): SplitIO.IAsyncSDK;
 
   /**
    * Persistent storage based on the LocalStorage Web API for browsers.
@@ -23,6 +24,13 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#storage}
    */
   export function InLocalStorage(options?: SplitIO.InLocalStorageOptions): SplitIO.StorageSyncFactory;
+
+  /**
+   * Pluggable storage to use the SDK in consumer mode.
+   *
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#sharing-state-with-a-pluggable-storage}
+   */
+  export function PluggableStorage(options: SplitIO.PluggableStorageOptions): SplitIO.StorageAsyncFactory;
 
   /**
    * Enable 'Google Analytics to Split' integration, to track Google Analytics hits as Split events.

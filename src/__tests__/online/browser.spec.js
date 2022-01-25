@@ -22,6 +22,7 @@ import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
 import mySegmentsNicolas from '../mocks/mysegments.nicolas@split.io.json';
 import mySegmentsMarcio from '../mocks/mysegments.marcio@split.io.json';
+import mySegmentsEmmanuel from '../mocks/mysegments.emmanuel@split.io.json';
 import { InLocalStorage } from '../../index';
 
 const settings = settingsValidator({
@@ -88,6 +89,7 @@ tape('## E2E CI Tests ##', function (assert) {
   fetchMock.get(url(settings, '/mySegments/facundo%40split.io'), { status: 200, body: mySegmentsFacundo });
   fetchMock.get(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolas });
   fetchMock.get(url(settings, '/mySegments/marcio%40split.io'), { status: 200, body: mySegmentsMarcio });
+  fetchMock.get(url(settings, '/mySegments/emmanuel%40split.io'), { status: 200, body: mySegmentsEmmanuel });
   fetchMock.post(url(settings, '/testImpressions/bulk'), 200);
   fetchMock.post(url(settings, '/testImpressions/count'), 200);
 
