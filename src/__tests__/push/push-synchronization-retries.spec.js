@@ -3,6 +3,7 @@ import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import splitChangesMock3 from '../mocks/splitchanges.since.1457552620999.till.1457552649999.SPLIT_UPDATE.json';
 import mySegmentsNicolasMock1 from '../mocks/mysegments.nicolas@split.io.json';
 import mySegmentsNicolasMock2 from '../mocks/mysegments.nicolas@split.io.mock2.json';
+import mySegmentsMarcio from '../mocks/mysegments.marcio@split.io.json';
 import splitUpdateMessage from '../mocks/message.SPLIT_UPDATE.1457552649999.json';
 import oldSplitUpdateMessage from '../mocks/message.SPLIT_UPDATE.1457552620999.json';
 import mySegmentsUpdateMessage from '../mocks/message.MY_SEGMENTS_UPDATE.nicolas@split.io.1457552640000.json';
@@ -20,6 +21,7 @@ import { SplitFactory } from '../../index';
 import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
+const otherUserKeySync = 'marcio@split.io';
 
 const baseUrls = {
   sdk: 'https://sdk.push-synchronization-retries/api',
@@ -79,7 +81,7 @@ export function testSynchronizationRetries(fetchMock, assert) {
   assert.plan(17);
   fetchMock.reset();
 
-  let start, splitio, client;
+  let start, splitio, client, otherClientSync;
 
   // mock SSE open and message events
   setMockListener(function (eventSourceInstance) {
@@ -132,7 +134,7 @@ export function testSynchronizationRetries(fetchMock, assert) {
   });
 
   // initial auth
-  fetchMock.getOnce(url(settings, `/v2/auth?users=${encodeURIComponent(userKey)}`), function (url, opts) {
+  fetchMock.getOnce(url(settings, `/v2/auth?users=${encodeURIComponent(userKey)}&users=${encodeURIComponent(otherUserKeySync)}`), function (url, opts) {
     if (!opts.headers['Authorization']) assert.fail('`/v2/auth` request must include `Authorization` header');
     assert.pass('auth success');
     return { status: 200, body: authPushEnabledNicolas };
@@ -141,6 +143,7 @@ export function testSynchronizationRetries(fetchMock, assert) {
   // initial split and mySegments sync
   fetchMock.getOnce(url(settings, '/splitChanges?since=-1'), { status: 200, body: splitChangesMock1 });
   fetchMock.getOnce(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolasMock1 });
+  fetchMock.get({ url: url(settings, '/mySegments/marcio%40split.io'), repeat: 2 }, { status: 200, body: mySegmentsMarcio });
 
   // split and segment sync after SSE opened
   fetchMock.getOnce(url(settings, '/splitChanges?since=1457552620999'), function () {
@@ -189,7 +192,7 @@ export function testSynchronizationRetries(fetchMock, assert) {
     assert.true(nearlyEqual(lapse, MILLIS_THIRD_RETRY_FOR_SPLIT_KILL_EVENT), 'third fetch retry due to SPLIT_KILL event');
 
     setTimeout(() => {
-      client.destroy().then(() => {
+      Promise.all([otherClientSync.destroy(), client.destroy()]).then(() => {
         assert.equal(client.getTreatment('whitelist'), 'control', 'evaluation returns control if client is destroyed');
         Backoff.DEFAULT_BASE_MILLIS = ORIGINAL_DEFAULT_BASE_MILLIS;
         assert.end();
@@ -207,5 +210,6 @@ export function testSynchronizationRetries(fetchMock, assert) {
 
   splitio = SplitFactory(config);
   client = splitio.client();
+  otherClientSync = splitio.client(otherUserKeySync);
 
 }

@@ -548,7 +548,10 @@ declare namespace SplitIO {
    * By returning an integration, the SDK will queue events and impressions into it.
    * Input parameter details are not part of the public API.
    */
-  type IntegrationFactory = (params: {}) => (Integration | void)
+  type IntegrationFactory = {
+    readonly type: string
+    (params: {}): (Integration | void)
+  }
   /**
    * A pair of user key and it's trafficType, required for tracking valid Split events.
    * @typedef {Object} Identity
