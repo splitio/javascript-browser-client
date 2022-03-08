@@ -1,5 +1,6 @@
 import { LogLevels, isLogLevelString } from '@splitsoftware/splitio-commons/src/logger/index';
-import { LogLevel } from '@splitsoftware/splitio-commons/src/types';
+import { ConsentStatus, LogLevel } from '@splitsoftware/splitio-commons/src/types';
+import { CONSENT_GRANTED } from '@splitsoftware/splitio-commons/src/utils/constants';
 
 const packageVersion = '0.4.2-rc.0';
 
@@ -31,6 +32,9 @@ export const defaults = {
     // Amount of time we will wait before the first push of events.
     eventsFirstPushWindow: 10
   },
+
+  // Consent is considered granted by default
+  userConsent: CONSENT_GRANTED as ConsentStatus,
 
   // Instance version.
   version: `browserjs-${packageVersion}`,

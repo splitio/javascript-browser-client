@@ -13,10 +13,10 @@ import mySegmentsUpdateMessageWithPayload from '../mocks/message.MY_SEGMENTS_UPD
 import mySegmentsUpdateMessageWithEmptyPayload from '../mocks/message.MY_SEGMENTS_UPDATE.marcio@split.io.1457552646000.json';
 import splitKillMessage from '../mocks/message.SPLIT_KILL.1457552650000.json';
 
-import unboundedMessage from '../mocks/message.V2.UNBOUNDED.1457552650000';
-import boundedZlibMessage from '../mocks/message.V2.BOUNDED.ZLIB.1457552651000';
-import keylistGzipMessage from '../mocks/message.V2.KEYLIST.GZIP.1457552652000';
-import segmentRemovalMessage from '../mocks/message.V2.SEGMENT_REMOVAL.1457552653000';
+import unboundedMessage from '../mocks/message.V2.UNBOUNDED.1457552650000.json';
+import boundedZlibMessage from '../mocks/message.V2.BOUNDED.ZLIB.1457552651000.json';
+import keylistGzipMessage from '../mocks/message.V2.KEYLIST.GZIP.1457552652000.json';
+import segmentRemovalMessage from '../mocks/message.V2.SEGMENT_REMOVAL.1457552653000.json';
 
 import authPushEnabledNicolas from '../mocks/auth.pushEnabled.nicolas@split.io.json';
 import authPushEnabledNicolasAndMarcio from '../mocks/auth.pushEnabled.nicolas@split.io.marcio@split.io.json';
@@ -145,7 +145,7 @@ export function testSynchronization(fetchMock, assert) {
     setTimeout(() => {
       otherClient = splitio.client(otherUserKey);
 
-      setMockListener(function (eventSourceInstance) {
+      setMockListener((eventSourceInstance) => {
         const expectedSSEurl = `${url(settings, '/sse')}?channels=NzM2MDI5Mzc0_NDEzMjQ1MzA0Nw%3D%3D_MjE0MTkxOTU2Mg%3D%3D_mySegments,NzM2MDI5Mzc0_NDEzMjQ1MzA0Nw%3D%3D_NTcwOTc3MDQx_mySegments,NzM2MDI5Mzc0_NDEzMjQ1MzA0Nw%3D%3D_splits,%5B%3Foccupancy%3Dmetrics.publishers%5Dcontrol_pri,%5B%3Foccupancy%3Dmetrics.publishers%5Dcontrol_sec&accessToken=${authPushEnabledNicolasAndMarcio.token}&v=1.1&heartbeats=true&SplitSDKVersion=${settings.version}&SplitSDKClientKey=h-1>`;
         assert.equals(eventSourceInstance.url, expectedSSEurl, 'new EventSource URL is the expected');
 
