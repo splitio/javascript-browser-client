@@ -10,8 +10,9 @@ import { pluggableIntegrationsManagerFactory } from '@splitsoftware/splitio-comm
 
 import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/utils';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
-import { SplitIO, ISettings } from '@splitsoftware/splitio-commons/src/types';
+import { ISettings } from '@splitsoftware/splitio-commons/src/types';
 import { CONSUMER_MODE, CONSUMER_PARTIAL_MODE, LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
+import { createUserConsentAPI } from '@splitsoftware/splitio-commons/src/consent/sdkUserConsent';
 
 let syncManagerStandaloneFactory: ISdkFactoryParams['syncManagerFactory'];
 let syncManagerSubmittersFactory: ISdkFactoryParams['syncManagerFactory'];
@@ -37,11 +38,15 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     SignalListener: BrowserSignalListener as ISdkFactoryParams['SignalListener'],
 
-    impressionListener: settings.impressionListener as SplitIO.IImpressionListener,
-
     integrationsManagerFactory: settings.integrations && settings.integrations.length > 0 ? pluggableIntegrationsManagerFactory.bind(null, settings.integrations) : undefined,
 
     impressionsObserverFactory: shouldAddPt(settings) ? impressionObserverCSFactory : undefined,
+
+    extraProps: (params) => {
+      return {
+        UserConsent: createUserConsentAPI(params)
+      };
+    },
   };
 
   switch (settings.mode) {

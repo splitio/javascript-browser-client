@@ -12,6 +12,8 @@ const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType:
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory(0);
+const TOTAL_RAW_IMPRESSIONS = 18;
+const TOTAL_EVENTS = 5;
 
 /** @type SplitIO.IBrowserAsyncSettings */
 const config = {
@@ -146,9 +148,14 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     assert.equal(disconnectSpy.callCount, 1, 'Wrapper disconnect method should be called only once, when the main client is destroyed');
 
+    const trackedImpressions = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.impressions', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.impressions'));
+    const trackedEvents = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.events', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.events'));
+    assert.equal(trackedImpressions.length, TOTAL_RAW_IMPRESSIONS, 'Tracked impressions should be present in the external storage');
+    assert.equal(trackedEvents.length, TOTAL_EVENTS, 'Tracked events should be present in the external storage');
+
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, 18, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();

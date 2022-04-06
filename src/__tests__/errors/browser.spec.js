@@ -19,7 +19,7 @@ const settings = settingsValidator({
 
 // prepare localstorage to emit SDK_READY_FROM_CACHE
 localStorage.clear();
-localStorage.setItem('errorCatching.SPLITIO.splits.till', 25);
+localStorage.setItem('SPLITIO.splits.till', 25);
 
 fetchMock.get(url(settings, '/splitChanges?since=25'), function () {
   return new Promise((res) => { setTimeout(() => res({ status: 200, body: splitChangesMock1 }), 1000); });
@@ -53,7 +53,7 @@ tape('Error catching on callbacks - Browsers', assert => {
       eventsPushRate: 100000
     },
     storage: InLocalStorage({
-      prefix: 'errorCatching'
+      // Using default prefix 'SPLITIO'
     }),
     streamingEnabled: false
   });
