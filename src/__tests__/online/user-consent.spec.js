@@ -86,15 +86,20 @@ export default function userConsent(fetchMock, t) {
       await client.ready();
       await sharedClient.ready();
 
-      let isTracking = factory.getUserConsent() !== 'DECLINED';
+      let isTracking = factory.UserConsent.getStatus() !== factory.UserConsent.Status.DECLINED;
       assert.deepEqual([client.track('user', 'event1'), sharedClient.track('user', 'event1')], [isTracking, isTracking], 'tracking events on SDK ready');
-      assert.deepEqual([client.getTreatment('always_on'), sharedClient.getTreatment('always_on')], ['on', 'on'], 'evaluating on SDK ready');
-      if (isTracking) expectedTrackedImpressions += 2;
+      assert.deepEqual([
+        client.getTreatment('always_on'), sharedClient.getTreatment('always_on'),
+        client.getTreatments(['always_on'])['always_on'], sharedClient.getTreatments(['always_on'])['always_on'],
+        client.getTreatmentWithConfig('always_on').treatment, sharedClient.getTreatmentWithConfig('always_on').treatment,
+        client.getTreatmentsWithConfig(['always_on'])['always_on'].treatment, sharedClient.getTreatmentsWithConfig(['always_on'])['always_on'].treatment,
+      ], ['on', 'on', 'on', 'on', 'on', 'on', 'on', 'on'], 'evaluating on SDK ready');
+      if (isTracking) expectedTrackedImpressions += 8;
 
       // Trigger unload event to validate browser listener behaviour
       // Beacon API is used only if user consent is GRANTED
       triggerUnloadEvent();
-      if (factory.getUserConsent() === 'GRANTED') {
+      if (factory.UserConsent.getStatus() === factory.UserConsent.Status.GRANTED) {
         assert.ok(sendBeaconSpy.calledThrice, 'sendBeacon should have been called thrice');
       } else {
         assert.ok(sendBeaconSpy.notCalled, 'sendBeacon should not be called if user consent is not granted');
@@ -102,20 +107,25 @@ export default function userConsent(fetchMock, t) {
       sendBeaconSpy.resetHistory();
 
       // If transitioning from UNKNOWN to GRANTED, data was tracked and will be submitted
-      if (factory.getUserConsent() === 'UNKNOWN' && setUserConsent) {
+      if (factory.UserConsent.getStatus() === factory.UserConsent.Status.UNKNOWN && setUserConsent) {
         mockSubmittersRequests(fetchMock, assert, 'always_on', 'event1');
       }
-      if (setUserConsent !== undefined) factory.setUserConsent(setUserConsent);
+      if (setUserConsent !== undefined) factory.UserConsent.setStatus(setUserConsent);
 
       // Await to track events and impressions with empty queues
       await new Promise(res => setTimeout(res));
-      isTracking = factory.getUserConsent() !== 'DECLINED';
+      isTracking = factory.UserConsent.getStatus() !== factory.UserConsent.Status.DECLINED;
       assert.deepEqual([client.track('user', 'event2'), sharedClient.track('user', 'event2')], [isTracking, isTracking], 'tracking events after updating user consent');
-      assert.deepEqual([client.getTreatment('always_off'), sharedClient.getTreatment('always_off')], ['off', 'off'], 'evaluating after updating user consent');
-      if (isTracking) expectedTrackedImpressions += 2;
+      assert.deepEqual([
+        client.getTreatment('always_off'), sharedClient.getTreatment('always_off'),
+        client.getTreatments(['always_off'])['always_off'], sharedClient.getTreatments(['always_off'])['always_off'],
+        client.getTreatmentWithConfig('always_off').treatment, sharedClient.getTreatmentWithConfig('always_off').treatment,
+        client.getTreatmentsWithConfig(['always_off'])['always_off'].treatment, sharedClient.getTreatmentsWithConfig(['always_off'])['always_off'].treatment,
+      ], ['off', 'off', 'off', 'off', 'off', 'off', 'off', 'off'], 'evaluating after updating user consent');
+      if (isTracking) expectedTrackedImpressions += 8;
 
       // If destroyed while user consent is GRANTED, last tracked data is submitted
-      if (factory.getUserConsent() === 'GRANTED') {
+      if (factory.UserConsent.getStatus() === factory.UserConsent.Status.GRANTED) {
         mockSubmittersRequests(fetchMock, assert, 'always_off', 'event2');
       }
       await sharedClient.destroy();
@@ -159,7 +169,7 @@ export default function userConsent(fetchMock, t) {
       submitterCalls++; return 200;
     });
 
-    factory.setUserConsent(true);
+    factory.UserConsent.setStatus(true);
 
     assert.equal(submitterCalls, 2, 'Submitter is resumed and POST requests executed when consent status change to GRANTED, except for events due to first push window');
 

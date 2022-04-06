@@ -443,16 +443,20 @@ stored = client.setAttributes(attr);
 let storedAttr: SplitIO.Attributes = client.getAttributes();
 removed = client.clearAttributes();
 
-/**** Tests for user consent setter/getter ****/
+/**** Tests for user consent API ****/
 
 let userConsent: SplitIO.ConsentStatus;
-userConsent = SDK.getUserConsent();
-SDK.setUserConsent(true);
-SDK.setUserConsent(false);
+userConsent = SDK.UserConsent.getStatus();
+SDK.UserConsent.setStatus(true);
+SDK.UserConsent.setStatus(false);
 
-userConsent = AsyncSDK.getUserConsent();
-AsyncSDK.setUserConsent(true);
-AsyncSDK.setUserConsent(false);
+userConsent = AsyncSDK.UserConsent.getStatus();
+AsyncSDK.UserConsent.setStatus(true);
+AsyncSDK.UserConsent.setStatus(false);
+
+userConsent = SDK.UserConsent.Status.DECLINED;
+userConsent = SDK.UserConsent.Status.GRANTED;
+userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
 
 /**** Tests for fully crowded settings interfaces ****/
 

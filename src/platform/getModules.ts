@@ -12,7 +12,7 @@ import { shouldAddPt } from '@splitsoftware/splitio-commons/src/trackers/impress
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
 import { ISettings } from '@splitsoftware/splitio-commons/src/types';
 import { CONSUMER_MODE, CONSUMER_PARTIAL_MODE, LOCALHOST_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
-import { userConsentProps } from '@splitsoftware/splitio-commons/src/sdkFactory/userConsentProps';
+import { createUserConsentAPI } from '@splitsoftware/splitio-commons/src/consent/sdkUserConsent';
 
 let syncManagerStandaloneFactory: ISdkFactoryParams['syncManagerFactory'];
 let syncManagerSubmittersFactory: ISdkFactoryParams['syncManagerFactory'];
@@ -42,7 +42,11 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     impressionsObserverFactory: shouldAddPt(settings) ? impressionObserverCSFactory : undefined,
 
-    extraProps: userConsentProps,
+    extraProps: (params) => {
+      return {
+        UserConsent: createUserConsentAPI(params)
+      };
+    },
   };
 
   switch (settings.mode) {
