@@ -1,6 +1,6 @@
 {
   "name": "@splitsoftware/splitio-browserjs",
-  "version": "0.4.2-rc.0",
+  "version": "0.5.0",
   "description": "Split SDK for Javascript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
