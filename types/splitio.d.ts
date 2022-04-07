@@ -58,6 +58,7 @@ interface ISettings {
   readonly scheduler: {
     featuresRefreshRate: number,
     impressionsRefreshRate: number,
+    impressionsQueueSize: number,
     segmentsRefreshRate: number,
     offlineRefreshRate: number,
     eventsPushRate: number,
@@ -89,7 +90,8 @@ interface ISettings {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
     localhostMode?: SplitIO.LocalhostFactory
-  }
+  },
+  readonly userConsent: SplitIO.ConsentStatus
 }
 /**
  * Log levels.
@@ -123,7 +125,38 @@ interface ILoggerAPI {
    * Log level constants. Use this to pass them to setLogLevel function.
    */
   LogLevel: {
-    [level: string]: LogLevel
+    [level in LogLevel]: LogLevel
+  }
+}
+/**
+ * User consent API
+ * @interface IUserConsentAPI
+ */
+interface IUserConsentAPI {
+  /**
+   * Set or update the user consent status. Possible values are `true` and `false`, which represent user consent `'GRANTED'` and `'DECLINED'` respectively.
+   * - `true ('GRANTED')`: the user has granted consent for tracking events and impressions. The SDK will send them to Split cloud.
+   * - `false ('DECLINED')`: the user has declined consent for tracking events and impressions. The SDK will not send them to Split cloud.
+   *
+   * NOTE: calling this method updates the user consent at a factory level, affecting all clients of the same factory.
+   *
+   * @function setStatus
+   * @param {boolean} userConsent The user consent status, true for 'GRANTED' and false for 'DECLINED'.
+   * @returns {boolean} Whether the provided param is a valid value (i.e., a boolean value) or not.
+   */
+  setStatus(userConsent: boolean): boolean;
+  /**
+   * Get the user consent status.
+   *
+   * @function getStatus
+   * @returns {ConsentStatus} The user consent status.
+   */
+  getStatus(): SplitIO.ConsentStatus;
+  /**
+   * Consent status constants. Use this to compare with the getStatus function result.
+   */
+  Status: {
+    [status in SplitIO.ConsentStatus]: SplitIO.ConsentStatus
   }
 }
 /**
@@ -268,7 +301,12 @@ interface IBasicSDK {
    * Logger API.
    * @property Logger
    */
-  Logger: ILoggerAPI
+  Logger: ILoggerAPI,
+  /**
+   * User consent API.
+   * @property UserConsent
+   */
+  UserConsent: IUserConsentAPI
 }
 /****** Exposed namespace ******/
 /**
@@ -548,7 +586,10 @@ declare namespace SplitIO {
    * By returning an integration, the SDK will queue events and impressions into it.
    * Input parameter details are not part of the public API.
    */
-  type IntegrationFactory = (params: {}) => (Integration | void)
+  type IntegrationFactory = {
+    readonly type: string
+    (params: {}): (Integration | void)
+  }
   /**
    * A pair of user key and it's trafficType, required for tracking valid Split events.
    * @typedef {Object} Identity
@@ -740,6 +781,11 @@ declare namespace SplitIO {
   */
   type ImpressionsMode = 'OPTIMIZED' | 'DEBUG';
   /**
+   * User consent status.
+   * @typedef {string} ConsentStatus
+   */
+  type ConsentStatus = 'GRANTED' | 'DECLINED' | 'UNKNOWN';
+  /**
    * Logger
    * Its interface details are not part of the public API. It shouldn't be used directly.
    * @interface ILogger
@@ -794,6 +840,17 @@ declare namespace SplitIO {
      * @property {Object} integrations
      */
     integrations?: IntegrationFactory[],
+    /**
+     * User consent status. Possible values are `'GRANTED'`, which is the default, `'DECLINED'` or `'UNKNOWN'`.
+     * - `'GRANTED'`: the user has granted consent for tracking events and impressions. The SDK will send them to Split cloud.
+     * - `'DECLINED'`: the user has declined consent for tracking events and impressions. The SDK will not send them to Split cloud.
+     * - `'UNKNOWN'`: the user has neither granted nor declined consent for tracking events and impressions. The SDK will track them in its internal storage, and eventually send
+     * them or not if the consent status is updated to 'GRANTED' or 'DECLINED' respectively. The status can be updated at any time with the `setUserConsent` factory method.
+     *
+     * @typedef {string} userConsent
+     * @default 'GRANTED'
+     */
+    userConsent?: ConsentStatus
   }
   /**
    * Settings interface for SDK instances created on the browser.
@@ -877,6 +934,13 @@ declare namespace SplitIO {
        * @default 60
        */
       impressionsRefreshRate?: number,
+      /**
+       * The maximum number of impression items we want to queue. If we queue more values, it will trigger a flush and reset the timer.
+       * If you use a 0 here, the queue will have no maximum size.
+       * @property {number} impressionsQueueSize
+       * @default 30000
+       */
+      impressionsQueueSize?: number,
       /**
        * The SDK polls Split servers for changes to segment definitions. This parameter controls this polling period in seconds.
        * @property {number} segmentsRefreshRate
@@ -976,6 +1040,13 @@ declare namespace SplitIO {
        */
       impressionsRefreshRate?: number,
       /**
+       * The maximum number of impression items we want to queue. If we queue more values, it will trigger a flush and reset the timer.
+       * If you use a 0 here, the queue will have no maximum size.
+       * @property {number} impressionsQueueSize
+       * @default 30000
+       */
+      impressionsQueueSize?: number,
+      /**
        * The SDK posts the queued events data in bulks. This parameter controls the posting rate in seconds.
        *
        * NOTE: this param is ignored in 'consumer' mode.
@@ -1002,13 +1073,13 @@ declare namespace SplitIO {
    */
   interface ISDK extends IBasicSDK {
     /**
-     * Returns the default client instance of the SDK, associated with the key and optional traffic type from settings.
+     * Returns the default client instance of the SDK, associated with the key provided on settings.
      * @function client
      * @returns {IClient} The client instance.
      */
     client(): IClient,
     /**
-     * Returns a shared client of the SDK, associated with the given key and optional traffic type.
+     * Returns a shared client of the SDK, associated with the given key.
      * @function client
      * @param {SplitKey} key The key for the new client instance.
      * @returns {IClient} The client instance.
@@ -1029,11 +1100,18 @@ declare namespace SplitIO {
    */
   interface IAsyncSDK extends IBasicSDK {
     /**
-     * Returns the default client instance of the SDK.
+     * Returns the default client instance of the SDK, associated with the key provided on settings.
      * @function client
      * @returns {IAsyncClient} The asynchronous client instance.
      */
     client(): IAsyncClient,
+    /**
+     * Returns a shared client of the SDK, associated with the given key.
+     * @function client
+     * @param {SplitKey} key The key for the new client instance.
+     * @returns {IAsyncClient} The asynchronous client instance.
+     */
+    client(key: SplitKey): IAsyncClient,
     /**
      * Returns a manager instance of the SDK to explore available information.
      * @function manager
@@ -1207,7 +1285,7 @@ declare namespace SplitIO {
     /**
      * Add an attribute to client's in memory attributes storage.
      *
-     * @param {string} attributeName Attrinute name
+     * @param {string} attributeName Attribute name
      * @param {AttributeType} attributeValue Attribute value
      * @returns {boolean} true if the attribute was stored and false otherwise
      */
@@ -1297,7 +1375,7 @@ declare namespace SplitIO {
     /**
      * Add an attribute to client's in memory attributes storage.
      *
-     * @param {string} attributeName Attrinute name
+     * @param {string} attributeName Attribute name
      * @param {AttributeType} attributeValue Attribute value
      * @returns {boolean} true if the attribute was stored and false otherwise
      */

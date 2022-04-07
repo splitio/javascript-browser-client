@@ -16,6 +16,8 @@ import useBeaconApiSuite from './use-beacon-api.spec';
 import useBeaconDebugApiSuite from './use-beacon-api.debug.spec';
 import readyPromiseSuite from './ready-promise.spec';
 import fetchSpecificSplits from './fetch-specific-splits.spec';
+import userConsent from './user-consent.spec';
+
 import { settingsValidator } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
@@ -113,6 +115,8 @@ tape('## E2E CI Tests ##', function (assert) {
   assert.test('E2E / Shared instances', sharedInstantiationSuite.bind(null, false, true, fetchMock));
   // Next test only applies for the isomorphic JS SDK, that support clients with bound TT
   // assert.test('E2E / Shared instances with Traffic Type on factory settings', sharedInstantiationSuite.bind(null, true, fetchMock));
+  /* Validate user consent */
+  assert.test('E2E / User consent', userConsent.bind(null, fetchMock));
   /* Check basic manager functionality */
   assert.test('E2E / Manager API', managerSuite.bind(null, settings, fetchMock));
   /* Validate readiness */

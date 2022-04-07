@@ -8,10 +8,12 @@ const nodeResolve = require('@rollup/plugin-node-resolve').nodeResolve;
 const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
 const string = require('rollup-plugin-string').string;
-const typescript = require('typescript');
-const ts = require('rollup-plugin-ts');
 const terser = require('rollup-plugin-terser').terser;
 const nodePolyfills = require('rollup-plugin-node-polyfills');
+
+// More popular plugins like https://www.npmjs.com/package/@rollup/plugin-typescript or https://www.npmjs.com/package/rollup-plugin-typescript2
+// cannot be used because they don't compile .ts files from node_modules
+const ts = require('rollup-plugin-ts');
 
 module.exports = {
   // base path, that will be used to resolve files and exclude
@@ -48,9 +50,8 @@ module.exports = {
       json(),
       string({ include: '**/*.txt' }),
       ts({
-        typescript,
         tsconfig: './tsconfig.json',
-        browserlist: false
+        transpileOnly: true
       }),
       terser(),
       nodePolyfills()

@@ -253,13 +253,6 @@ client = client.removeAllListeners();
 const readyPromise: Promise<void> = client.ready();
 const destroyPromise: Promise<void> = client.destroy();
 
-const setAttribute: boolean = client.setAttribute('attrName', 'attrValue');
-const getAttribute: Object = client.getAttribute('attrName');
-const setAttributes: boolean = client.setAttributes({ attr: 'attr' });
-const getAttributes: Record<string, Object> = client.getAttributes();
-const removeAttribute: boolean = client.removeAttribute('attrName');
-const clearAttributes: boolean = client.clearAttributes();
-
 // We can call getTreatment without a key.
 // treatment = client.getTreatment(splitKey, 'mySplit');
 treatment = client.getTreatment('mySplit');
@@ -422,6 +415,49 @@ impressionListener = MyImprListenerMap;
 impressionListener = new MyImprListener();
 impressionListener.logImpression(impressionData);
 
+/**** Tests for attribute binding ****/
+let stored: boolean = client.setAttribute('stringAttribute', 'value');
+stored = client.setAttribute('numberAttribtue', 1);
+stored = client.setAttribute('booleanAttribute', true);
+stored = client.setAttribute('stringArrayAttribute', ['value1', 'value2']);
+stored = client.setAttribute('numberArrayAttribute', [1, 2]);
+
+let storedAttributeValue: SplitIO.AttributeType = client.getAttribute('stringAttribute');
+storedAttributeValue = client.getAttribute('numberAttribute');
+storedAttributeValue = client.getAttribute('booleanAttribute');
+storedAttributeValue = client.getAttribute('stringArrayAttribute');
+storedAttributeValue = client.getAttribute('numberArrayAttribute');
+
+let removed: boolean = client.removeAttribute('numberAttribute');
+removed = client.clearAttributes();
+
+let attr: SplitIO.Attributes = {
+  stringAttribute: 'value',
+  numberAttribute: 1,
+  booleanAttribute: true,
+  stringArrayAttribute: ['value1', 'value2'],
+  numberArrayAttribute: [1, 2]
+};
+
+stored = client.setAttributes(attr);
+let storedAttr: SplitIO.Attributes = client.getAttributes();
+removed = client.clearAttributes();
+
+/**** Tests for user consent API ****/
+
+let userConsent: SplitIO.ConsentStatus;
+userConsent = SDK.UserConsent.getStatus();
+SDK.UserConsent.setStatus(true);
+SDK.UserConsent.setStatus(false);
+
+userConsent = AsyncSDK.UserConsent.getStatus();
+AsyncSDK.UserConsent.setStatus(true);
+AsyncSDK.UserConsent.setStatus(false);
+
+userConsent = SDK.UserConsent.Status.DECLINED;
+userConsent = SDK.UserConsent.Status.GRANTED;
+userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
+
 /**** Tests for fully crowded settings interfaces ****/
 
 // Split filters
@@ -459,6 +495,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   scheduler: {
     featuresRefreshRate: 1,
     impressionsRefreshRate: 1,
+    impressionsQueueSize: 1,
     // metricsRefreshRate: 1,
     segmentsRefreshRate: 1,
     offlineRefreshRate: 1,
@@ -492,8 +529,11 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     splitFilters: splitFilters,
     impressionsMode: 'DEBUG',
     localhostMode: LocalhostFromObject()
-  }
+  },
+  userConsent: 'GRANTED'
 };
+fullBrowserSettings.userConsent = 'DECLINED';
+fullBrowserSettings.userConsent = 'UNKNOWN';
 
 let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   mode: 'consumer',
@@ -505,6 +545,7 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   },
   scheduler: {
     impressionsRefreshRate: 1,
+    impressionsQueueSize: 1,
     // metricsRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
@@ -533,9 +574,12 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   streamingEnabled: true,
   sync: {
     impressionsMode: 'DEBUG',
-  }
+  },
+  userConsent: 'GRANTED'
 };
 fullBrowserAsyncSettings.mode = 'consumer_partial';
+fullBrowserAsyncSettings.userConsent = 'DECLINED';
+fullBrowserAsyncSettings.userConsent = 'UNKNOWN';
 
 // debug property can be a log level or Logger instance
 fullBrowserSettings.debug = 'ERROR';
