@@ -5,8 +5,9 @@ import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory
 import { getFetch } from './platform/getFetchSlim';
 import { getEventSource } from './platform/getEventSource';
 import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
+import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
 
-const platform = { getFetch, getEventSource, EventEmitter };
+const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
  * Slim SplitFactory with pluggable modules for Browser.

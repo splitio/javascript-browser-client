@@ -513,7 +513,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     sdk: 'https://asd.com/sdk',
     events: 'https://asd.com/events',
     auth: 'https://asd.com/auth',
-    streaming: 'https://asd.com/streaming'
+    streaming: 'https://asd.com/streaming',
+    telemetry: 'https://asd.com/telemetry'
   },
   features: mockedFeaturesMap,
   storage: syncStorageFactory,
@@ -558,7 +559,8 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
     sdk: 'https://asd.com/sdk',
     events: 'https://asd.com/events',
     auth: 'https://asd.com/auth',
-    streaming: 'https://asd.com/streaming'
+    streaming: 'https://asd.com/streaming',
+    telemetry: 'https://asd.com/telemetry'
   },
   storage: PluggableStorage({
     prefix: 'MY_PREFIX',
