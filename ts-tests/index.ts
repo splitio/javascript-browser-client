@@ -496,7 +496,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     featuresRefreshRate: 1,
     impressionsRefreshRate: 1,
     impressionsQueueSize: 1,
-    // metricsRefreshRate: 1,
+    telemetryRefreshRate: 1,
     segmentsRefreshRate: 1,
     offlineRefreshRate: 1,
     eventsPushRate: 1,
@@ -546,7 +546,7 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   scheduler: {
     impressionsRefreshRate: 1,
     impressionsQueueSize: 1,
-    // metricsRefreshRate: 1,
+    telemetryRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
   },

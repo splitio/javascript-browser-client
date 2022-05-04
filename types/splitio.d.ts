@@ -59,6 +59,7 @@ interface ISettings {
     featuresRefreshRate: number,
     impressionsRefreshRate: number,
     impressionsQueueSize: number,
+    telemetryRefreshRate: number,
     segmentsRefreshRate: number,
     offlineRefreshRate: number,
     eventsPushRate: number,
@@ -842,10 +843,10 @@ declare namespace SplitIO {
     integrations?: IntegrationFactory[],
     /**
      * User consent status. Possible values are `'GRANTED'`, which is the default, `'DECLINED'` or `'UNKNOWN'`.
-     * - `'GRANTED'`: the user has granted consent for tracking events and impressions. The SDK will send them to Split cloud.
-     * - `'DECLINED'`: the user has declined consent for tracking events and impressions. The SDK will not send them to Split cloud.
-     * - `'UNKNOWN'`: the user has neither granted nor declined consent for tracking events and impressions. The SDK will track them in its internal storage, and eventually send
-     * them or not if the consent status is updated to 'GRANTED' or 'DECLINED' respectively. The status can be updated at any time with the `setUserConsent` factory method.
+     * - `'GRANTED'`: the user grants consent for tracking events and impressions. The SDK sends them to Split cloud.
+     * - `'DECLINED'`: the user declines consent for tracking events and impressions. The SDK does not send them to Split cloud.
+     * - `'UNKNOWN'`: the user neither grants nor declines consent for tracking events and impressions. The SDK tracks them in its internal storage, and eventually either sends
+     * them or not if the consent status is updated to 'GRANTED' or 'DECLINED' respectively. The status can be updated at any time with the `UserConsent.setStatus` factory method.
      *
      * @typedef {string} userConsent
      * @default 'GRANTED'
@@ -941,6 +942,12 @@ declare namespace SplitIO {
        * @default 30000
        */
       impressionsQueueSize?: number,
+      /**
+       * The SDK sends diagnostic metrics to Split servers. This parameters controls this metric flush period in seconds.
+       * @property {number} telemetryRefreshRate
+       * @default 3600
+       */
+      telemetryRefreshRate?: number,
       /**
        * The SDK polls Split servers for changes to segment definitions. This parameter controls this polling period in seconds.
        * @property {number} segmentsRefreshRate
@@ -1046,6 +1053,12 @@ declare namespace SplitIO {
        * @default 30000
        */
       impressionsQueueSize?: number,
+      /**
+       * The SDK sends diagnostic metrics to Split servers. This parameters controls this metric flush period in seconds.
+       * @property {number} telemetryRefreshRate
+       * @default 3600
+       */
+      telemetryRefreshRate?: number,
       /**
        * The SDK posts the queued events data in bulks. This parameter controls the posting rate in seconds.
        *
