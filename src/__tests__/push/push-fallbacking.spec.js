@@ -49,7 +49,6 @@ const config = {
   scheduler: {
     featuresRefreshRate: 0.2,
     segmentsRefreshRate: 0.25,
-    metricsRefreshRate: 3000,
     impressionsRefreshRate: 3000
   },
   urls: baseUrls,
