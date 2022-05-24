@@ -5,8 +5,9 @@ import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory
 import { getFetch } from './platform/getFetchSlim';
 import { getEventSource } from './platform/getEventSource';
 import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
+import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
 
-const platform = { getFetch, getEventSource, EventEmitter };
+const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
  * Slim SplitFactory with pluggable modules for Browser.
@@ -17,7 +18,7 @@ const platform = { getFetch, getEventSource, EventEmitter };
  * caution since, unlike `config`, this param is not validated neither considered part of the public API.
  * @throws Will throw an error if the provided config is invalid.
  */
-export function SplitFactory(config: any, __updateModules: (modules: ISdkFactoryParams) => void) {
+export function SplitFactory(config: any, __updateModules?: (modules: ISdkFactoryParams) => void) {
   const settings = settingsValidator(config);
   const modules = getModules(settings, platform);
   if (__updateModules) __updateModules(modules);

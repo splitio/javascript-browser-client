@@ -496,7 +496,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     featuresRefreshRate: 1,
     impressionsRefreshRate: 1,
     impressionsQueueSize: 1,
-    // metricsRefreshRate: 1,
+    telemetryRefreshRate: 1,
     segmentsRefreshRate: 1,
     offlineRefreshRate: 1,
     eventsPushRate: 1,
@@ -513,7 +513,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     sdk: 'https://asd.com/sdk',
     events: 'https://asd.com/events',
     auth: 'https://asd.com/auth',
-    streaming: 'https://asd.com/streaming'
+    streaming: 'https://asd.com/streaming',
+    telemetry: 'https://asd.com/telemetry'
   },
   features: mockedFeaturesMap,
   storage: syncStorageFactory,
@@ -546,7 +547,7 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   scheduler: {
     impressionsRefreshRate: 1,
     impressionsQueueSize: 1,
-    // metricsRefreshRate: 1,
+    telemetryRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
   },
@@ -558,7 +559,8 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
     sdk: 'https://asd.com/sdk',
     events: 'https://asd.com/events',
     auth: 'https://asd.com/auth',
-    streaming: 'https://asd.com/streaming'
+    streaming: 'https://asd.com/streaming',
+    telemetry: 'https://asd.com/telemetry'
   },
   storage: PluggableStorage({
     prefix: 'MY_PREFIX',

@@ -4,7 +4,7 @@ import { url } from '../testUtils';
 import evaluationsSuite from './evaluations.spec';
 import impressionsSuite from './impressions.spec';
 import impressionsSuiteDebug from './impressions.debug.spec';
-// import metricsSuite from './metrics.spec';
+import telemetrySuite from './telemetry.spec';
 import impressionsListenerSuite from './impressions-listener.spec';
 import readinessSuite from './readiness.spec';
 import readyFromCache from './ready-from-cache.spec';
@@ -42,7 +42,6 @@ const configInMemory = {
   scheduler: {
     featuresRefreshRate: 1,
     segmentsRefreshRate: 1,
-    metricsRefreshRate: 3000, // for now I don't want to publish metrics during E2E run.
     impressionsRefreshRate: 3000  // for now I don't want to publish impressions during E2E run.
   },
   streamingEnabled: false
@@ -59,7 +58,6 @@ const configInMemoryWithBucketingKey = {
   scheduler: {
     featuresRefreshRate: 1,
     segmentsRefreshRate: 1,
-    metricsRefreshRate: 3000, // for now I don't want to publish metrics during E2E run.
     impressionsRefreshRate: 3000  // for now I don't want to publish impressions during E2E run.
   },
   streamingEnabled: false
@@ -73,7 +71,6 @@ const configInLocalStorage = {
   scheduler: {
     featuresRefreshRate: 1,
     segmentsRefreshRate: 1,
-    metricsRefreshRate: 3000, // for now I don't want to publish metrics during E2E run.
     impressionsRefreshRate: 3000  // for now I don't want to publish impressions during E2E run.
   },
   storage: InLocalStorage({
@@ -104,9 +101,8 @@ tape('## E2E CI Tests ##', function (assert) {
   assert.test('E2E / Impressions Debug Mode', impressionsSuiteDebug.bind(null, fetchMock));
   /* Check impression listener */
   assert.test('E2E / Impression listener', impressionsListenerSuite);
-  /* Check metrics */
-  // @TODO uncomment when telemetry is implemented
-  // assert.test('E2E / Metrics', metricsSuite.bind(null, fetchMock));
+  /* Check telemetry */
+  assert.test('E2E / Telemetry', telemetrySuite.bind(null, fetchMock));
   /* Check events */
   assert.test('E2E / Events', withoutBindingTT.bind(null, fetchMock));
   // Next test only applies for the isomorphic JS SDK, that support clients with bound TT
