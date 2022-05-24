@@ -1,4 +1,4 @@
-0.6.0 (May 23, 2022)
+0.6.0 (May 24, 2022)
  - Added `scheduler.telemetryRefreshRate` property to SDK configuration.
  - Updated SDK telemetry storage, metrics and updater to be more effective and send less often.
  - Bugfixing - Updated default values for `scheduler.impressionsRefreshRate` config parameter: 300s for OPTIMIZED impression mode and 60s for DEBUG impression mode (previously it was 60s for both).
