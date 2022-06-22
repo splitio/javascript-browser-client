@@ -529,7 +529,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   sync: {
     splitFilters: splitFilters,
     impressionsMode: 'DEBUG',
-    localhostMode: LocalhostFromObject()
+    localhostMode: LocalhostFromObject(),
+    enabled: true
   },
   userConsent: 'GRANTED'
 };
@@ -576,6 +577,7 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   streamingEnabled: true,
   sync: {
     impressionsMode: 'DEBUG',
+    enabled: true
   },
   userConsent: 'GRANTED'
 };
