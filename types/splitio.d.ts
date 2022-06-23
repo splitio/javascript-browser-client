@@ -93,7 +93,8 @@ interface ISettings {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
     localhostMode?: SplitIO.LocalhostFactory,
-    onlyImpressionsAndEvents?: boolean
+    enabled?: boolean
+    onlySubmitters?: boolean
   },
   readonly userConsent: SplitIO.ConsentStatus
 }
@@ -243,16 +244,25 @@ interface ISharedSettings {
      * ```
      * @property {Object} localhostMode
      */
-    localhostMode?: SplitIO.LocalhostFactory,
+    localhostMode?: SplitIO.LocalhostFactory
+    /**
+     * Controls the SDK continuous synchronization flags.
+     *
+     * When `true` a running SDK will process rollout plan updates performed on the UI (default).
+     * When false it'll just fetch all data upon init
+     *
+     * @property {boolean} enabled
+     * @default true
+     */
+    enabled?: boolean
     /*
      * @TODO
      *
-     * false by default
-     * if true:
-     * - In standalone mode, it will DISABLE splits and segments synchronization (i.e., polling and streaming)
-     * - In consumer mode, it will ENABLE events and impressions synchronization (i.e., submitters)
+     * False by default.
+     * If true and standalone mode, it will DISABLE splits and segments synchronization (i.e., polling and streaming).
+     * In consumer and partial consumer mode, it has no effect
      */
-    onlyImpressionsAndEvents?: boolean
+    onlySubmitters?: boolean
   }
 }
 /**
