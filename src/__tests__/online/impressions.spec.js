@@ -36,7 +36,6 @@ export default function (fetchMock, assert) {
     scheduler: {
       featuresRefreshRate: 0.5,
       segmentsRefreshRate: 0.5,
-      metricsRefreshRate: 3000,
       impressionsRefreshRate: 0.5
     },
     startup: {
@@ -117,7 +116,7 @@ export default function (fetchMock, assert) {
     // depends on hierarchical_dep_hierarchical which depends on hierarchical_dep_always_on
     assert.equal(client.getTreatment('hierarchical_splits_test'), 'on', 'We should get an evaluation as always.');
     assert.deepEqual(client.getTreatmentWithConfig('split_with_config'), {
-      treatment: 'on',
+      treatment: 'o.n',
       config: '{"color":"brown","dimensions":{"height":12,"width":14},"text":{"inner":"click me"}}'
     }, 'We should get an evaluation as always.');
     client.getTreatmentWithConfig('split_with_config');

@@ -8,6 +8,10 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build:
     name: Build
@@ -19,7 +23,7 @@ jobs:
       - name: Set up nodejs
         uses: actions/setup-node@v2
         with:
-          node-version: 'lts/*'
+          node-version: '14'
           cache: 'npm'
 
       - name: npm CI
@@ -37,28 +41,34 @@ jobs:
       - name: npm Build
         run: BUILD_BRANCH=$(echo "${GITHUB_REF#refs/heads/}") BUILD_COMMIT=${{ github.sha }} npm run build
 
-      - name: Deploy S3 Development
+      - name: Configure AWS credentials (development)
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/development' }}
-        uses: jakejarvis/s3-sync-action@v0.5.1
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          args: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
-        env:
-          AWS_S3_BUCKET: 'aws-development-split-public'
-          AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_STAGE_USER }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_STAGE_KEY }}
-          AWS_REGION: 'us-east-1'
-          SOURCE_DIR: './umd'
-          DEST_DIR: sdk
+          role-to-assume: arn:aws:iam::079419646996:role/public-assets
+          aws-region: us-east-1
 
-      - name: Deploy S3 Main
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        uses: jakejarvis/s3-sync-action@v0.5.1
-        with:
-          args: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+      - name: Upload to S3 (development)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/development' }}
+        run: aws s3 sync $SOURCE_DIR s3://$BUCKET/$DEST_DIR $ARGS
         env:
-          AWS_S3_BUCKET: 'split-public'
-          AWS_ACCESS_KEY_ID: ${{ secrets.PUBLIC_ASSETS_PROD_USER }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PUBLIC_ASSETS_PROD_KEY }}
-          AWS_REGION: 'us-east-1'
-          SOURCE_DIR: './umd'
+          BUCKET: split-public-stage
+          SOURCE_DIR: ./umd
           DEST_DIR: sdk
+          ARGS: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+
+      - name: Configure AWS credentials (main)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::825951051969:role/public-assets
+          aws-region: us-east-1
+
+      - name: Upload to S3 (main)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: aws s3 sync $SOURCE_DIR s3://$BUCKET/$DEST_DIR $ARGS
+        env:
+          BUCKET: split-public
+          SOURCE_DIR: ./umd
+          DEST_DIR: sdk
+          ARGS: --acl public-read --follow-symlinks --cache-control max-age=31536000,public

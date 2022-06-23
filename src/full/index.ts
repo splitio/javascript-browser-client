@@ -6,4 +6,5 @@ export { ErrorLogger } from '@splitsoftware/splitio-commons/src/logger/browser/E
 export { WarnLogger } from '@splitsoftware/splitio-commons/src/logger/browser/WarnLogger';
 export { InfoLogger } from '@splitsoftware/splitio-commons/src/logger/browser/InfoLogger';
 export { DebugLogger } from '@splitsoftware/splitio-commons/src/logger/browser/DebugLogger';
+export { PluggableStorage } from '@splitsoftware/splitio-commons/src/storages/pluggable';
 export { DataLoaderFactory } from '@splitsoftware/splitio-commons/src/storages/dataLoader';

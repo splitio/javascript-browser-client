@@ -4,7 +4,8 @@
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "import"
   ],
 
   "env": {
@@ -43,7 +44,11 @@
       "rules": {
         "no-restricted-syntax": ["error", "ForOfStatement", "ForInStatement", "ArrayPattern"],
         "compat/compat": ["error", "defaults, not ie < 10"],
-        "no-throw-literal": "error"
+        "no-throw-literal": "error",
+        "import/no-default-export": "error",
+        "import/no-self-import": "error",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error"
       },
       "parserOptions": {
         "ecmaVersion": 2015,

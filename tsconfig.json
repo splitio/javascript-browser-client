@@ -6,6 +6,7 @@
     "allowJs": true,                          /* Allow javascript files to be compiled. */
     "declaration": false,                     /* Generates corresponding '.d.ts' file. */
     "sourceMap": false,                       /* Generates corresponding '.map' file. */
+    "importHelpers": true,                    /* Import emit helpers from 'tslib', to avoid duplicated helpers in builds. */
 
     /* Strict Type-Checking Options */
     "strict": true,                           /* Enable all strict type-checking options. */
@@ -17,11 +18,9 @@
     "esModuleInterop": true                   /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
   },
   "include": [
-    "src/index.ts",
-    "src/full/index.ts"
+    "src"
   ],
   "exclude": [
-    "node_modules",
     "src/**/__tests__/**"
   ]
 }

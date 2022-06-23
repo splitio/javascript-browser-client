@@ -11,7 +11,7 @@
  *
  */
 
-import EventEmitter from '@splitsoftware/splitio-commons/src/utils/MinEvents';
+import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 
 const defaultOptions = {
   withCredentials: false

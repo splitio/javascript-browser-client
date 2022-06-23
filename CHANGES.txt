@@ -1,3 +1,35 @@
+0.6.0 (May 24, 2022)
+ - Added `scheduler.telemetryRefreshRate` property to SDK configuration.
+ - Updated SDK telemetry storage, metrics and updater to be more effective and send less often.
+ - Bugfixing - Updated default values for `scheduler.impressionsRefreshRate` config parameter: 300s for OPTIMIZED impression mode and 60s for DEBUG impression mode (previously it was 60s for both).
+
+0.5.0 (April 7, 2022)
+ - Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
+ - Added `scheduler.impressionsQueueSize` property to SDK configuration to limit the amount of impressions tracked in memory. Read more in our docs.
+ - Updated format for MySegments keys in LocalStorage, keeping backwards compatibility (issue https://github.com/splitio/javascript-client/issues/638).
+ - Updated some dependencies for vulnerability fixes.
+ - Bugfixing - Updated internal isObject utility function, to avoid unexpected behaviors on frameworks and libraries that uses multiple VM contexts, like NuxtJS dev server.
+ - Bugfixing - Fixed validation of `core.key` SDK configuration param, to parse it into a string and log a warning when passing a number (Related to issue https://github.com/splitio/react-native-client/issues/19).
+ - Bugfixing - Fixed validation of `sync.impressionsMode` SDK configuration param, to avoid an exception on SplitFactory instantiation when passing a non-string value.
+ - Bugfixing - Fixed streaming synchronization issue when using multiple clients.
+ - Bugfixing - Fixed issue with internal Map ponyfill that results in logger not working properly on IE11 browser.
+
+0.4.1 (February 22, 2022)
+ - Updated karma and some transitive dependencies for vulnerability fixes.
+
+0.4.0 (January 19, 2022)
+ - Added support to SDK clients on browser to optionally bind attributes to the client, keeping these loaded within the SDK along with the user ID, for easier usage when requesting flag.
+ - Updated some transitive dependencies for vulnerability fixes.
+
+0.3.0 (January 11, 2022)
+ - Added support for the SDK to run in "consumer" and "partial consumer" modes, with a pluggable implementation of it's internal storage,
+  enabling customers to implement this caching with any storage technology of choice and connect it to the SDK instance to be used instead of
+  its in-memory storage (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#sharing-state-with-a-pluggable-storage).
+ - Updated @splitsoftware/splitio-commons dependency to version 1.1.0, which includes:
+      - Updated multiple modules due to general polishing and improvements, including the replacement of default exports with named exports,
+      to avoid runtime errors with some particular configurations of Webpack projects.
+      - Bugfixing - Fixed issue returning dynamic configs if treatment name contains a dot (".").
+
 0.2.0 (October 20, 2021)
  - Added localhost mode support (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode).
  - Updated @splitsoftware/splitio-commons dependency to version 1.0.0, which includes:
