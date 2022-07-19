@@ -91,6 +91,7 @@ tape('## E2E CI Tests ##', function (assert) {
   fetchMock.get(url(settings, '/mySegments/emmanuel%40split.io'), { status: 200, body: mySegmentsEmmanuel });
   fetchMock.post(url(settings, '/testImpressions/bulk'), 200);
   fetchMock.post(url(settings, '/testImpressions/count'), 200);
+  Math.random = () => 0.5; // SDKs without telemetry
 
   /* Check client evaluations. */
   assert.test('E2E / In Memory', evaluationsSuite.bind(null, configInMemory, fetchMock));
