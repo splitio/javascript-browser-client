@@ -406,4 +406,50 @@ export default function (fetchMock, assert) {
 
   });
 
+  // test 'autoRequire' script placed right after GA script tag.
+  // We get same result if it is placed right before, and also applies for Universal Analytics configured with GTM and gtag.js tags.
+  // If it is executed asynchronously, trackers creation might be missed.
+  assert.test(t => {
+    fetchMock.postOnce(url(settings, '/events/bulk'), (url, opts) => {
+      const resp = JSON.parse(opts.body);
+      const sentHitsTracker1 = window.gaSpy.getHits('tracker1');
+      const sentHitsTracker2 = window.gaSpy.getHits('tracker2');
+
+      t.equal(resp.length, sentHitsTracker1.length + sentHitsTracker2.length, 'All hits of all trackers are captured as Split events');
+
+      setTimeout(() => {
+        client.destroy();
+        t.end();
+      });
+      return 200;
+    });
+
+    gaTag();
+
+    // Run autoRequire iife. `require` cannot be used because it is not polyfilled by "rollup-plugin-node-polyfills"
+    // eslint-disable-next-line
+    (function(n,t,e){n[e]=n[e]||t;n[t]=n[t]||function(){n[t].q.push(arguments)};n[t].q=n[t].q||[];var r={};function i(n){return typeof n==="object"&&typeof n.name==="string"&&n.name}function o(e){if(e&&e[0]==="create"){var o=i(e[1])||i(e[2])||i(e[3])||(typeof e[3]==="string"?e[3]:undefined);if(!r[o]){r[o]=true;n[t]((o?o+".":"")+"require","splitTracker")}}}n[t].q.forEach(o);var u=n[t].q.push;n[t].q.push=function(n){var t=u.apply(this,arguments);o(n);return t}})(window,"ga","GoogleAnalyticsObject");
+
+    window.ga('create', 'UA-00000000-1', { name: 'tracker1', cookieDomain: 'auto', siteSpeedSampleRate: 0 });
+
+    gaSpy(['tracker1']);
+
+    window.ga('tracker1.send', 'event', 'mycategory', 'myaction1'); // Captured
+
+    const factory = SplitFactory({
+      ...config,
+      integrations: [GoogleAnalyticsToSplit({
+        autoRequire: true
+      })],
+    });
+
+    window.ga('tracker1.send', 'event', 'mycategory', 'myaction2'); // Captured
+    window.ga('create', 'UA-00000001-1', 'auto', 'tracker2', { siteSpeedSampleRate: 0 }); // New tracker
+    gaSpy(['tracker2'], false);
+    window.ga('tracker2.send', 'event', 'mycategory', 'myaction3'); // Captured
+
+    client = factory.client();
+
+  });
+
 }

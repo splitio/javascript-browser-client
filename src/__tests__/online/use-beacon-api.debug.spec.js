@@ -4,7 +4,7 @@ import { settingsValidator } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
 import { DEBUG } from '@splitsoftware/splitio-commons/src/utils/constants';
-import { url, triggerUnloadEvent } from '../testUtils';
+import { url, triggerPagehideEvent, triggerVisibilitychange } from '../testUtils';
 
 const config = {
   core: {
@@ -60,7 +60,7 @@ const assertCallsToBeaconAPI = (assert) => {
   assertEventSent(assert, parsedPayload.entries[0]);
 };
 
-// This E2E test checks that Beacon API is not called when page unload is triggered and there are not events or impressions to send.
+// This E2E test checks that Beacon API is not called when page is hidden and there are not events or impressions to send.
 function beaconApiNotSendTestDebug(fetchMock, assert) {
   sendBeaconSpyDebug = sinon.spy(window.navigator, 'sendBeacon');
 
@@ -74,8 +74,9 @@ function beaconApiNotSendTestDebug(fetchMock, assert) {
   const client = splitio.client();
   client.on(client.Event.SDK_READY, () => {
 
-    // trigger unload event, without tracked events and impressions
-    triggerUnloadEvent();
+    // trigger events, without tracked events and impressions
+    triggerPagehideEvent();
+    triggerVisibilitychange();
 
     // destroy the client and execute the next E2E test named beaconApiSendTest
     setTimeout(() => {
@@ -89,7 +90,7 @@ function beaconApiNotSendTestDebug(fetchMock, assert) {
   });
 }
 
-// This E2E test checks that impressions and events are sent to backend via Beacon API when page unload is triggered.
+// This E2E test checks that impressions and events are sent to backend via Beacon API when page is hidden.
 function beaconApiSendTestDebug(fetchMock, assert) {
 
   // Init and run Split client
@@ -99,8 +100,8 @@ function beaconApiSendTestDebug(fetchMock, assert) {
     client.getTreatment('hierarchical_splits_test');
     client.track('sometraffictype', 'someEvent', 10);
 
-    // trigger unload event inmmediatly, before scheduled push of events and impressions
-    triggerUnloadEvent();
+    // trigger visibilitychange event inmmediatly, before scheduled push of events and impressions
+    triggerVisibilitychange();
 
     // queue the assertion of the Beacon requests, destroy the client and execute the next E2E test named fallbackTest
     setTimeout(() => {
@@ -114,7 +115,7 @@ function beaconApiSendTestDebug(fetchMock, assert) {
   });
 }
 
-// This E2E test checks that impressions and events are sent to backend via Axios when page unload is triggered and Beacon API is not available.
+// This E2E test checks that impressions and events are sent to backend via Fetch API when page is hidden and Beacon API is not available.
 function fallbackTest(fetchMock, assert) {
 
   // destroy reference to Beacon API
@@ -134,7 +135,7 @@ function fallbackTest(fetchMock, assert) {
     }, 0);
   })();
 
-  // Mock endpoints used by Axios
+  // Mock endpoints
   fetchMock.postOnce(url(settings, '/testImpressions/bulk'), (url, opts) => {
     const resp = JSON.parse(opts.body);
     assert.ok(opts, 'Fallback to /testImpressions/bulk');
@@ -153,8 +154,8 @@ function fallbackTest(fetchMock, assert) {
   client.on(client.Event.SDK_READY, () => {
     client.getTreatment('hierarchical_splits_test');
     client.track('sometraffictype', 'someEvent', 10);
-    // trigger unload event inmmediatly, before scheduled push of events and impressions
-    triggerUnloadEvent();
+    // trigger pagehide event inmmediatly, before scheduled push of events and impressions
+    triggerPagehideEvent();
   });
 }
 

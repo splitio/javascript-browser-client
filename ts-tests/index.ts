@@ -476,6 +476,7 @@ let customGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = 
   mapper: function (model: UniversalAnalytics.Model, defaultMapping: SplitIO.EventData): SplitIO.EventData { return eventDataSample; },
   prefix: 'PREFIX',
   identities: [{ key: 'key1', trafficType: 'tt1' }, { key: 'key2', trafficType: 'tt2' }],
+  autoRequire: true
 };
 let customSplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {
   events: false,

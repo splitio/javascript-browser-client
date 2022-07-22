@@ -91,6 +91,7 @@ tape('## E2E CI Tests ##', function (assert) {
   fetchMock.get(url(settings, '/mySegments/emmanuel%40split.io'), { status: 200, body: mySegmentsEmmanuel });
   fetchMock.post(url(settings, '/testImpressions/bulk'), 200);
   fetchMock.post(url(settings, '/testImpressions/count'), 200);
+  Math.random = () => 0.5; // SDKs without telemetry
 
   /* Check client evaluations. */
   assert.test('E2E / In Memory', evaluationsSuite.bind(null, configInMemory, fetchMock));
@@ -119,9 +120,9 @@ tape('## E2E CI Tests ##', function (assert) {
   assert.test('E2E / Readiness', readinessSuite.bind(null, fetchMock));
   /* Validate headers for ip and hostname are not sended with requests (ignore setting IPAddressesEnabled) */
   assert.test('E2E / Ignore setting IPAddressesEnabled', ignoreIpAddressesSettingSuite.bind(null, fetchMock));
-  /* Check that impressions and events are sended to backend via Beacon API or Fetch when page unload is triggered. */
-  assert.test('E2E / Use Beacon API (or Fetch if not available) to send remaining impressions and events when browser page is unload', useBeaconApiSuite.bind(null, fetchMock));
-  assert.test('E2E / Use Beacon API DEBUG (or Fetch if not available) to send remaining impressions and events when browser page is unload', useBeaconDebugApiSuite.bind(null, fetchMock));
+  /* Check that impressions and events are sended to backend via Beacon API or Fetch when pagehide/visibilitychange events are triggered. */
+  assert.test('E2E / Use Beacon API (or Fetch if not available) to send remaining impressions and events when browser page is unload or hidden', useBeaconApiSuite.bind(null, fetchMock));
+  assert.test('E2E / Use Beacon API DEBUG (or Fetch if not available) to send remaining impressions and events when browser page is unload or hidden', useBeaconDebugApiSuite.bind(null, fetchMock));
   /* Validate ready from cache behaviour (might be merged into another suite if we end up having simple behavior around it as expected) */
   assert.test('E2E / Readiness from cache', readyFromCache.bind(null, fetchMock));
   /* Validate readiness with ready promises */
