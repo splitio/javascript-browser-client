@@ -244,11 +244,11 @@ interface ISharedSettings {
      */
     localhostMode?: SplitIO.LocalhostFactory
     /**
-     * Controls the SDK continuous synchronization flags. 
-     * 
-     * When `true` a running SDK will process rollout plan updates performed on the UI (default). 
+     * Controls the SDK continuous synchronization flags.
+     *
+     * When `true` a running SDK will process rollout plan updates performed on the UI (default).
      * When false it'll just fetch all data upon init
-     * 
+     *
      * @property {boolean} enabled
      * @default true
      */
@@ -628,7 +628,7 @@ declare namespace SplitIO {
   /**
    * Configuration params for 'Google Analytics to Split' integration plugin, to track Google Analytics hits as Split events.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
+   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#google-analytics-to-split}
    */
   interface GoogleAnalyticsToSplitOptions {
     /**
@@ -669,6 +669,17 @@ declare namespace SplitIO {
      * If not provided, events are sent using the key and traffic type provided at SDK config.
      */
     identities: Identity[],
+    /**
+     * Optional flag to log an error if the `auto-require` script is not detected.
+     * The auto-require script automatically requires the `splitTracker` plugin for created trackers,
+     * and should be placed right after your Google Analytics, Google Tag Manager or gtag.js script tag.
+     *
+     * @see {@link https://help.split.io/hc/en-us/articles/360040838752#set-up-with-gtm-and-gtag.js}
+     *
+     * @property {boolean} autoRequire
+     * @default false
+     */
+    autoRequire?: boolean,
   }
   /**
    * Object representing the data sent by Split (events and impressions).
@@ -680,7 +691,7 @@ declare namespace SplitIO {
   /**
    * Configuration params for 'Split to Google Analytics' integration plugin, to track Split impressions and events as Google Analytics hits.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
+   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#split-to-google-analytics}
    */
   interface SplitToGoogleAnalyticsOptions {
     /**
