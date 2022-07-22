@@ -35,14 +35,14 @@ declare module JsSdk {
   /**
    * Enable 'Google Analytics to Split' integration, to track Google Analytics hits as Split events.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
+   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#google-analytics-to-split}
    */
   export function GoogleAnalyticsToSplit(options?: SplitIO.GoogleAnalyticsToSplitOptions): SplitIO.IntegrationFactory;
 
   /**
    * Enable 'Split to Google Analytics' integration, to track Split impressions and events as Google Analytics hits.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#integrations}
+   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#split-to-google-analytics}
    */
   export function SplitToGoogleAnalytics(options?: SplitIO.SplitToGoogleAnalyticsOptions): SplitIO.IntegrationFactory;
 

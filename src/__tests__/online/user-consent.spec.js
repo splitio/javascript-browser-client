@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { SplitFactory } from '../../index';
-import { nearlyEqual, url, triggerUnloadEvent } from '../testUtils';
+import { nearlyEqual, url, triggerPagehideEvent } from '../testUtils';
 
 const trackedImpressions = [];
 
@@ -96,9 +96,9 @@ export default function userConsent(fetchMock, t) {
       ], ['on', 'on', 'on', 'on', 'on', 'on', 'on', 'on'], 'evaluating on SDK ready');
       if (isTracking) expectedTrackedImpressions += 8;
 
-      // Trigger unload event to validate browser listener behaviour
+      // Trigger pagehide event to validate browser listener behaviour
       // Beacon API is used only if user consent is GRANTED
-      triggerUnloadEvent();
+      triggerPagehideEvent();
       if (factory.UserConsent.getStatus() === factory.UserConsent.Status.GRANTED) {
         assert.ok(sendBeaconSpy.calledThrice, 'sendBeacon should have been called thrice');
       } else {
