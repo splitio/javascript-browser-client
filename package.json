@@ -14,7 +14,8 @@
     "esm",
     "src",
     "types",
-    "full"
+    "full",
+    "scripts/ga-to-split-autorequire.js"
   ],
   "scripts": {
     "check": "npm run check:lint && npm run check:types && npm run check:version",
@@ -26,6 +27,7 @@
     "build:cjs": "rimraf cjs && tsc -outDir cjs -m CommonJS && ./scripts/build_cjs_replace_imports.sh",
     "build:umd-visualizer": "rollup --config rollup.visualizer.config.js",
     "build:umd": "rollup --config rollup.ci.config.js --branch=$BUILD_BRANCH --commit_hash=$BUILD_COMMIT",
+    "build:ga-to-split-autorequire": "terser ./node_modules/@splitsoftware/splitio-commons/src/integrations/ga/autoRequire.js --mangle --output ./scripts/ga-to-split-autorequire.js",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "npm run test:e2e-logger && npm run test:e2e-offline && npm run test:e2e-online && npm run test:e2e-destroy && npm run test:e2e-errors && npm run test:e2e-push && npm run test:e2e-gaintegration && npm run test:e2e-consumer",
