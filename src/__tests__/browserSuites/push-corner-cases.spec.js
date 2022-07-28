@@ -7,7 +7,7 @@ import { nearlyEqual, url } from '../testUtils';
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
-import { SplitFactory, InLocalStorage } from '../../';
+import { SplitFactory, InLocalStorage } from '../..';
 import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
