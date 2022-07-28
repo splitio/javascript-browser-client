@@ -546,12 +546,11 @@ export default function readyPromiseAssertions(fetchMock, assert) {
         t.false(consoleSpy.log.calledWithExactly('[WARN]  splitio => No listeners for SDK Readiness detected. Incorrect control treatments could have been logged if you called getTreatment/s while the SDK was not yet ready.'),
           'No warning logged');
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const sharedClientWithoutCb = splitio.client('emiliano@split.io');
         setTimeout(() => {
           t.true(consoleSpy.log.calledWithExactly('[WARN]  splitio => No listeners for SDK Readiness detected. Incorrect control treatments could have been logged if you called getTreatment/s while the SDK was not yet ready.'),
             'Warning logged');
-          client.destroy().then(() => {
+          Promise.all([sharedClientWithoutCb.destroy(), client.destroy()]).then(() => {
             client.ready()
               .then(() => {
                 t.pass('### SDK IS READY - the promise remains resolved after client destruction.');

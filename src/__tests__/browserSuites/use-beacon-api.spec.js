@@ -3,8 +3,9 @@ import { SplitFactory } from '../../index';
 import { settingsValidator } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
-import { url, triggerPagehideEvent, triggerVisibilitychange } from '../testUtils';
 import { OPTIMIZED } from '@splitsoftware/splitio-commons/src/utils/constants';
+import { url } from '../testUtils';
+import { triggerPagehideEvent, triggerVisibilitychange } from '../testUtils/browser';
 
 const config = {
   core: {

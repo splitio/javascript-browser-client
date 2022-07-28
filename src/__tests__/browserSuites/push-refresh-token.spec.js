@@ -6,7 +6,7 @@ import authPushDisabled from '../mocks/auth.pushDisabled.json';
 
 import { nearlyEqual, url } from '../testUtils';
 
-// Polyfill EventSource with mock
+// Replace global EventSource with mock
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 

@@ -13,7 +13,7 @@ function countImpressions(parsedImpressionsBulkPayload) {
 const config = {
   core: {
     key: 'facundo@split.io',
-    trafficType: 'user', // ignored for default client, but used as default identity in GaToSplit integration
+    trafficType: 'user', // Traffic type is not bound to default client in JS Browser SDK, but it is used as identity in GaToSplit integration
   },
   integrations: [GoogleAnalyticsToSplit(), SplitToGoogleAnalytics()],
   streamingEnabled: false,

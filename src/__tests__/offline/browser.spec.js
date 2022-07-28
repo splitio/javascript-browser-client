@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import { SplitFactory, InLocalStorage } from '../../full';
-import { SplitFactory as SplitFactorySlim, LocalhostFromObject } from '../../';
+import { SplitFactory as SplitFactorySlim, LocalhostFromObject } from '../../index';
 import { settingsValidator } from '../../settings';
 
 const settings = settingsValidator({ core: { key: 'facundo@split.io' } });

@@ -21,14 +21,15 @@ import segmentRemovalMessage from '../mocks/message.V2.SEGMENT_REMOVAL.145755265
 import authPushEnabledNicolas from '../mocks/auth.pushEnabled.nicolas@split.io.json';
 import authPushEnabledNicolasAndMarcio from '../mocks/auth.pushEnabled.nicolas@split.io.marcio@split.io.json';
 
-import { nearlyEqual, url, hasNoCacheHeader, triggerUnloadEvent } from '../testUtils';
+import { nearlyEqual, url, hasNoCacheHeader } from '../testUtils';
+import { triggerUnloadEvent } from '../testUtils/browser';
 import includes from 'lodash/includes';
 
 // Replace original EventSource with mock
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
-import { SplitFactory, DebugLogger } from '../../index';
+import { SplitFactory } from '../../index';
 import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
@@ -49,7 +50,6 @@ const config = {
   },
   urls: baseUrls,
   streamingEnabled: true,
-  debug: DebugLogger(),
 };
 const settings = settingsValidator(config);
 

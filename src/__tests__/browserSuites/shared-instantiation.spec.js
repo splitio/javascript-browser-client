@@ -13,7 +13,7 @@ const settings = settingsValidator({
  * @param {boolean} startWithTT whether the SDK settings includes a `core.trafficType` config param or not
  * @param {boolean} sdkIgnoredTT whether the SDK ignores TT (i.e, clients without bound TT) or not (client with optional bound TT)
  */
-export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
+export default function sharedInstantiationSuite(startWithTT, sdkIgnoresTT, fetchMock, assert) {
   // mocking mySegments endpoints with delays for new clients
   fetchMock.get(url(settings, '/mySegments/emiliano%2Fsplit.io'), { status: 200, body: { mySegments: [] } }, { delay: 100 });
   fetchMock.get(url(settings, '/mySegments/matias%25split.io'), { status: 200, body: { mySegments: [] } }, { delay: 200 });
@@ -42,10 +42,10 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
 
   assert.throws(factory.client.bind(factory, null), 'Calling factory.client() with a key parameter that is not a valid key should throw.');
   assert.throws(factory.client.bind(factory, {}), 'Calling factory.client() with a key parameter that is not a valid key should throw.');
-  if (sdkIgnoresTT) { // Browser JS SDK
+  if (sdkIgnoresTT) { // JS Browser SDK
     assert.doesNotThrow(factory.client.bind(factory, 'facundo@split.io', null), 'Calling factory.client() with a traffic type parameter that is not valid shouldn\'t throw because it is ignored.');
     assert.doesNotThrow(factory.client.bind(factory, 'facundo@split.io', []), 'Calling factory.client() with a traffic type parameter that is not valid shouldn\'t throw because it is ignored.');
-  } else { // Isomorphic JS SDK
+  } else { // JS SDK (Isomorphic)
     assert.throws(factory.client.bind(factory, 'facundo@split.io', null), 'Calling factory.client() with a traffic type parameter that is not a valid should throw.');
     assert.throws(factory.client.bind(factory, 'facundo@split.io', []), 'Calling factory.client() with a traffic type parameter that is not a valid should throw.');
   }
@@ -143,9 +143,6 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   /* Assert client.track(), no need to wait for ready. */
   trackAssertions();
 
-  emmanuelClient.setAttribute('attr', 10);
-  nicolasClient.setAttributes({ attr: 9 });
-
   /* Assert getTreatment/s */
   const expectControls = ['control', 'control', 'control', 'control'];
   // If main is not ready and returning controls, they all return controls.
@@ -154,6 +151,9 @@ export default function (startWithTT, sdkIgnoresTT, fetchMock, assert) {
   getTreatmentsAssertions(marcioClient, expectControls);
   getTreatmentsAssertions(emilianoClient, expectControls);
   getTreatmentsAssertions(emmanuelClient, expectControls);
+
+  emmanuelClient.setAttribute('attr', 10);
+  nicolasClient.setAttributes({ attr: 9 });
 
   // Each client is ready when splits and its segments are fetched
   mainClient.ready().then(() => {

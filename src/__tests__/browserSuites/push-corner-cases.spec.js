@@ -7,7 +7,7 @@ import { nearlyEqual, url } from '../testUtils';
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
-import { SplitFactory, InLocalStorage } from '../..';
+import { SplitFactory, InLocalStorage } from '../../index';
 import { settingsValidator } from '../../settings';
 
 const userKey = 'nicolas@split.io';
@@ -95,6 +95,6 @@ export function testSplitKillOnReadyFromCache(fetchMock, assert) {
     const lapse = Date.now() - start;
     assert.true(nearlyEqual(lapse, MILLIS_SPLIT_CHANGES_RESPONSE), 'SDK_READY once split changes arrives');
 
-    client.destroy().then(()=> { assert.end();});
+    client.destroy().then(() => { assert.end(); });
   });
 }

@@ -362,7 +362,6 @@ export default function (config, fetchMock, assert) {
 
   };
 
-
   for (i; i < SDK_INSTANCES_TO_TEST; i++) {
     let splitio = SplitFactory(config);
 
