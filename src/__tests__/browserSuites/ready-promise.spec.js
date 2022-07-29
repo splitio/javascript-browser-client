@@ -10,7 +10,7 @@ const consoleSpy = {
   error: sinon.spy(console, 'error'),
 };
 
-import { SplitFactory, WarnLogger } from '../../index';
+import { SplitFactory, WarnLogger } from '../../';
 
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
