@@ -3,7 +3,7 @@ import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import map from 'lodash/map';
 import pick from 'lodash/pick';
-import { SplitFactory, DebugLogger } from '../../';
+import { SplitFactory } from '../../';
 import { settingsFactory } from '../../settings';
 import splitChangesMock1 from '../mocks/splitChanges.since.-1.till.1500492097547.json';
 import splitChangesMock2 from '../mocks/splitChanges.since.1500492097547.json';
@@ -30,7 +30,6 @@ tape('SDK destroy for BrowserJS', async function (assert) {
       authorizationKey: 'fake-key',
       key: 'ut1'
     },
-    debug: DebugLogger(),
     streamingEnabled: false
   };
 
