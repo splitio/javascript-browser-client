@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import { SplitFactory, SplitToGoogleAnalytics, DebugLogger } from '../../index';
-import { settingsValidator } from '../../settings';
+import { SplitFactory, SplitToGoogleAnalytics, DebugLogger } from '../../';
+import { settingsFactory } from '../../settings';
 import { gaSpy, gaTag, removeGaTag, addGaTag } from './gaTestUtils';
 import { SPLIT_IMPRESSION, SPLIT_EVENT, DEBUG } from '@splitsoftware/splitio-commons/src/utils/constants';
 import { url } from '../testUtils';
@@ -26,7 +26,7 @@ const config = {
   }
 };
 
-const settings = settingsValidator(config);
+const settings = settingsFactory(config);
 
 export default function (fetchMock, assert) {
 

@@ -7,7 +7,7 @@ import { SDK_NOT_READY } from '@splitsoftware/splitio-commons/src/utils/labels';
 import { url } from '../testUtils';
 import { applyOperations } from './wrapper-commands';
 
-import { SplitFactory, PluggableStorage } from '../../index';
+import { SplitFactory, PluggableStorage } from '../../';
 
 const expectedSplitName = 'hierarchical_splits_testing_on';
 const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {} };

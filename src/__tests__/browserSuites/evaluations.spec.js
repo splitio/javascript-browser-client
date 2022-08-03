@@ -1,4 +1,4 @@
-import { SplitFactory } from '../../index';
+import { SplitFactory } from '../../';
 
 const SDK_INSTANCES_TO_TEST = 4;
 
@@ -361,7 +361,6 @@ export default function (config, fetchMock, assert) {
     }, 'If I get treatments right, I get a map of objects with those treatments and the configs when existent, null config otherwise.');
 
   };
-
 
   for (i; i < SDK_INSTANCES_TO_TEST; i++) {
     let splitio = SplitFactory(config);

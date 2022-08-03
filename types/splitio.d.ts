@@ -91,8 +91,8 @@ interface ISettings {
   readonly sync: {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
-    localhostMode?: SplitIO.LocalhostFactory,
-    enabled?: boolean
+    enabled: boolean,
+    localhostMode?: SplitIO.LocalhostFactory
   },
   readonly userConsent: SplitIO.ConsentStatus
 }
@@ -247,7 +247,7 @@ interface ISharedSettings {
      * Controls the SDK continuous synchronization flags.
      *
      * When `true` a running SDK will process rollout plan updates performed on the UI (default).
-     * When false it'll just fetch all data upon init
+     * When false it'll just fetch all data upon init.
      *
      * @property {boolean} enabled
      * @default true
