@@ -35,7 +35,6 @@ let trackPromise: Promise<boolean>;
 /**** Interfaces ****/
 
 // Facade return interface
-// let SDK: SplitIO.ISDK;
 let AsyncSDK: SplitIO.IAsyncSDK;
 let SDK: SplitIO.ISDK;
 // Settings interfaces
@@ -44,7 +43,6 @@ let SDK: SplitIO.ISDK;
 let browserSettings: SplitIO.IBrowserSettings;
 let browserAsyncSettings: SplitIO.IBrowserAsyncSettings;
 // Client & Manager APIs
-// let client: SplitIO.IClient;
 let client: SplitIO.IClient;
 let manager: SplitIO.IManager;
 let asyncClient: SplitIO.IAsyncClient;
@@ -193,10 +191,10 @@ AsyncSDK = SplitFactory(browserAsyncSettings);
 // The settings values the SDK expose.
 const instantiatedSettingsCore: {
   authorizationKey: string,
-  key: SplitIO.SplitKey,
+  key?: SplitIO.SplitKey,
   trafficType?: string,
   labelsEnabled: boolean,
-  IPAddressesEnabled: boolean
+  IPAddressesEnabled?: boolean
 } = SDK.settings.core;
 // const instantiatedSettingsMode: ('standalone' | 'consumer') = SDK.settings.mode;
 const instantiatedSettingsScheduler: { [key: string]: number } = SDK.settings.scheduler;
@@ -204,7 +202,7 @@ const instantiatedSettingsStartup: { [key: string]: number } = SDK.settings.star
 const instantiatedStorage: SplitIO.StorageSync = SDK.settings.storage;
 const instantiatedSettingsUrls: { [key: string]: string } = SDK.settings.urls;
 const instantiatedSettingsVersion: string = SDK.settings.version;
-let instantiatedSettingsFeatures = SDK.settings.features;
+let instantiatedSettingsFeatures = SDK.settings.features as SplitIO.MockedFeaturesMap;
 // // We should be able to write on features prop. The rest are readonly props.
 instantiatedSettingsFeatures.something = 'something';
 SDK.settings.features = { 'split_x': 'on' };
