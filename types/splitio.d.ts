@@ -72,7 +72,7 @@ interface ISettings {
     retriesOnFailureBeforeReady: number,
     eventsFirstPushWindow: number
   },
-  readonly storage?: SplitIO.StorageSyncFactory | SplitIO.StorageAsyncFactory,
+  readonly storage: SplitIO.StorageSyncFactory | SplitIO.StorageAsyncFactory,
   readonly urls: {
     events: string,
     sdk: string,
@@ -91,8 +91,8 @@ interface ISettings {
   readonly sync: {
     splitFilters: SplitIO.SplitFilter[],
     impressionsMode: SplitIO.ImpressionsMode,
+    enabled: boolean,
     localhostMode?: SplitIO.LocalhostFactory,
-    enabled?: boolean
   },
   readonly userConsent: SplitIO.ConsentStatus
 }
@@ -220,7 +220,7 @@ interface ISharedSettings {
      * Possible values are 'DEBUG' and 'OPTIMIZED'.
      * - DEBUG: will send all the impressions generated (recommended only for debugging purposes).
      * - OPTIMIZED: will send unique impressions to Split Servers avoiding a considerable amount of traffic that duplicated impressions could generate.
-     * @property {String} impressionsMode
+     * @property {string} impressionsMode
      * @default 'OPTIMIZED'
      */
     impressionsMode?: SplitIO.ImpressionsMode,
@@ -247,7 +247,7 @@ interface ISharedSettings {
      * Controls the SDK continuous synchronization flags.
      *
      * When `true` a running SDK will process rollout plan updates performed on the UI (default).
-     * When false it'll just fetch all data upon init
+     * When false it'll just fetch all data upon init.
      *
      * @property {boolean} enabled
      * @default true
@@ -392,7 +392,7 @@ declare namespace SplitIO {
    */
   type Event = 'init::timeout' | 'init::ready' | 'init::cache-ready' | 'state::update';
   /**
-   * Split attributes should be on object with values of type string or number (dates should be sent as millis since epoch).
+   * Split attributes should be on object with values of type string, boolean, number (dates should be sent as millis since epoch) or array of strings or numbers.
    * @typedef {Object.<AttributeType>} Attributes
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#attribute-syntax}
    */
@@ -406,7 +406,7 @@ declare namespace SplitIO {
   type AttributeType = string | number | boolean | Array<string | number>;
   /**
    * Split properties should be an object with values of type string, number, boolean or null. Size limit of ~31kb.
-   * @typedef {Object.<number, string, boolean, null>} Attributes
+   * @typedef {Object.<number, string, boolean, null>} Properties
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#track
    */
   type Properties = {
@@ -495,10 +495,10 @@ declare namespace SplitIO {
     }
   };
   /**
-   * A promise that will be resolved with that SplitView.
-   * @typedef {Promise<SplitView>} SplitView
+   * A promise that will be resolved with that SplitView or null if the split is not found.
+   * @typedef {Promise<SplitView | null>} SplitView
    */
-  type SplitViewAsync = Promise<SplitView>;
+  type SplitViewAsync = Promise<SplitView | null>;
   /**
    * An array containing the SplitIO.SplitView elements.
    */
@@ -885,7 +885,7 @@ declare namespace SplitIO {
   /**
    * Settings interface for SDK instances created on the browser.
    * @interface IBrowserSettings
-   * @extends ISharedSettings
+   * @extends IBrowserBasicSettings
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
   interface IBrowserSettings extends IBrowserBasicSettings {
@@ -1467,20 +1467,20 @@ declare namespace SplitIO {
      * @function names
      * @returns {SplitNames} The lists of Split names.
      */
-    names(): SplitNames,
+    names(): SplitNames;
     /**
      * Get the array of splits data in SplitView format.
      * @function splits
      * @returns {SplitViews} The list of SplitIO.SplitView.
      */
-    splits(): SplitViews,
+    splits(): SplitViews;
     /**
      * Get the data of a split in SplitView format.
      * @function split
      * @param {string} splitName The name of the split we wan't to get info of.
-     * @returns {SplitView} The SplitIO.SplitView of the given split.
+     * @returns {SplitView | null} The SplitIO.SplitView of the given split or null if the split is not found.
      */
-    split(splitName: string): SplitView,
+     split(splitName: string): SplitView | null;
   }
   /**
    * Representation of a manager instance with asynchronous storage of the SDK.
@@ -1493,19 +1493,19 @@ declare namespace SplitIO {
      * @function names
      * @returns {SplitNamesAsync} A promise that will resolve to the array of Splitio.SplitNames.
      */
-    names(): SplitNamesAsync,
+    names(): SplitNamesAsync;
     /**
      * Get the array of splits data in SplitView format.
      * @function splits
      * @returns {SplitViewsAsync} A promise that will resolve to the SplitIO.SplitView list.
      */
-    splits(): SplitViewsAsync,
+    splits(): SplitViewsAsync;
     /**
      * Get the data of a split in SplitView format.
      * @function split
      * @param {string} splitName The name of the split we wan't to get info of.
-     * @returns {SplitViewAsync} A promise that will resolve to the SplitIO.SplitView value.
+     * @returns {SplitViewAsync} A promise that will resolve to the SplitIO.SplitView value or null if the split is not found.
      */
-    split(splitName: string): SplitViewAsync,
+    split(splitName: string): SplitViewAsync;
   }
 }
