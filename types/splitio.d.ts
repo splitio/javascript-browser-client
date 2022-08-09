@@ -6,10 +6,9 @@
 
 /****** Exposed namespace ******/
 /**
- * @TODO update this comment and add link to merging namesapces from typescript
- * Types and interfaces for @splitsoftware/splitio package for usage when integrating javascript sdk on typescript apps.
+ * Types and interfaces for @splitsoftware/splitio package for usage when integrating Javascript Browser SDK on Typescript apps.
  * For the SDK package information
- * @see {@link https://www.npmjs.com/package/@splitsoftware/splitio}
+ * @see {@link https://www.npmjs.com/package/@splitsoftware/splitio-browserjs}
  */
 declare namespace SplitIO {
   /**
@@ -64,7 +63,7 @@ declare namespace SplitIO {
   /**
    * Settings interface with async storage for SDK instances created on the browser.
    * If your storage is synchronous (by defaut we use memory, which is sync) use SplitIO.IBrowserSettings instead.
-   * @interface IClientSideAsyncSettings
+   * @interface IBrowserAsyncSettings
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
   interface IBrowserAsyncSettings extends IClientSideSharedSettings, IPluggableSettings {
@@ -91,8 +90,11 @@ declare namespace SplitIO {
     storage: StorageAsyncFactory,
   }
 
-  // @TODO add document comment from JS-commons
-  type IClient = IClientWithKey;
+  /**
+   * This represents the interface for the Client instance with attributes binding, synchronous method calls, and client-side API, where each client has a key associated.
+   * @interface IClient
+   */
+  interface IClient extends IClientWithKey { }
   /**
    * This represents the interface for the SDK instance with synchronous method calls and client-side API, where client instances have a bound user key.
    * @interface ISDK
@@ -112,8 +114,11 @@ declare namespace SplitIO {
      */
     client(key: SplitKey): IClient,
   }
-  // @TODO put document comment here
-  type IAsyncClient = IAsyncClientWithKey;
+  /**
+   * This represents the interface for the Client instance with attributes binding, asynchronous method calls, and client-side API, where each client has a key associated.
+   * @interface IAsyncClient
+   */
+  interface IAsyncClient extends IAsyncClientWithKey { }
   /**
    * This represents the interface for the SDK instance with asynchronous method calls and client-side API, where client instances have a bound user key.
    * @interface IAsyncSDK
