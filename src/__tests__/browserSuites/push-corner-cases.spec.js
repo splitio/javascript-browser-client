@@ -8,7 +8,7 @@ import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
 import { SplitFactory, InLocalStorage } from '../../';
-import { settingsValidator } from '../../settings';
+import { settingsFactory } from '../../settings';
 
 const userKey = 'nicolas@split.io';
 
@@ -27,7 +27,7 @@ const config = {
     prefix: 'pushCornerCase'
   }),
 };
-const settings = settingsValidator(config);
+const settings = settingsFactory(config);
 
 const MILLIS_SSE_OPEN = 100;
 const MILLIS_SPLIT_KILL_EVENT = 200;
@@ -95,6 +95,6 @@ export function testSplitKillOnReadyFromCache(fetchMock, assert) {
     const lapse = Date.now() - start;
     assert.true(nearlyEqual(lapse, MILLIS_SPLIT_CHANGES_RESPONSE), 'SDK_READY once split changes arrives');
 
-    client.destroy().then(()=> { assert.end();});
+    client.destroy().then(() => { assert.end(); });
   });
 }

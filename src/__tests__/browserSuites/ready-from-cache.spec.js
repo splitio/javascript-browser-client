@@ -1,4 +1,4 @@
-import { SplitFactory, InLocalStorage } from '../../index';
+import { SplitFactory, InLocalStorage } from '../../';
 
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
@@ -113,11 +113,11 @@ export default function (fetchMock, assert) {
     const client2 = splitio.client('nicolas2@split.io');
     const client3 = splitio.client('nicolas3@split.io');
 
-    client.on(client.Event.SDK_READY_TIMED_OUT, () => {
+    client.once(client.Event.SDK_READY_TIMED_OUT, () => {
       t.fail('It should not timeout in this scenario.');
       t.end();
     });
-    client.on(client.Event.SDK_READY_FROM_CACHE, () => {
+    client.once(client.Event.SDK_READY_FROM_CACHE, () => {
       t.fail('It should not emit SDK_READY_FROM_CACHE if there is no cache.');
       t.end();
     });
