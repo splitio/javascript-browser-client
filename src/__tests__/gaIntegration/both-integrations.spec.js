@@ -1,5 +1,5 @@
-import { SplitFactory, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '../../index';
-import { settingsValidator } from '../../settings';
+import { SplitFactory, GoogleAnalyticsToSplit, SplitToGoogleAnalytics } from '../../';
+import { settingsFactory } from '../../settings';
 import { gaSpy, gaTag } from './gaTestUtils';
 import includes from 'lodash/includes';
 import { DEBUG } from '@splitsoftware/splitio-commons/src/utils/constants';
@@ -13,7 +13,7 @@ function countImpressions(parsedImpressionsBulkPayload) {
 const config = {
   core: {
     key: 'facundo@split.io',
-    trafficType: 'user', // ignored for default client, but used as default identity in GaToSplit integration
+    trafficType: 'user', // Traffic type is not bound to default client in JS Browser SDK, but it is used as identity in GaToSplit integration
   },
   integrations: [GoogleAnalyticsToSplit(), SplitToGoogleAnalytics()],
   streamingEnabled: false,
@@ -21,7 +21,7 @@ const config = {
     impressionsMode: DEBUG,
   }
 };
-const settings = settingsValidator(config);
+const settings = settingsFactory(config);
 
 export default function (fetchMock, assert) {
 

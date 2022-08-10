@@ -1,8 +1,9 @@
 import sinon from 'sinon';
-import { SplitFactory } from '../../index';
-import { settingsValidator } from '../../settings';
 
-const settings = settingsValidator({
+import { SplitFactory } from '../../';
+import { settingsFactory } from '../../settings';
+
+const settings = settingsFactory({
   core: {
     key: '<fake id>'
   },
