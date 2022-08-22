@@ -562,7 +562,7 @@ export default function readyPromiseAssertions(fetchMock, assert) {
                 t.end();
               });
           });
-        }, 0);
+        }, 10);
       });
     }, fromSecondsToMillis(0.2));
 
