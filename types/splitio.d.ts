@@ -59,6 +59,19 @@ declare namespace SplitIO {
      * @property {Object} storage
      */
     storage?: SplitIO.StorageSyncFactory,
+    /**
+     * Defines an optional list of factory functions used to instantiate SDK integrations.
+     *
+     * Example:
+     * ```typescript
+     * SplitFactory({
+     *   ...
+     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
+     * })
+     * ```
+     * @property {Object} integrations
+     */
+    integrations?: IntegrationFactory[],
   }
   /**
    * Settings interface with async storage for SDK instances created on the browser.
