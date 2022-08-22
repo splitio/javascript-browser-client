@@ -570,11 +570,6 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   }),
   impressionListener: impressionListener,
   debug: true,
-  integrations: [
-    GoogleAnalyticsToSplit(), SplitToGoogleAnalytics(),
-    GoogleAnalyticsToSplit(minimalGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(emptySplitToGoogleAnalyticsConfig),
-    GoogleAnalyticsToSplit(customGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(customSplitToGoogleAnalyticsConfig)
-  ],
   streamingEnabled: true,
   sync: {
     impressionsMode: 'DEBUG',
