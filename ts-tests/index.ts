@@ -74,34 +74,15 @@ asyncManager = AsyncSDK.manager();
 
 /**** Tests for Client and Manager interfaces ****/
 
-// Client implements methods from IEventEmitter that is a subset of NodeJS.Events. Testing a few.
+// Client and manager interfaces implement methods from IEventEmitter that is a subset of NodeJS.EventEmitter. Testing a few.
 let splitEvent: SplitIO.Event;
-client = client.on(splitEvent, () => { });
-const a: boolean = client.emit(splitEvent);
-client = client.removeAllListeners(splitEvent);
-client = client.removeAllListeners();
-// const b: number = client.listenerCount(splitEvent); // Not part of IEventEmitter
-
-// AsyncClient implements methods from IEventEmitter that is a subset of NodeJS.Events. Testing a few.
-asyncClient = asyncClient.on(splitEvent, () => { });
-const a1: boolean = asyncClient.emit(splitEvent);
-asyncClient = asyncClient.removeAllListeners(splitEvent);
-asyncClient = asyncClient.removeAllListeners();
-// const b1: number = asyncClient.listenerCount(splitEvent); // Not part of IEventEmitter
-
-// Manager implements methods from IEventEmitter that is a subset of NodeJS.Events. Testing a few.
-manager = manager.on(splitEvent, () => { });
-const aa: boolean = manager.emit(splitEvent);
-manager = manager.removeAllListeners(splitEvent);
-manager = manager.removeAllListeners();
-// const bb: number = manager.listenerCount(splitEvent); // Not part of IEventEmitter
-
-// asyncManager implements methods from IEventEmitter that is a subset of NodeJS.Events. Testing a few.
-asyncManager = asyncManager.on(splitEvent, () => { });
-const aaa: boolean = asyncManager.emit(splitEvent);
-asyncManager = asyncManager.removeAllListeners(splitEvent);
-asyncManager = asyncManager.removeAllListeners();
-// const bbb: number = asyncManager.listenerCount(splitEvent); // Not part of IEventEmitter
+[client, asyncClient, manager, asyncManager].forEach((eventEmitter: SplitIO.IEventEmitter) => {
+  eventEmitter = eventEmitter.on(splitEvent, () => { });
+  const a: boolean = eventEmitter.emit(splitEvent);
+  eventEmitter = eventEmitter.removeAllListeners(splitEvent);
+  eventEmitter = eventEmitter.removeAllListeners();
+  // const b: number = eventEmitter.listenerCount(splitEvent); // Not part of IEventEmitter
+});
 
 /**** Tests for fully crowded settings interfaces ****/
 
