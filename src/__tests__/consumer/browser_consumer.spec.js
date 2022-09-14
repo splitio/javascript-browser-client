@@ -4,6 +4,7 @@ import { inMemoryWrapperFactory } from '@splitsoftware/splitio-commons/src/stora
 import { SDK_NOT_READY, EXCEPTION } from '@splitsoftware/splitio-commons/src/utils/labels';
 import { applyOperations } from './wrapper-commands';
 import { nearlyEqual } from '../testUtils';
+import { version } from '../../../package.json';
 
 import { SplitFactory, PluggableStorage } from '../../';
 
@@ -11,7 +12,7 @@ const expectedSplitName = 'hierarchical_splits_testing_on';
 const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {} };
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
-const wrapperInstance = inMemoryWrapperFactory(0);
+const wrapperInstance = inMemoryWrapperFactory();
 const TOTAL_RAW_IMPRESSIONS = 18;
 const TOTAL_EVENTS = 5;
 
@@ -39,13 +40,16 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     const impressions = [];
     const disconnectSpy = sinon.spy(wrapperInstance, 'disconnect');
 
-    const expectedConfig = '{"color":"brown"}';
+    // Overwrite Math.random to track telemetry
+    const originalMathRandom = Math.random; Math.random = () => 0.001;
     const sdk = SplitFactory({
       ...config,
       impressionListener: {
         logImpression(data) { impressions.push(data); }
       }
     });
+    Math.random = originalMathRandom; // restore
+
     const client = sdk.client();
     const otherClient = sdk.client('emi@split.io');
     const manager = sdk.manager();
@@ -59,7 +63,6 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     const splitsResult = manager.splits();
 
     assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
-    // @TODO caveat: if wrapper.connect is resolved before wrapper operations, next evaluation might be different than control
     assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
     assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
     assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
@@ -106,7 +109,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     client.clearAttributes();
     assert.deepEqual(await client.getTreatmentWithConfig('always-o.n-with-config'), {
       treatment: 'o.n',
-      config: expectedConfig
+      config: '{"color":"brown"}'
     }, 'Evaluations using pluggable storage should be correct, including configs.');
 
     assert.equal(await client.getTreatment('always-on'), 'on', 'Evaluations using pluggable storage should be correct.');
@@ -134,8 +137,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // New shared client created
     const newClient = sdk.client('other');
-    assert.true(await newClient.track('user', 'test.event', 18), 'Track should attempt to track, whether SDK_READY has been emitted or not.');
-    assert.equal((await newClient.getTreatment('UT_IN_SEGMENT')), 'control', '`getTreatment` evaluation is control if shared client is not ready yet.');
+    newClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track should attempt to track, whether SDK_READY has been emitted or not.'));
+    newClient.getTreatment('UT_IN_SEGMENT').then(result => assert.equal(result, 'control', '`getTreatment` evaluation is control if shared client is not ready yet.'));
 
     await newClient.ready();
     assert.true(await newClient.track('user', 'test.event', 18), 'Track should attempt to track, whether SDK_READY has been emitted or not.');
@@ -148,10 +151,19 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     assert.equal(disconnectSpy.callCount, 1, 'Wrapper disconnect method should be called only once, when the main client is destroyed');
 
+    // Validate stored impressions and events
     const trackedImpressions = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.impressions', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.impressions'));
     const trackedEvents = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.events', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.events'));
     assert.equal(trackedImpressions.length, TOTAL_RAW_IMPRESSIONS, 'Tracked impressions should be present in the external storage');
     assert.equal(trackedEvents.length, TOTAL_EVENTS, 'Tracked events should be present in the external storage');
+
+    // Validate stored telemetry
+    const latencies = await wrapperInstance.getKeysByPrefix(`PLUGGABLE_STORAGE_UT.SPLITIO.telemetry.latencies::browserjs-${version}/unknown/unknown`);
+    assert.true(latencies.length > 0, 'There are stored latencies');
+    const exceptions = await wrapperInstance.getKeysByPrefix(`PLUGGABLE_STORAGE_UT.SPLITIO.telemetry.exceptions::browserjs-${version}/unknown/unknown`);
+    assert.true(exceptions.length === 0, 'There aren\'t stored exceptions');
+    const configValue = await wrapperInstance.get(`PLUGGABLE_STORAGE_UT.SPLITIO.telemetry.init::browserjs-${version}/unknown/unknown`);
+    assert.deepEqual(JSON.parse(configValue), { oM: 1, st: 'pluggable', aF: 1, rF: 0 }, 'There is stored telemetry config');
 
     // Assert impressionsListener
     setTimeout(() => {

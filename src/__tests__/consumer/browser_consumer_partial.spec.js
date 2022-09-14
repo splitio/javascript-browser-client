@@ -13,7 +13,7 @@ const expectedSplitName = 'hierarchical_splits_testing_on';
 const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {} };
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
-const wrapperInstance = inMemoryWrapperFactory(0);
+const wrapperInstance = inMemoryWrapperFactory();
 const TOTAL_RAW_IMPRESSIONS = 17;
 const TOTAL_EVENTS = 5;
 
@@ -33,7 +33,8 @@ const config = {
   // },
   urls: {
     sdk: 'https://sdk.baseurl/impressionsSuite',
-    events: 'https://events.baseurl/impressionsSuite'
+    events: 'https://events.baseurl/impressionsSuite',
+    telemetry: 'https://telemetry.baseurl/impressionsSuite'
   }
 };
 
@@ -55,6 +56,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     });
 
     fetchMock.postOnce(url(config, '/testImpressions/count'), 200);
+    fetchMock.postOnce(url(config, '/v1/metrics/config'), 200);
+    fetchMock.postOnce(url(config, '/v1/metrics/usage'), 200);
 
     fetchMock.postOnce(url(config, '/events/bulk'), (url, req) => {
       const resp = JSON.parse(req.body);
@@ -69,13 +72,16 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     const impressions = [];
     const disconnectSpy = sinon.spy(wrapperInstance, 'disconnect');
 
-    const expectedConfig = '{"color":"brown"}';
+    // Overwrite Math.random to track telemetry
+    const originalMathRandom = Math.random; Math.random = () => 0.001;
     const sdk = SplitFactory({
       ...config,
       impressionListener: {
         logImpression(data) { impressions.push(data); }
       }
     });
+    Math.random = originalMathRandom; // restore
+
     const client = sdk.client();
     const otherClient = sdk.client('emi@split.io');
     const manager = sdk.manager();
@@ -89,7 +95,6 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     const splitsResult = manager.splits();
 
     assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
-    // @TODO caveat: if wrapper.connect is resolved before wrapper operations, next evaluation might be different than control
     assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
     assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
     assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
@@ -135,7 +140,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     }, 'Evaluations using pluggable storage should be correct, including configs.');
     assert.deepEqual(await client.getTreatmentWithConfig('always-o.n-with-config'), {
       treatment: 'o.n',
-      config: expectedConfig
+      config: '{"color":"brown"}'
     }, 'Evaluations using pluggable storage should be correct, including configs.');
 
     assert.equal(await client.getTreatment('always-on'), 'on', 'Evaluations using pluggable storage should be correct.');
@@ -163,8 +168,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // New shared client created
     const newClient = sdk.client('other');
-    assert.true(await newClient.track('user', 'test.event', 18), 'Track should attempt to track, whether SDK_READY has been emitted or not.');
-    assert.equal((await newClient.getTreatment('UT_IN_SEGMENT')), 'control', '`getTreatment` evaluation is control if shared client is not ready yet.');
+    newClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track should attempt to track, whether SDK_READY has been emitted or not.'));
+    newClient.getTreatment('UT_IN_SEGMENT').then(result => assert.equal(result, 'control', '`getTreatment` evaluation is control if shared client is not ready yet.'));
 
     await newClient.ready();
     assert.true(await newClient.track('user', 'test.event', 18), 'Track should attempt to track, whether SDK_READY has been emitted or not.');
@@ -174,9 +179,9 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     await newClient.destroy();
     await otherClient.destroy();
 
-    assert.false(fetchMock.called(), 'fetch hasn\'t been called yet');
+    assert.equal(fetchMock.calls().length, 1, 'fetch has been called once for posting telemetry config stats');
     await client.destroy();
-    assert.equal(fetchMock.calls().length, 3, 'fetch has been called 3 times, for posting events, impressions and impression counts, after main client is destroyed');
+    assert.equal(fetchMock.calls().length, 5, 'fetch has been called 5 times after main client is destroyed, for posting events, impressions, impression counts, telemetry config and usage stats');
 
     assert.equal(disconnectSpy.callCount, 1, 'Wrapper disconnect method should be called only once, when the main client is destroyed');
 
