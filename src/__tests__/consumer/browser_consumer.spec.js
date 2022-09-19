@@ -300,7 +300,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     const expectedImpressionCount = [
       [`${wrapperPrefix}.SPLITIO.impressions.count::UT_SET_MATCHER::${truncateTimeFrame(timeFrame)}`, '1'],
       [`${wrapperPrefix}.SPLITIO.impressions.count::UT_NOT_SET_MATCHER::${truncateTimeFrame(timeFrame)}`, '1'],
-    ]
+    ];
     assert.deepEqual(trackedImpressionCounts, expectedImpressionCount, 'Impression counts should be present in the external storage');
 
     // Assert impressionsListener
