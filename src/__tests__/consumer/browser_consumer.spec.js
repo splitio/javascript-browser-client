@@ -26,12 +26,15 @@ const config = {
   storage: PluggableStorage({
     prefix: wrapperPrefix,
     wrapper: wrapperInstance
-  })
+  }),
+  sync: {
+    impressionsMode: 'DEBUG'
+  },
 };
 
 tape('Browser Consumer mode with pluggable storage', function (t) {
 
-  t.test('Regular usage', async (assert) => {
+  t.test('Regular usage - DEBUG strategy', async (assert) => {
 
     // Load wrapper with data to do the proper tests
     await applyOperations(wrapperInstance);

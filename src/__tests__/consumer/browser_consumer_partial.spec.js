@@ -44,7 +44,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
    * We only validates regular usage.
    * Corner cases, such as wrapper connection timeout and operation errors, are validated in `browser_consumer.spec.js`
    */
-  t.test('Regular usage', async (assert) => {
+  t.test('Regular usage - OPTIMIZED strategy', async (assert) => {
 
     fetchMock.postOnce(url(config, '/testImpressions/bulk'), (url, req) => {
       assert.equal(req.headers.SplitSDKImpressionsMode, OPTIMIZED, 'Impressions mode is OPTIMIZED by default');

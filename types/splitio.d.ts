@@ -809,7 +809,7 @@ declare namespace SplitIO {
   * ImpressionsMode type
   * @typedef {string} ImpressionsMode
   */
-  type ImpressionsMode = 'OPTIMIZED' | 'DEBUG';
+  type ImpressionsMode = 'OPTIMIZED' | 'DEBUG' | 'NONE';
   /**
    * User consent status.
    * @typedef {string} ConsentStatus
