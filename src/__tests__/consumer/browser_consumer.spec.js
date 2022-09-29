@@ -430,10 +430,10 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     const trackedImpressionCounts = await wrapperInstance.getKeysByPrefix('PLUGGABLE_STORAGE_UT.SPLITIO.impressions.count')
       .then(impressionCountsKeys => Promise.all(impressionCountsKeys.map(key => wrapperInstance.get(key).then(count => ([key, count])))));
     const expectedImpressionCount = [
-      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_IN_SEGMENT::${truncateTimeFrame(timeFrame)}`, '1'],
-      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_NOT_IN_SEGMENT::${truncateTimeFrame(timeFrame)}`, '1'],
-      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_SET_MATCHER::${truncateTimeFrame(timeFrame)}`, '1'],
-      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_NOT_SET_MATCHER::${truncateTimeFrame(timeFrame)}`, '1'],
+      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_IN_SEGMENT::${truncateTimeFrame(timeFrame)}`, '5'],
+      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_NOT_IN_SEGMENT::${truncateTimeFrame(timeFrame)}`, '2'],
+      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_SET_MATCHER::${truncateTimeFrame(timeFrame)}`, '3'],
+      [`${wrapperPrefix}.SPLITIO.impressions.count::UT_NOT_SET_MATCHER::${truncateTimeFrame(timeFrame)}`, '3'],
       [`${wrapperPrefix}.SPLITIO.impressions.count::always-o.n-with-config::${truncateTimeFrame(timeFrame)}`, '1'],
       [`${wrapperPrefix}.SPLITIO.impressions.count::always-on::${truncateTimeFrame(timeFrame)}`, '1'],
       [`${wrapperPrefix}.SPLITIO.impressions.count::hierarchical_splits_testing_on::${truncateTimeFrame(timeFrame)}`, '1'],
