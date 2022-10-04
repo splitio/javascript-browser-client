@@ -30,7 +30,8 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "keyword-spacing": "error",
-    "comma-style": "error"
+    "comma-style": "error",
+    "no-trailing-spaces": "error"
   },
 
   "overrides": [
