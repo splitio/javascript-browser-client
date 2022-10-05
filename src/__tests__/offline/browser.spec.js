@@ -4,9 +4,9 @@ import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import { SplitFactory, InLocalStorage } from '../../full';
 import { SplitFactory as SplitFactorySlim, LocalhostFromObject } from '../../';
-import { settingsValidator } from '../../settings';
+import { settingsFactory } from '../../settings';
 
-const settings = settingsValidator({ core: { key: 'facundo@split.io' } });
+const settings = settingsFactory({ core: { key: 'facundo@split.io' } });
 
 const spySplitChanges = sinon.spy();
 const spySegmentChanges = sinon.spy();
@@ -32,8 +32,6 @@ const configMocks = () => {
   fetchMock.mock(url(settings, '/events/bulk'), () => replySpy(spyEventsBulk));
   fetchMock.mock(url(settings, '/testImpressions/bulk'), () => replySpy(spyTestImpressionsBulk));
   fetchMock.mock(url(settings, '/testImpressions/count'), () => replySpy(spyTestImpressionsCount));
-  fetchMock.mock(url(settings, '/metrics/times'), () => replySpy(spyMetricsTimes));
-  fetchMock.mock(url(settings, '/metrics/counters'), () => replySpy(spyMetricsCounters));
   fetchMock.mock('*', () => replySpy(spyAny));
 };
 

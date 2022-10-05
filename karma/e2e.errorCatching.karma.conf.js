@@ -6,11 +6,11 @@ module.exports = function(config) {
   config.set(assign({}, require('./config'), {
     // list of files / patterns to load in the browser
     files: [
-      '__tests__/errors/browser.spec.js'
+      '__tests__/errorCatching/browser.spec.js'
     ],
     // prepare code for the browser using rollup
     preprocessors: {
-      '__tests__/errors/browser.spec.js': ['rollup']
+      '__tests__/errorCatching/browser.spec.js': ['rollup']
     },
 
     // level of logging

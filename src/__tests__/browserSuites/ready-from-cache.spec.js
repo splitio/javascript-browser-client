@@ -1,4 +1,4 @@
-import { SplitFactory, InLocalStorage } from '../../index';
+import { SplitFactory, InLocalStorage } from '../../';
 
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
@@ -113,11 +113,11 @@ export default function (fetchMock, assert) {
     const client2 = splitio.client('nicolas2@split.io');
     const client3 = splitio.client('nicolas3@split.io');
 
-    client.on(client.Event.SDK_READY_TIMED_OUT, () => {
+    client.once(client.Event.SDK_READY_TIMED_OUT, () => {
       t.fail('It should not timeout in this scenario.');
       t.end();
     });
-    client.on(client.Event.SDK_READY_FROM_CACHE, () => {
+    client.once(client.Event.SDK_READY_FROM_CACHE, () => {
       t.fail('It should not emit SDK_READY_FROM_CACHE if there is no cache.');
       t.end();
     });
@@ -503,7 +503,7 @@ export default function (fetchMock, assert) {
     });
 
     client.once(client.Event.SDK_READY, () => {
-      t.deepEqual(manager.names(), ['p1__split', 'p2__split'], 'p1__split should be added for evaluation');
+      t.deepEqual(manager.names().sort(), ['p1__split', 'p2__split'], 'p1__split should be added for evaluation');
 
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
@@ -547,7 +547,7 @@ export default function (fetchMock, assert) {
     });
 
     client.once(client.Event.SDK_READY, () => {
-      t.deepEqual(manager.names(), ['p1__split', 'p2__split'], 'p1__split should be added for evaluation');
+      t.deepEqual(manager.names().sort(), ['p1__split', 'p2__split'], 'p1__split should be added for evaluation');
 
       client.destroy().then(() => {
         t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
@@ -591,11 +591,11 @@ export default function (fetchMock, assert) {
     const manager = splitio.manager();
 
     client.once(client.Event.SDK_READY_FROM_CACHE, () => {
-      t.deepEqual(manager.names(), ['p2__split', 'p1__split'], 'splits shouldn\'t be removed for evaluation');
+      t.deepEqual(manager.names().sort(), ['p1__split', 'p2__split'], 'splits shouldn\'t be removed for evaluation');
     });
 
     client.once(client.Event.SDK_READY, () => {
-      t.deepEqual(manager.names(), ['p2__split', 'p1__split'], 'active splits should be present for evaluation');
+      t.deepEqual(manager.names().sort(), ['p1__split', 'p2__split'], 'active splits should be present for evaluation');
 
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
@@ -646,7 +646,7 @@ export default function (fetchMock, assert) {
     });
 
     client.once(client.Event.SDK_READY, () => {
-      t.deepEqual(manager.names(), ['p2__split', 'p1__split'], 'active splits should be present for evaluation');
+      t.deepEqual(manager.names().sort(), ['p1__split', 'p2__split'], 'active splits should be present for evaluation');
 
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
@@ -687,7 +687,7 @@ export default function (fetchMock, assert) {
         localStorage.setItem('readyFromCache_8.SPLITIO.splits.till', 25);
         localStorage.setItem('readyFromCache_8.SPLITIO.split.p1__split', JSON.stringify(splitDeclarations.p1__split));
         localStorage.setItem('readyFromCache_8.SPLITIO.split.p2__split', JSON.stringify(splitDeclarations.p2__split));
-        localStorage.setItem('readyFromCache_8.SPLITIO.split.deleted__split', 'deleted_split');
+        localStorage.setItem('readyFromCache_8.SPLITIO.split.deleted__split', '{ "name": "deleted_split" }');
         localStorage.setItem('readyFromCache_8.SPLITIO.splits.filterQuery', '&names=p2__split&prefixes=p1');
 
         const splitio = SplitFactory({
@@ -708,7 +708,7 @@ export default function (fetchMock, assert) {
         });
 
         client.once(client.Event.SDK_READY, () => {
-          t.deepEqual(manager.names(), ['p1__split', 'p2__split', 'p3__split'], 'active splits should be present for evaluation');
+          t.deepEqual(manager.names().sort(), ['p1__split', 'p2__split', 'p3__split'], 'active splits should be present for evaluation');
 
           client.destroy().then(() => {
             t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
@@ -761,7 +761,7 @@ export default function (fetchMock, assert) {
     });
 
     client.once(client.Event.SDK_READY, () => {
-      t.deepEqual(manager.names(), ['p3__split', 'p2__split'], 'active splits should be present for evaluation');
+      t.deepEqual(manager.names().sort(), ['p2__split', 'p3__split'], 'active splits should be present for evaluation');
 
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');

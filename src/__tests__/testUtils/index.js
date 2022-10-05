@@ -43,7 +43,7 @@ export function hasNoCacheHeader(fetchMockOpts) {
   return fetchMockOpts.headers['Cache-Control'] === 'no-cache';
 }
 
-const telemetryEndpointMatcher = /^\/v1\/metrics\/(config|usage)/;
+const telemetryEndpointMatcher = /^\/v1\/(metrics|keys)\/(config|usage|ss|cs)/;
 const eventsEndpointMatcher = /^\/(testImpressions|metrics|events)/;
 const authEndpointMatcher = /^\/v2\/auth/;
 const streamingEndpointMatcher = /^\/(sse|event-stream)/;
@@ -70,24 +70,4 @@ export function url(settings, target) {
     return `${settings.urls.streaming}${target}`;
   }
   return `${settings.urls.sdk}${target}`;
-}
-
-function triggerEvent(eventName) {
-  const event = document.createEvent('HTMLEvents');
-  event.initEvent(eventName, true, true);
-  event.eventName = eventName;
-  window.dispatchEvent(event);
-}
-
-export function triggerUnloadEvent() {
-  triggerEvent('unload');
-}
-
-export function triggerPagehideEvent() {
-  triggerEvent('pagehide');
-}
-
-export function triggerVisibilitychange(state = 'hidden' /* 'hidden' | 'visible' */) {
-  Object.defineProperty(document, 'visibilityState', { value: state, writable: true });
-  document.dispatchEvent(new Event('visibilitychange'));
 }

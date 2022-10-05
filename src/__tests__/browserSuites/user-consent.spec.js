@@ -1,6 +1,7 @@
 import sinon from 'sinon';
-import { SplitFactory } from '../../index';
-import { nearlyEqual, url, triggerPagehideEvent } from '../testUtils';
+import { SplitFactory } from '../../';
+import { triggerPagehideEvent } from '../testUtils/browser';
+import { nearlyEqual, url } from '../testUtils';
 
 const trackedImpressions = [];
 
@@ -157,7 +158,8 @@ export default function userConsent(fetchMock, t) {
     await client.ready();
 
     assert.equal(client.track('user', 'event1'), true, 'Events queue is full, but submitter is not executed');
-    assert.equal(client.getTreatment('always_on'), 'on', 'Impressions queue is full, but submitter is not executed');
+    assert.equal(client.getTreatment('always_on'), 'on', 'Impressions queue is full, but submitter is not executed');// First impression counted in backend
+    assert.equal(client.getTreatment('always_on'), 'on', 'Impressions queue is full, but submitter is not executed');// impression counted in sdk
 
     let submitterCalls = 0;
     const start = Date.now();

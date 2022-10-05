@@ -1,5 +1,5 @@
-import { SplitFactory } from '../../index';
-import { settingsValidator } from '../../settings';
+import { SplitFactory } from '../../';
+import { settingsFactory } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
@@ -12,7 +12,7 @@ const baseUrls = {
   events: 'https://events.baseurl/impressionsSuite'
 };
 
-const settings = settingsValidator({
+const settings = settingsFactory({
   core: {
     key: 'asd'
   },
@@ -94,7 +94,7 @@ export default function (fetchMock, assert) {
   fetchMock.postOnce(url(settings, '/testImpressions/count'), (url, opts) => {
     const data = JSON.parse(opts.body);
 
-    assert.equal(data.pf.length, 2, 'We should generated 2 impressions count.');
+    assert.equal(data.pf.length, 1, 'We should generate impressions count for one feature.');
 
     // finding these validate the feature names collection too
     const dependencyChildImpr = data.pf.filter(e => e.f === 'hierarchical_splits_test')[0];

@@ -1,12 +1,12 @@
 import tape from 'tape-catch';
 import fetchMock from '../testUtils/fetchMock';
-import { testAuthWithPushDisabled, testAuthWith401, testNoEventSource, testSSEWithNonRetryableError } from './push-initialization-nopush.spec';
-import { testPushRetriesDueToAuthErrors, testPushRetriesDueToSseErrors, testSdkDestroyWhileAuthRetries, testSdkDestroyWhileAuthSuccess, testSdkDestroyWhileConnDelay } from './push-initialization-retries.spec';
-import { testSynchronization } from './push-synchronization.spec';
-import { testSynchronizationRetries } from './push-synchronization-retries.spec';
-import { testFallbacking } from './push-fallbacking.spec';
-import { testRefreshToken } from './push-refresh-token.spec';
-import { testSplitKillOnReadyFromCache } from './push-corner-cases.spec';
+import { testAuthWithPushDisabled, testAuthWith401, testNoEventSource, testSSEWithNonRetryableError } from '../browserSuites/push-initialization-nopush.spec';
+import { testPushRetriesDueToAuthErrors, testPushRetriesDueToSseErrors, testSdkDestroyWhileAuthRetries, testSdkDestroyWhileAuthSuccess, testSdkDestroyWhileConnDelay } from '../browserSuites/push-initialization-retries.spec';
+import { testSynchronization } from '../browserSuites/push-synchronization.spec';
+import { testSynchronizationRetries } from '../browserSuites/push-synchronization-retries.spec';
+import { testFallbacking } from '../browserSuites/push-fallbacking.spec';
+import { testRefreshToken } from '../browserSuites/push-refresh-token.spec';
+import { testSplitKillOnReadyFromCache } from '../browserSuites/push-corner-cases.spec';
 
 fetchMock.config.overwriteRoutes = false;
 Math.random = () => 0.5; // SDKs without telemetry

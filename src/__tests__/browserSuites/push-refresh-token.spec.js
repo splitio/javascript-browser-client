@@ -1,17 +1,18 @@
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import mySegmentsNicolasMock1 from '../mocks/mysegments.nicolas@split.io.json';
+
 import authPushEnabledNicolas from '../mocks/auth.pushEnabled.nicolas@split.io.601secs.json';
 import authPushDisabled from '../mocks/auth.pushDisabled.json';
 
 import { nearlyEqual, url } from '../testUtils';
 
-// Polyfill EventSource with mock
+// Replace global EventSource with mock
 import EventSourceMock, { setMockListener } from '../testUtils/eventSourceMock';
 window.EventSource = EventSourceMock;
 
-import { SplitFactory } from '../../index';
-import { settingsValidator } from '../../settings';
+import { SplitFactory } from '../../';
+import { settingsFactory } from '../../settings';
 
 const userKey = 'nicolas@split.io';
 
@@ -32,7 +33,7 @@ const config = {
   },
   // debug: true,
 };
-const settings = settingsValidator(config);
+const settings = settingsFactory(config);
 
 const MILLIS_CONNDELAY = 500;
 const MILLIS_REFRESH_TOKEN = 1000;
