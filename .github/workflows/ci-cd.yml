@@ -77,23 +77,23 @@ jobs:
           name: assets
           path: umd
 
-      - name: Display structure of downloaded files
+      - name: Display structure of assets
         run: ls -R
         working-directory: umd
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     role-to-assume: arn:aws:iam::${{ matrix.account_id }}:role/gha-public-assets-role
-      #     aws-region: us-east-1
-      #
-      # - name: Upload to S3
-      #   run: aws s3 sync $SOURCE_DIR s3://$BUCKET/$DEST_DIR $ARGS
-      #   env:
-      #     BUCKET: ${{ matrix.bucket }}
-      #     SOURCE_DIR: ./umd
-      #     DEST_DIR: sdk
-      #     ARGS: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.account_id }}:role/gha-public-assets-role
+          aws-region: us-east-1
+
+      - name: Upload to S3
+        run: aws s3 sync $SOURCE_DIR s3://$BUCKET/$DEST_DIR $ARGS
+        env:
+          BUCKET: ${{ matrix.bucket }}
+          SOURCE_DIR: ./umd
+          DEST_DIR: sdk
+          ARGS: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
 
   upload-prod:
     name: Upload assets
@@ -119,6 +119,10 @@ jobs:
         with:
           name: assets
           path: umd
+
+      - name: Display structure of assets
+        run: ls -R
+        working-directory: umd
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
