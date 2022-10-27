@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set p Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16.16.0'
@@ -33,13 +33,13 @@ jobs:
       - name: npm ci
         run: npm ci
 
-      - name: npm ts tests
+      - name: npm test-ts-decls
         run: npm run test-ts-decls
 
-      - name: npm Check
+      - name: npm check
         run: npm run check
 
-      - name: npm Test
+      - name: npm test
         run: npm run test
 
       - name: npm build
