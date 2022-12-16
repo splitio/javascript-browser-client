@@ -2,7 +2,7 @@ import { LogLevels, isLogLevelString } from '@splitsoftware/splitio-commons/src/
 import { ConsentStatus, LogLevel } from '@splitsoftware/splitio-commons/src/types';
 import { CONSENT_GRANTED } from '@splitsoftware/splitio-commons/src/utils/constants';
 
-const packageVersion = '0.9.2-rc.0';
+const packageVersion = '0.9.2';
 
 /**
  * In browser, the default debug level, can be set via the `localStorage.splitio_debug` item.
