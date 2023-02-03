@@ -1,6 +1,6 @@
 {
-  "name": "@splitsoftware/splitio-browserjs",
-  "version": "0.9.2",
+  "name": "@splitsoft/splitio-browserjs",
+  "version": "0.9.3-rc.0",
   "description": "Split SDK for Javascript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -64,7 +64,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "1.7.3",
+    "@splitsoftware/splitio-commons": "1.8.0",
     "@types/google.analytics": "0.0.40"
   },
   "devDependencies": {
