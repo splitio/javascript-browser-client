@@ -8,7 +8,7 @@ export const plugins = [
   nodeResolve({
     // defaults `extensions` plus '.ts' files
     extensions: [
-      '.mjs', '.js', '.json', '.node'
+      '.mjs', '.js', '.json', '.node', '.ts'
     ],
     browser: true,
     preferBuiltins: false,
