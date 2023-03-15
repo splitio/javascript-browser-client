@@ -39,7 +39,6 @@
       "files": ["src/**/*.ts"],
       "excludedFiles": ["src/**/__tests__/**"],
       "extends": [
-        "eslint:recommended",
         "plugin:compat/recommended"
       ],
       "rules": {
