@@ -1,4 +1,4 @@
-// Type definitions for Javascript Browser Split Software SDK
+// Type definitions for JavaScript Browser Split Software SDK
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
