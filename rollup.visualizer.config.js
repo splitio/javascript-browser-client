@@ -1,5 +1,5 @@
 import { plugins, VERSION } from './rollup.common.js';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import visualizer from 'rollup-plugin-visualizer';
 
 const createRollupConfig = (input, outputPrefix) => ({
