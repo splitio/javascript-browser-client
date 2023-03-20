@@ -1,4 +1,4 @@
-// Type definitions for Javascript Browser Split Software SDK
+// Type definitions for JavaScript Browser Split Software SDK
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
@@ -296,9 +296,14 @@ interface IStatusInterface extends IEventEmitter {
  */
 interface IBasicClient extends IStatusInterface {
   /**
-   * Destroy the client instance.
+   * Destroys the client instance.
+   *
+   * In 'standalone' and 'partial consumer' modes, this method will flush any pending impressions and events.
+   * In 'standalone' mode, it also stops the synchronization of feature flag definitions with the backend.
+   * In 'consumer' and 'partial consumer' modes, this method also disconnects the SDK from the Pluggable storage.
+   *
    * @function destroy
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} A promise that will be resolved once the client is destroyed.
    */
   destroy(): Promise<void>
 }
@@ -541,7 +546,7 @@ declare namespace SplitIO {
     /**
      * Optional prefix to prevent any kind of data collision when having multiple factories using the same storage type.
      * @property {string} prefix
-     * @default SPLITIO
+     * @default 'SPLITIO'
      */
     prefix?: string
   }
@@ -565,7 +570,7 @@ declare namespace SplitIO {
     /**
      * Optional prefix to prevent any kind of data collision when having multiple factories using the same storage wrapper.
      * @property {string} prefix
-     * @default SPLITIO
+     * @default 'SPLITIO'
      */
     prefix?: string,
     /**
@@ -896,7 +901,7 @@ declare namespace SplitIO {
      * For "localhost" mode, use "localhost" as authorizationKey.
      *
      * @property {'standalone'} mode
-     * @default standalone
+     * @default 'standalone'
      */
     mode?: 'standalone',
     /**
