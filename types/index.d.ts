@@ -1,4 +1,4 @@
-// Declaration file for Javascript Browser Split Software SDK
+// Declaration file for JavaScript Browser Split Software SDK
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 

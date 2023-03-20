@@ -31,7 +31,8 @@
     "@typescript-eslint/no-unused-vars": "error",
     "keyword-spacing": "error",
     "comma-style": "error",
-    "no-trailing-spaces": "error"
+    "no-trailing-spaces": "error",
+    "space-before-function-paren": ["error", {"named": "never"}]
   },
 
   "overrides": [
@@ -39,7 +40,6 @@
       "files": ["src/**/*.ts"],
       "excludedFiles": ["src/**/__tests__/**"],
       "extends": [
-        "eslint:recommended",
         "plugin:compat/recommended"
       ],
       "rules": {
