@@ -1,8 +1,8 @@
 'use strict';
 
 // Comment the next two lines if you want to run with Chrome instead of Chromium
-// const puppeteer = require('puppeteer');
-// process.env.CHROME_BIN = puppeteer.executablePath();
+const puppeteer = require('puppeteer');
+process.env.CHROME_BIN = puppeteer.executablePath();
 
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
