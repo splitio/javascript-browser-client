@@ -1,15 +1,15 @@
 'use strict';
 
 // Comment the next two lines if you want to run with Chrome instead of Chromium
-// const puppeteer = require('puppeteer');
-// process.env.CHROME_BIN = puppeteer.executablePath();
+const puppeteer = require('puppeteer');
+process.env.CHROME_BIN = puppeteer.executablePath();
 
-const nodeResolve = require('@rollup/plugin-node-resolve').nodeResolve;
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const json = require('@rollup/plugin-json');
-const string = require('rollup-plugin-string').string;
-const terser = require('rollup-plugin-terser').terser;
-const nodePolyfills = require('rollup-plugin-node-polyfills');
+const { string } = require('rollup-plugin-string');
+const terser = require('@rollup/plugin-terser');
+const nodePolyfills = require('rollup-plugin-polyfill-node');
 
 // More popular plugins like https://www.npmjs.com/package/@rollup/plugin-typescript or https://www.npmjs.com/package/rollup-plugin-typescript2
 // cannot be used because they don't compile .ts files from node_modules
