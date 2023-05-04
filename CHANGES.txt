@@ -1,4 +1,5 @@
-0.9.4 (April 28, 2023)
+0.9.4 (May 4, 2023)
+ - Updated some transitive dependencies for vulnerability fixes.
  - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" entrypoint (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
 
 0.9.3 (March 20, 2023)
