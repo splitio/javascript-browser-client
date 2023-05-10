@@ -3,7 +3,7 @@
 [![npm version](https://badge.fury.io/js/%40splitsoftware%2Fsplitio-browserjs.svg)](https://badge.fury.io/js/%40splitsoftware%2Fsplitio-browserjs) [![Build Status](https://github.com/splitio/javascript-browser-client/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/splitio/javascript-browser-client/actions/workflows/ci-cd.yml)
 
 ## Overview
-This SDK is designed to work with Split, the platform for controlled rollouts, which serves features to your users via a Split feature flag to manage your complete customer experience.
+This SDK is designed to work with Split, the platform for controlled rollouts, which serves features to your users via feature flags to manage your complete customer experience.
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/splitsoftware.svg?style=social&label=Follow&maxAge=1529000)](https://twitter.com/intent/follow?screen_name=splitsoftware)
 
@@ -21,7 +21,7 @@ import { SplitFactory } from '@splitsoftware/splitio-browserjs';
 // Instantiate the SDK
 var factory = SplitFactory({
   core: {
-    authorizationKey: 'YOUR_SDK_API_KEY',
+    authorizationKey: 'YOUR_SDK_KEY',
     key: 'CUSTOMER_ID'
   }
 });
@@ -31,7 +31,7 @@ var client = factory.client();
 
 // Set a callback to listen for the SDK_READY event, to make sure the SDK is properly loaded before asking for a treatment
 client.on(client.Event.SDK_READY, function() {
-  var treatment = client.getTreatment('SPLIT_NAME');
+  var treatment = client.getTreatment('FEATURE_FLAG_NAME');
   if (treatment == 'on') {
     // insert code here for on treatment
   } else if (treatment == 'off') {

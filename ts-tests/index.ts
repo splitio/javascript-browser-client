@@ -174,7 +174,7 @@ browserSettings = {
 // For browser with async storage
 browserAsyncSettings = {
   core: {
-    authorizationKey: 'api-key',
+    authorizationKey: 'sdk-key',
     key: 'customer-key'
   },
   mode: 'consumer',
