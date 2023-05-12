@@ -20,7 +20,7 @@ const TOTAL_EVENTS = 5;
 /** @type SplitIO.IBrowserAsyncSettings */
 const config = {
   core: {
-    authorizationKey: 'SOME API KEY', // in consumer mode, api key is only used to identify the sdk instance
+    authorizationKey: 'SOME SDK KEY', // in consumer mode, SDK key is only used to identify the sdk instance
     key: 'UT_Segment_member'
   },
   mode: 'consumer_partial',
