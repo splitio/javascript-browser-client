@@ -1,3 +1,9 @@
+0.9.5 (May 15, 2023)
+ - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
+    - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and IntelliSense comments.
+    - Updated split storage modules to optimize some operations when using Redis and pluggable storages.
+ - Updated some transitive dependencies for vulnerability fixes.
+
 0.9.4 (May 4, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
  - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" entrypoint (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
