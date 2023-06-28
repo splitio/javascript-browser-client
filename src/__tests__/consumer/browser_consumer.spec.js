@@ -558,5 +558,36 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
   });
 
+  t.test('Wrapper connection error', (assert) => {
+    sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
+    const getSpy = sinon.spy(wrapperInstance, 'get');
+    const pushItemsSpy = sinon.spy(wrapperInstance, 'pushItems');
+    const disconnectSpy = sinon.spy(wrapperInstance, 'disconnect');
 
+    const sdk = SplitFactory(config);
+
+    const client = sdk.client();
+
+    client.ready().then(() => {
+      assert.fail('Ready promise should not be resolved if wrapper connection fails');
+    }, () => {
+      assert.pass('Ready promise should be rejected if wrapper connection fails');
+    });
+
+    client.on(client.Event.SDK_READY_TIMED_OUT, async () => {
+      // Client methods behave as if the SDK is destroyed: they return control/false, and doen't attempt to push impressions or events
+      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'control', '`getTreatment` evaluation is control.');
+      assert.false(await client.track('user', 'test.event', 18), '`track` call resolves to false.');
+
+      assert.equal(getSpy.callCount, 0, 'Wrapper methods (get) should not be called if wrapper connection fails');
+      assert.equal(pushItemsSpy.callCount, 0, 'Wrapper methods (pushItems) should not be called if wrapper connection fails');
+
+      // Event if the SDK is flagged as destroyed, destroy method should be called to ensure wrapper disconnection
+      await client.destroy();
+      assert.true(disconnectSpy.calledOnce, 'Wrapper disconnect should be called if destroy method is called');
+
+      wrapperInstance.connect.restore();
+      assert.end();
+    });
+  });
 });

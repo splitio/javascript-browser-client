@@ -1,3 +1,8 @@
+0.9.6 (June 28, 2023)
+ - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes bug fixes:
+    - Bugfix - Update the `destroy` method to flag the SDK client as destroyed immediately, in order to avoid issues with `getTreatment` and `track` calls after the SDK is destroyed.
+    - Bugfix - Fixed an issue with SDK_READY_TIMED_OUT event, that was not being emitted immediately when a connection error occurs using pluggable storage in consumer and partial consumer modes.
+
 0.9.5 (May 15, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
     - Updated terminology on the SDKs codebase to be more aligned with current standard without causing a breaking change. The core change is the term split for feature flag on things like logs and IntelliSense comments.
