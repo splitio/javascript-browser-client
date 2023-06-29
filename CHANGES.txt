@@ -1,4 +1,4 @@
-0.9.6 (June 30, 2023)
+0.9.6 (June 29, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
  - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
     - Updated SDK_READY_TIMED_OUT event to be emitted immediately when a connection error occurs using pluggable storage (i.e., when the wrapper `connect` promise is rejected) in consumer and partial consumer modes.

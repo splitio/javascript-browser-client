@@ -341,7 +341,6 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     });
   });
 
-
   t.test('Wrapper connection error timeouts the SDK immediately', (assert) => {
     // Mock a wrapper connection error
     sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
