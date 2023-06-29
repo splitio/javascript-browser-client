@@ -559,6 +559,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
   });
 
   t.test('Wrapper connection error', (assert) => {
+    // Mock a wrapper connection error
     sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
     const getSpy = sinon.spy(wrapperInstance, 'get');
     const pushItemsSpy = sinon.spy(wrapperInstance, 'pushItems');
@@ -579,15 +580,23 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
       assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'control', '`getTreatment` evaluation is control.');
       assert.false(await client.track('user', 'test.event', 18), '`track` call resolves to false.');
 
-      assert.equal(getSpy.callCount, 0, 'Wrapper methods (get) should not be called if wrapper connection fails');
-      assert.equal(pushItemsSpy.callCount, 0, 'Wrapper methods (pushItems) should not be called if wrapper connection fails');
+      // Shared clients will also timeout and behave as if the SDK is destroyed
+      const otherClient = sdk.client('other_user');
+      otherClient.on(otherClient.Event.SDK_READY_TIMED_OUT, async () => {
 
-      // Event if the SDK is flagged as destroyed, destroy method should be called to ensure wrapper disconnection
-      await client.destroy();
-      assert.true(disconnectSpy.calledOnce, 'Wrapper disconnect should be called if destroy method is called');
+        assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'control', '`getTreatment` evaluation is control in shared client.');
+        assert.false(await otherClient.track('user', 'test.event', 18), '`track` call resolves to false in shared client.');
 
-      wrapperInstance.connect.restore();
-      assert.end();
+        assert.equal(getSpy.callCount, 0, 'Wrapper methods (get) should not be called if wrapper connection fails');
+        assert.equal(pushItemsSpy.callCount, 0, 'Wrapper methods (pushItems) should not be called if wrapper connection fails');
+
+        // Event if the SDK is flagged as destroyed, destroy method should be called to ensure wrapper disconnection
+        await client.destroy();
+        assert.true(disconnectSpy.calledOnce, 'Wrapper disconnect should be called if destroy method is called');
+
+        wrapperInstance.connect.restore();
+        assert.end();
+      });
     });
   });
 });
