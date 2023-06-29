@@ -4,7 +4,7 @@ import fetchMock from '../testUtils/fetchMock';
 import { inMemoryWrapperFactory } from '@splitsoftware/splitio-commons/src/storages/pluggable/inMemoryWrapper';
 import { OPTIMIZED } from '@splitsoftware/splitio-commons/src/utils/constants';
 import { SDK_NOT_READY } from '@splitsoftware/splitio-commons/src/utils/labels';
-import { url } from '../testUtils';
+import { url, nearlyEqual } from '../testUtils';
 import { applyOperations } from './wrapper-commands';
 
 import { SplitFactory, PluggableStorage } from '../../';
@@ -341,4 +341,43 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     });
   });
 
+  t.test('Wrapper connection error timeouts the SDK immediately', (assert) => {
+    // Mock a wrapper connection error
+    sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
+    const getSpy = sinon.spy(wrapperInstance, 'get');
+
+    const sdk = SplitFactory(config);
+
+    const client = sdk.client();
+
+    client.ready().then(() => {
+      assert.fail('Ready promise should not be resolved if wrapper connection fails');
+    }, () => {
+      assert.pass('Ready promise should be rejected if wrapper connection fails');
+    });
+
+    const start = Date.now();
+    client.on(client.Event.SDK_READY_TIMED_OUT, async () => {
+      assert.true(nearlyEqual(Date.now() - start, 0), 'SDK_READY_TIMED_OUT event is emitted immediately');
+
+      // Client methods behave as if the SDK is not ready
+      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'control', 'treatment is control with label not ready.');
+      assert.true(await client.track('user', 'test.event', 18), 'event is tracked in memory (partial consumer mode).');
+
+      // Shared clients will also timeout immediately and behave as if the SDK is not ready
+      const otherClient = sdk.client('other_user');
+      otherClient.on(otherClient.Event.SDK_READY_TIMED_OUT, async () => {
+        assert.true(nearlyEqual(Date.now() - start, 0), 'SDK_READY_TIMED_OUT event is emitted immediately in shared client');
+
+        assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'control', 'treatment is control with label not ready.');
+        assert.true(await otherClient.track('user', 'test.event', 18), 'event is tracked in memory (partial consumer mode).');
+
+        await client.destroy();
+        assert.equal(getSpy.callCount, 0, '`getTreatment` shouldn\'t have called wrapper methods if SDK is not ready');
+
+        wrapperInstance.connect.restore();
+        assert.end();
+      });
+    });
+  });
 });

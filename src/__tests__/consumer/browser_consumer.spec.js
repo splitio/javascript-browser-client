@@ -558,5 +558,4 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
   });
 
-
 });
