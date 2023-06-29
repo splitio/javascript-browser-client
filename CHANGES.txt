@@ -1,8 +1,8 @@
-0.9.6 (June 28, 2023)
+0.9.6 (June 30, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
- - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes bug fixes:
+ - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
+    - Updated SDK_READY_TIMED_OUT event to be emitted immediately when a connection error occurs using pluggable storage (i.e., wrapper `connect` promise is rejected) in consumer and partial consumer modes.
     - Bugfix - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent access to the storage when `getTreatment` and `track` methods are called after the SDK is destroyed.
-    - Bugfix - Fixed an issue with SDK_READY_TIMED_OUT event, that was not being emitted immediately when a connection error occurs using pluggable storage in consumer and partial consumer modes.
 
 0.9.5 (May 15, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
