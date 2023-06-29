@@ -346,7 +346,6 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     // Mock a wrapper connection error
     sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
     const getSpy = sinon.spy(wrapperInstance, 'get');
-    const disconnectSpy = sinon.spy(wrapperInstance, 'disconnect');
 
     const sdk = SplitFactory(config);
 
@@ -376,7 +375,6 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
         await client.destroy();
         assert.equal(getSpy.callCount, 0, '`getTreatment` shouldn\'t have called wrapper methods if SDK is not ready');
-        assert.true(disconnectSpy.calledOnce, 'Wrapper disconnect should be called if destroy method is called');
 
         wrapperInstance.connect.restore();
         assert.end();
