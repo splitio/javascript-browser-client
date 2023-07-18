@@ -1,6 +1,6 @@
 {
   "name": "@splitsoftware/splitio-browserjs",
-  "version": "0.9.6",
+  "version": "0.10.0",
   "description": "Split SDK for JavaScript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -26,7 +26,7 @@
     "build:esm": "rimraf esm && tsc -outDir esm && ./scripts/build_esm_replace_imports.sh",
     "build:cjs": "rimraf cjs && tsc -outDir cjs -m CommonJS && ./scripts/build_cjs_replace_imports.sh",
     "build:umd-visualizer": "rollup --config rollup.visualizer.config.js",
-    "build:umd": "rollup --config rollup.ci.config.js --branch=$BUILD_BRANCH --commit_hash=$BUILD_COMMIT",
+    "build:umd": "rollup --config rollup.ci.config.js --branch=$BUILD_BRANCH",
     "build:ga-to-split-autorequire": "terser ./node_modules/@splitsoftware/splitio-commons/src/integrations/ga/autoRequire.js --mangle --output ./scripts/ga-to-split-autorequire.js",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
@@ -64,7 +64,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "1.8.3",
+    "@splitsoftware/splitio-commons": "1.9.0",
     "@types/google.analytics": "0.0.40",
     "unfetch": "^4.2.0"
   },

@@ -1,3 +1,7 @@
+0.10.0 (July 18, 2023)
+ - Updated @splitsoftware/splitio-commons package to version 1.9.0 that includes minor improvements:
+    - Updated streaming architecture implementation to apply feature flag updates from the notification received which is now enhanced, improving efficiency and reliability of the whole update system.
+
 0.9.6 (June 29, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
  - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
