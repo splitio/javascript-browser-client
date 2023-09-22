@@ -1,3 +1,6 @@
+0.10.1 (September 22, 2023)
+ - Updated @splitsoftware/splitio-commons package to version 1.9.1. This update removes the handler for 'unload' DOM events, that can prevent browsers from being able to put pages in the back/forward cache for faster back and forward loads (Related to issue https://github.com/splitio/javascript-client/issues/759).
+
 0.10.0 (July 18, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.9.0 that includes minor improvements:
     - Updated streaming architecture implementation to apply feature flag updates from the notification received which is now enhanced, improving efficiency and reliability of the whole update system.
@@ -6,7 +9,7 @@
  - Updated some transitive dependencies for vulnerability fixes.
  - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
     - Updated SDK_READY_TIMED_OUT event to be emitted immediately when a connection error occurs using pluggable storage (i.e., when the wrapper `connect` promise is rejected) in consumer and partial consumer modes.
-    - Bugfix - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviours when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
+    - Bugfixing - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviours when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
 
 0.9.5 (May 15, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
