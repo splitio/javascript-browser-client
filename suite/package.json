@@ -1,0 +1,5 @@
+{
+  "main": "../cjs/suite/index.js",
+  "module": "../esm/suite/index.js",
+  "types": "../types/suite/index.d.ts"
+}

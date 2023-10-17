@@ -13,10 +13,12 @@
 
 import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
 import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject, PluggableStorage } from '@splitsoftware/splitio-browserjs';
+import { SplitSuite, InLocalStorage as InLocalStorageSuite, DebugLogger as DebugLoggerSuite, InfoLogger as InfoLoggerSuite, WarnLogger as WarnLoggerSuite, ErrorLogger as ErrorLoggerSuite } from '@splitsoftware/splitio-browserjs/suite';
+import { EventData, SplitRumAgent } from '@splitsoftware/browser-rum-agent';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
-let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
+let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull; inLocalStorage = InLocalStorageSuite;
 let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitFull;
 let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsFull;
 let pluggableStorage = PluggableStorage; pluggableStorage = PluggableStorageFull;
@@ -596,6 +598,10 @@ fullBrowserSettings.debug = DebugLoggerFull();
 fullBrowserSettings.debug = InfoLoggerFull();
 fullBrowserSettings.debug = WarnLoggerFull();
 fullBrowserSettings.debug = ErrorLoggerFull();
+fullBrowserSettings.debug = DebugLoggerSuite();
+fullBrowserSettings.debug = InfoLoggerSuite();
+fullBrowserSettings.debug = WarnLoggerSuite();
+fullBrowserSettings.debug = ErrorLoggerSuite();
 
 // fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 
@@ -678,3 +684,37 @@ fullBrowserSettings.debug = ErrorLoggerFull();
 //     splitFilters: splitFilters
 //   }
 // };
+
+// Suite
+const suiteConfig: SplitIO.IBrowserSuiteSettings = {
+  ...browserSettings,
+  core: {
+    ...browserSettings.core,
+    trafficType: 'some-tt'
+  },
+  rumAgent: {
+    prefix: 'prefix',
+    pushRate: 1,
+    queueSize: 1
+  }
+};
+
+const suite = SplitSuite(suiteConfig);
+
+SDK = suite; // The Suite interface extends the SDK interface
+
+client = suite.client();
+client = suite.client('key');
+client = suite.client('key', 'trafficType');
+let promise: Promise<void> = suite.destroy();
+
+const someEvent: EventData = {
+  eventTypeId: 'custom-event',
+  value: 10,
+  properties: {
+    prop1: 'value1',
+    prop2: 'value2'
+  }
+};
+
+SplitRumAgent.track(someEvent);

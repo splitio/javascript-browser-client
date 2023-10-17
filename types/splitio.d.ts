@@ -3,6 +3,7 @@
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
 /// <reference types="google.analytics" />
+import { SplitRumAgentConfig } from '@splitsoftware/browser-rum-agent';
 
 export as namespace SplitIO;
 export = SplitIO;
@@ -1022,6 +1023,29 @@ declare namespace SplitIO {
     }
   }
   /**
+   * Settings interface for Suite instances created on the browser.
+   * @interface IBrowserSuiteSettings
+   * @extends IBrowserSettings
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
+   */
+  interface IBrowserSuiteSettings extends IBrowserSettings {
+    core: IBrowserBasicSettings['core'] & {
+      /**
+       * Traffic type of the identity provided to the RUM Agent for event tracking. @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
+       * If no provided, 'user' is used as default.
+       * This does not affect the behavior of the SDK client: even if provided, you still need to specify the traffic type in `client.track()` calls.
+       *
+       * @property {string=} trafficType
+       */
+      trafficType?: string,
+    },
+    /**
+     * Optional configuration object for the RUM agent.
+     * @see {@link https://help.split.io/hc/en-us/articles/360030898431-Browser-RUM-agent#configuration}
+     */
+    rumAgent?: SplitRumAgentConfig
+  }
+  /**
    * Settings interface with async storage for SDK instances created on the browser.
    * If your storage is synchronous (by defaut we use memory, which is sync) use SplitIO.IBrowserSettings instead.
    * @interface IBrowserAsyncSettings
@@ -1142,6 +1166,41 @@ declare namespace SplitIO {
      * @returns {IManager} The manager instance.
      */
     manager(): IManager
+  }
+  /**
+   * This represents the interface for the Suite instance, that is an extension of the ISDK interface.
+   * @interface ISuiteSDK
+   * @extends ISDK
+   */
+  interface ISuiteSDK extends ISDK {
+    /**
+     * Returns the default client instance of the SDK and adds its identity (i.e., user key and traffic type pair) to the RUM agent for event tracking.
+     *
+     * NOTE: if no traffic type is provided in the SDK config, 'user' will be used as default for the RUM Agent.
+     *
+     * @function client
+     * @returns {IClient} The client instance.
+     */
+    client(): IClient,
+    /**
+     * Returns a shared client of the SDK and adds its identity (i.e., user key and traffic type pair) to the RUM agent for event tracking.
+     *
+     * NOTE: if no traffic type is provided as second argument, 'user' will be used as default for the RUM Agent.
+     *
+     * @function client
+     * @param {SplitKey} key The key for the new client instance.
+     * @param {string=} trafficType The traffic type of the provided key, used to pass an identity to the RUM agent. If not provided, 'user' will be used as default.
+     * @returns {IClient} The client instance.
+     */
+    client(key: SplitKey, trafficType?: string): IClient
+    /**
+     * Destroys all client instances and remove identities from the RUM agent to stop tracking events for them.
+     * This method will flush any pending impressions and events, and stop the synchronization of feature flag definitions with the backend.
+     *
+     * @function destroy
+     * @returns {Promise<void>} A promise that resolves once the client is destroyed.
+     */
+    destroy(): Promise<void>
   }
   /**
    * This represents the interface for the SDK instance with asynchronous storage and client-side API,
