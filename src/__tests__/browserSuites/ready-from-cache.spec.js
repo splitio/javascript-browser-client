@@ -473,7 +473,7 @@ export default function (fetchMock, assert) {
       events: 'https://events.baseurl/readyFromCache_5'
     };
     localStorage.clear();
-    t.plan(7);
+    t.plan(6);
 
     fetchMock.getOnce(testUrls.sdk + '/splitChanges?since=-1&names=p1__split,p2__split', { status: 200, body: { splits: [splitDeclarations.p1__split, splitDeclarations.p2__split], since: -1, till: 1457552620999 } }, { delay: 10 }); // short delay to let emit SDK_READY_FROM_CACHE
     // fetchMock.getOnce(testUrls.sdk + '/splitChanges?since=1457552620999&names=p1__split', { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } });
@@ -499,7 +499,8 @@ export default function (fetchMock, assert) {
     const manager = splitio.manager();
 
     client.once(client.Event.SDK_READY_FROM_CACHE, () => {
-      t.deepEqual(manager.names(), ['p2__split'], 'stored p3__split must be removed because doesn\'t match the filter');
+      t.fail('It should not emit SDK_READY_FROM_CACHE if cache is empty.');
+      t.end();
     });
 
     client.once(client.Event.SDK_READY, () => {
@@ -731,7 +732,7 @@ export default function (fetchMock, assert) {
       events: 'https://events.baseurl/readyFromCache_9'
     };
     localStorage.clear();
-    t.plan(7);
+    t.plan(6);
 
     fetchMock.getOnce(testUrls.sdk + '/splitChanges?since=-1&names=no%20exist%20trim,no_exist,p3__split&prefixes=no%20exist%20trim,p2', { status: 200, body: { splits: [splitDeclarations.p2__split, splitDeclarations.p3__split], since: -1, till: 1457552620999 } }, { delay: 10 }); // short delay to let emit SDK_READY_FROM_CACHE
     fetchMock.getOnce(testUrls.sdk + '/mySegments/nicolas%40split.io', { status: 200, body: { mySegments: [] } });
@@ -757,7 +758,8 @@ export default function (fetchMock, assert) {
     const manager = splitio.manager();
 
     client.once(client.Event.SDK_READY_FROM_CACHE, () => {
-      t.deepEqual(manager.names(), ['p2__split'], 'stored p1__split must be removed because doesn\'t match the filter');
+      t.fail('It should not emit SDK_READY_FROM_CACHE because all splits were removed from cache since the filter query changed.');
+      t.end();
     });
 
     client.once(client.Event.SDK_READY, () => {
