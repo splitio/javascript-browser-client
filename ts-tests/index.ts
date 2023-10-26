@@ -518,7 +518,7 @@ userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
 /**** Tests for fully crowded settings interfaces ****/
 
 // Split filters
-let splitFilters: SplitIO.SplitFilter[] = [{ type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
+let splitFilters: SplitIO.SplitFilter[] = [{ type: 'bySet', values: ['set_a', 'set_b'] }, { type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
 
 // Browser integrations
 let fieldsObjectSample: UniversalAnalytics.FieldsObject = { hitType: 'event', eventAction: 'action' };

@@ -801,7 +801,7 @@ declare namespace SplitIO {
    *
    * @typedef {string} SplitFilterType
    */
-  type SplitFilterType = 'byName' | 'byPrefix';
+  type SplitFilterType = 'bySet' | 'byName' | 'byPrefix';
   /**
    * Defines a feature flag filter, described by a type and list of values.
    */
