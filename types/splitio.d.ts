@@ -1228,7 +1228,7 @@ declare namespace SplitIO {
      */
     getTreatmentsByFlagSet(key: SplitKey, flagSet: string, attributes?: Attributes): Treatments,
     /**
-     * Returns a TreatmentsWithConfig value, which is an object map with the TreatmentWithConfig (an object with both treatment and config string) for the feature flags related to the given flag sets.
+     * Returns a TreatmentsWithConfig value, which is an object map with the TreatmentWithConfig (an object with both treatment and config string) for the feature flags related to the given flag set.
      * @function getTreatmentsWithConfigByFlagSet
      * @param {string} key - The string key representing the consumer.
      * @param {string} flagSet - The flag set name we want to get the treatments.
@@ -1325,7 +1325,7 @@ declare namespace SplitIO {
      */
     getTreatmentsByFlagSet(key: SplitKey, flagSet: string, attributes?: Attributes): AsyncTreatments,
     /**
-     * Returns a TreatmentsWithConfig value, which is an object map with the TreatmentWithConfig (an object with both treatment and config string) for the feature flags related to the given flag sets.
+     * Returns a TreatmentsWithConfig value, which is an object map with the TreatmentWithConfig (an object with both treatment and config string) for the feature flags related to the given flag set.
      * For usage on NodeJS as we don't have only one key.
      * @function getTreatmentsWithConfigByFlagSet
      * @param {string} key - The string key representing the consumer.
@@ -1523,7 +1523,7 @@ declare namespace SplitIO {
      * @function getTreatmentsWithConfig
      * @param {Array<string>} featureFlagNames - An array of the feature flag names we want to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {AsyncTreatmentWithConfig} TreatmentWithConfig promise that resolves to the TreatmentWithConfig object.
+     * @returns {AsyncTreatmentsWithConfig} TreatmentsWithConfig promise that resolves to the TreatmentsWithConfig object.
      */
     getTreatmentsWithConfig(featureFlagNames: string[], attributes?: Attributes): AsyncTreatmentsWithConfig,
     /**
@@ -1539,7 +1539,7 @@ declare namespace SplitIO {
      * @function getTreatmentsWithConfigByFlagSet
      * @param {string} flagSet - The flag set name we want to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {AsyncTreatmentWithConfig} TreatmentWithConfig promise that resolves to the TreatmentWithConfig object.
+     * @returns {AsyncTreatmentsWithConfig} TreatmentsWithConfig promise that resolves to the TreatmentsWithConfig object.
      */
     getTreatmentsWithConfigByFlagSet(flagSet: string, attributes?: Attributes): AsyncTreatmentsWithConfig,
     /**
@@ -1555,7 +1555,7 @@ declare namespace SplitIO {
      * @function getTreatmentsWithConfigByFlagSets
      * @param {Array<string>} flagSets - An array of the flag set names we want to get the treatments.
      * @param {Attributes=} attributes - An object of type Attributes defining the attributes for the given key.
-     * @returns {AsyncTreatmentWithConfig} TreatmentWithConfig promise that resolves to the TreatmentWithConfig object.
+     * @returns {AsyncTreatmentsWithConfig} TreatmentsWithConfig promise that resolves to the TreatmentsWithConfig object.
      */
     getTreatmentsWithConfigByFlagSets(flagSets: string[], attributes?: Attributes): AsyncTreatmentsWithConfig,
     /**
