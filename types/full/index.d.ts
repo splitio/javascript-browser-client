@@ -67,7 +67,6 @@ declare module JsSdk {
    */
   export function WarnLogger(): SplitIO.ILogger;
 
-
   /**
    * Creates a logger instance that enables descriptive log messages with ERROR log level when passed in the factory settings.
    *

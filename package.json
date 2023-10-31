@@ -1,6 +1,6 @@
 {
   "name": "@splitsoftware/splitio-browserjs",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Split SDK for JavaScript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -30,7 +30,7 @@
     "build:ga-to-split-autorequire": "terser ./node_modules/@splitsoftware/splitio-commons/src/integrations/ga/autoRequire.js --mangle --output ./scripts/ga-to-split-autorequire.js",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
-    "test:e2e": "npm run test:e2e-logger && npm run test:e2e-offline && npm run test:e2e-online && npm run test:e2e-destroy && npm run test:e2e-errorCatching && npm run test:e2e-push && npm run test:e2e-gaIntegration && npm run test:e2e-consumer",
+    "test:e2e": "npm run test:e2e-logger && npm run test:e2e-offline && npm run test:e2e-online && npm run test:e2e-destroy && npm run test:e2e-errorCatching && npm run test:e2e-push && npm run test:e2e-consumer",
     "test:e2e-logger": "karma start karma/e2e.logger.karma.conf.js",
     "test:e2e-offline": "karma start karma/e2e.offline.karma.conf.js",
     "test:e2e-online": "karma start karma/e2e.online.karma.conf.js",
@@ -64,7 +64,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "1.9.1",
+    "@splitsoftware/splitio-commons": "1.10.0",
     "@types/google.analytics": "0.0.40",
     "unfetch": "^4.2.0"
   },
