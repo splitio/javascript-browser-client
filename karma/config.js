@@ -36,6 +36,7 @@ module.exports = {
   rollupPreprocessor: {
     // `input` is handled by karma-rollup-preprocessor.
     output: {
+      file: 'karma/bundle.js',
       format: 'umd',
       name: 'splitio',
       // sourcemap: 'inline', // Uncomment for debugging

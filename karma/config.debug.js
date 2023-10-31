@@ -8,6 +8,7 @@ module.exports = merge({}, require('./config'), {
   ],
   rollupPreprocessor: {
     output: {
+      file: 'karma/bundle.js',
       sourcemap: 'inline',
     },
   },
