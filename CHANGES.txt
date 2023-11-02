@@ -1,4 +1,4 @@
-0.10.2 (October XX, 2023)
+0.11.0 (October 31, 2023)
  - Added `defaultTreatment` property to the `SplitView` object returned by the `split` and `splits` methods of the SDK manager (Related to issue https://github.com/splitio/javascript-commons/issues/225).
  - Updated @splitsoftware/splitio-commons package to version 1.10.0 that includes vulnerability fixes, and adds the `defaultTreatment` property to the `SplitView` object.
 
