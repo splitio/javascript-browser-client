@@ -136,6 +136,7 @@ splitView = {
   configs: {
     off: '{"dimensions":"{\"height\":20,\"width\":40}"}'
   },
+  sets: ['set_a','set_b'],
   defaultTreatment: 'off'
 };
 splitViews = [splitView];
