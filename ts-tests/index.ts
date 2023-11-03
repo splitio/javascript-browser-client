@@ -136,6 +136,7 @@ splitView = {
   configs: {
     off: '{"dimensions":"{\"height\":20,\"width\":40}"}'
   },
+  sets: ['set_a','set_b'],
   defaultTreatment: 'off'
 };
 splitViews = [splitView];
@@ -282,6 +283,34 @@ treatmentsWithConfig = client.getTreatmentsWithConfig(['mySplit']);
 // treatmentsWithConfig = client.getTreatmentsWithConfig(splitKey, ['mySplit'], attributes);
 treatmentsWithConfig = client.getTreatmentsWithConfig(['mySplit'], attributes);
 
+// We can call getTreatmentsByFlagSet without a key.
+// treatments = client.getTreatmentsByFlagSet(splitKey, 'set_a');
+treatments = client.getTreatmentsByFlagSet('set_a');
+// Attributes parameter is optional.
+// treatments = client.getTreatmentsByFlagSet(splitKey, 'set_a', attributes);
+treatments = client.getTreatmentsByFlagSet('set_a', attributes);
+
+// We can call getTreatmentsByFlagSets without a key.
+// treatments = client.getTreatmentsByFlagSets(splitKey, ['set_a']);
+treatments = client.getTreatmentsByFlagSets(['set_a']);
+// Attributes parameter is optional.
+// treatments = client.getTreatmentsByFlagSets(splitKey, ['set_a'], attributes);
+treatments = client.getTreatmentsByFlagSets(['set_a'], attributes);
+
+// We can call getTreatmentsWithConfigByFlagSet without a key.
+// treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a');
+treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet('set_a');
+// Attributes parameter is optional.
+// treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a', attributes);
+treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet('set_a', attributes);
+
+// We can call getTreatmentsWithConfigByFlagSets without a key.
+// treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a']);
+treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(['set_a']);
+// Attributes parameter is optional.
+// treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a'], attributes);
+treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(['set_a'], attributes);
+
 // We can call track without a key. Traffic type can also be binded to the client.
 // tracked = client.track(splitKey, 'myTrafficType', 'myEventType'); // all params
 tracked = client.track('myTrafficType', 'myEventType'); // key binded, tt provided.
@@ -342,6 +371,34 @@ asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit']);
 // Attributes parameter is optional
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit'], attributes);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(splitKey, ['mySplit'], attributes);
+
+// We can call getTreatmentsByFlagSet
+asyncTreatments = asyncClient.getTreatmentsByFlagSet('set_a');
+// asyncTreatments = asyncClient.getTreatmentsByFlagSet(splitKey, 'set_a');
+// Attributes parameter is optional
+asyncTreatments = asyncClient.getTreatmentsByFlagSet('set_a', attributes);
+// asyncTreatments = asyncClient.getTreatmentsByFlagSet(splitKey, 'set_a', attributes);
+
+// We can call getTreatmentsByFlagSets
+asyncTreatments = asyncClient.getTreatmentsByFlagSets(['set_a']);
+// asyncTreatments = asyncClient.getTreatmentsByFlagSets(splitKey, ['set_a']);
+// Attributes parameter is optional
+asyncTreatments = asyncClient.getTreatmentsByFlagSets(['set_a'], attributes);
+// asyncTreatments = asyncClient.getTreatmentsByFlagSets(splitKey, ['set_a'], attributes);
+
+// We can call getTreatmentsWithConfigByFlagSet
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet('set_a');
+// asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a');
+// Attributes parameter is optional
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet('set_a', attributes);
+// asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a', attributes);
+
+// We can call getTreatmentsByFlagSets but always with a key.
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(['set_a']);
+// asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a']);
+// Attributes parameter is optional
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(['set_a'], attributes);
+// asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a'], attributes);
 
 // We can call track.
 trackPromise = asyncClient.track('myTrafficType', 'myEventType'); // all required params
@@ -462,7 +519,7 @@ userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
 /**** Tests for fully crowded settings interfaces ****/
 
 // Split filters
-let splitFilters: SplitIO.SplitFilter[] = [{ type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
+let splitFilters: SplitIO.SplitFilter[] = [{ type: 'bySet', values: ['set_a', 'set_b'] }, { type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
 
 // Browser integrations
 let fieldsObjectSample: UniversalAnalytics.FieldsObject = { hitType: 'event', eventAction: 'action' };
