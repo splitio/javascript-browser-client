@@ -158,8 +158,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // Evaluations with flag sets
     assert.deepEqual(await client.getTreatmentsByFlagSet('set_a'), { with_set_a: 'on', with_sets_a_b: 'on' }, 'Evaluations with getTreatmentsByFlagSet should be correct.');
@@ -201,7 +201,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS + TOTAL_RAW_IMPRESSIONS_IN_EVALUATIONS_WITH_FLAGSETS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS + TOTAL_RAW_IMPRESSIONS_IN_EVALUATIONS_WITH_FLAGSETS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -326,8 +326,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // New shared client created
     const newClient = sdk.client('other');
@@ -348,7 +348,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
