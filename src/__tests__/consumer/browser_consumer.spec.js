@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { inMemoryWrapperFactory } from '@splitsoftware/splitio-commons/src/storages/pluggable/inMemoryWrapper';
 import { SDK_NOT_READY, EXCEPTION } from '@splitsoftware/splitio-commons/src/utils/labels';
 import { truncateTimeFrame } from '@splitsoftware/splitio-commons/src/utils/time';
-import { applyOperations } from './wrapper-commands';
+import { applyOperations, OPERATIONS_FLAG_SETS } from './wrapper-commands';
 import { nearlyEqual } from '../testUtils';
 import { version } from '../../../package.json';
 
@@ -549,4 +549,77 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
   });
 
+  t.test('Getting treatments with flag sets', async assert => {
+    const wrapperInstance = inMemoryWrapperFactory();
+    await applyOperations(wrapperInstance, OPERATIONS_FLAG_SETS);
+
+    const sdk = SplitFactory({
+      ...config,
+      storage: PluggableStorage({
+        prefix: wrapperPrefix,
+        wrapper: wrapperInstance
+      })
+    });
+
+    const client = sdk.client();
+    const otherClient = sdk.client('emi@split');
+
+    client.getTreatmentsWithConfigByFlagSets('other', ['set_one']).then(result => assert.deepEqual(result, {}, 'Flag sets evaluations using pluggable storage should be empty until connection is ready.'));
+
+    await client.ready();
+    await otherClient.ready();
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSet('set_one'),
+      { 'always-on': 'on', 'always-off': 'off' },
+      'Evaluations using pluggable storage should be correct for a set.'
+    );
+
+    assert.deepEqual(
+      await otherClient.getTreatmentsWithConfigByFlagSet('set_one'),
+      { 'always-on': { treatment: 'on', config: null }, 'always-off': { treatment: 'off', config: null } },
+      'Evaluations with configs using pluggable storage should be correct for a set.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSet('set_two'),
+      { 'always-off': 'off', 'nico_not': 'off' },
+      'Evaluations using Redipluggables storage should be correct for a set.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSet('set_invalid'),
+      {},
+      'Evaluations using pluggable storage should properly handle all invalid sets.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSets(['set_two', 'set_one']),
+      { 'always-on': 'on', 'always-off': 'off', 'nico_not': 'off' },
+      'Evaluations using pluggable storage should be correct for multiple sets.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsWithConfigByFlagSets(['set_two', 'set_one']),
+      { 'always-on': { treatment: 'on', config: null }, 'always-off': { treatment: 'off', config: null }, 'nico_not': { treatment: 'off', config: '{"text":"Gallardiola"}' } },
+      'Evaluations with configs using pluggable storage should be correct for multiple sets.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSets([243, null, 'set_two', 'set_one', 'invalid_set']),
+      { 'always-on': 'on', 'always-off': 'off', 'nico_not': 'off' },
+      'Evaluations using pluggable storage should be correct for multiple sets, discarding invalids.'
+    );
+
+    assert.deepEqual(
+      await otherClient.getTreatmentsByFlagSets([243, null, 'invalid_set']),
+      {},
+      'Evaluations using pluggable storage should properly handle all invalid sets.'
+    );
+
+    await otherClient.destroy();
+    await client.destroy();
+
+    assert.end();
+  });
 });
