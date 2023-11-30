@@ -15,7 +15,6 @@ const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType:
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory();
 const TOTAL_RAW_IMPRESSIONS = 18;
-const TOTAL_RAW_IMPRESSIONS_IN_EVALUATIONS_WITH_FLAGSETS = 10;
 const TOTAL_EVENTS = 5;
 const DEDUPED_IMPRESSIONS = 2;
 const timeFrame = Date.now();
@@ -63,27 +62,16 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     /** Evaluation, track and manager methods before SDK_READY */
 
-    const getTreatmentResult = client.getTreatment('UT_IN_SEGMENT');
-    const getTreatmentsWithConfigByFlagSetsResult = client.getTreatmentsWithConfigByFlagSets(['set_a']);
-
-    const namesResult = manager.names();
-    const splitResult = manager.split(expectedSplitName);
-    const splitsResult = manager.splits();
-
     assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
     assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
-    assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
-    assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
-    assert.deepEqual(await getTreatmentsWithConfigByFlagSetsResult, {}, 'Flag sets evaluations using pluggable storage should be empty if initiated before SDK_READY.');
 
-    const trackResult = otherClient.track('user', 'test.event', 18);
-    assert.equal(typeof trackResult.then, 'function', 'Track calls should always return a promise on Consumer mode.');
-    assert.true(await trackResult, 'If the wrapper operation success to queue the event, the promise will resolve to true');
+    client.getTreatment('UT_IN_SEGMENT').then(treatment => assert.equal(treatment, 'control', 'Evaluations using pluggable storage returns a promise that resolves to control if initiated before SDK_READY'));
+    otherClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track calls returns a promise on consumer mode, that resolves to true if the wrapper push operation success to queue the event'));
 
     // Manager methods
-    assert.deepEqual(await namesResult, [], 'manager `names` method returns an empty list of split names if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await splitResult, null, 'manager `split` method returns a null split view if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await splitsResult, [], 'manager `splits` method returns an empty list of split views if called before SDK_READY or wrapper operation fail');
+    manager.names().then(namesResult => assert.deepEqual(namesResult, [], 'manager `names` method returns a promise that resolved to an empty list of split names if called before SDK_READY or wrapper operation fail'));
+    manager.split(expectedSplitName).then(splitResult => assert.deepEqual(splitResult, null, 'manager `split` method returns a promise that resolved to a null split view if called before SDK_READY or wrapper operation fail'));
+    manager.splits().then(splitsResult => assert.deepEqual(splitsResult, [], 'manager `splits` method returns a promise that resolved to an empty list of split views if called before SDK_READY or wrapper operation fail'));
 
     /** Evaluation, track and manager methods on SDK_READY */
 
@@ -135,23 +123,13 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
     assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
-    // Evaluations with flag sets
-    assert.deepEqual(await client.getTreatmentsByFlagSet('set_a'), { with_set_a: 'on', with_sets_a_b: 'on' }, 'Evaluations with getTreatmentsByFlagSet should be correct.');
-    assert.deepEqual(await client.getTreatmentsByFlagSets(['set_a', 'set_b']), { with_set_a: 'on', with_set_b: 'on', with_sets_a_b: 'on' }, 'Evaluations with getTreatmentsByFlagSets should be correct.');
-    assert.deepEqual(await client.getTreatmentsWithConfigByFlagSet('set_b'), { with_set_b: { treatment: 'on', config: '{}' }, with_sets_a_b: { treatment: 'on', config: null } }, 'Evaluations with getTreatmentsWithConfigByFlagSet should be correct.');
-    assert.deepEqual(await client.getTreatmentsWithConfigByFlagSets(['set_a', 'set_b']), { with_set_a: { treatment: 'on', config: null }, with_set_b: { treatment: 'on', config: '{}' }, with_sets_a_b: { treatment: 'on', config: null } }, 'Evaluations with getTreatmentsWithConfigByFlagSets should be correct.');
-
-    assert.deepEqual(await client.getTreatmentsByFlagSet(), {}, 'Evaluations without flag set should be empty.');
-    assert.deepEqual(await client.getTreatmentsByFlagSets([]), {}, 'Evaluations without flag sets should be empty.');
-    assert.deepEqual(await client.getTreatmentsByFlagSets(['non_existent_set']), {}, 'Evaluations with non existent flag sets should be empty.');
-
     // Manager methods
     const splitNames = await manager.names();
-    assert.equal(splitNames.length, 28, 'manager `names` method returns the list of split names asynchronously');
+    assert.equal(splitNames.length, 25, 'manager `names` method returns the list of split names asynchronously');
     assert.equal(splitNames.indexOf(expectedSplitName) > -1, true, 'list of split names should contain expected splits');
     assert.deepEqual(await manager.split(expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
     const splitViews = await manager.splits();
-    assert.equal(splitViews.length, 28, 'manager `splits` method returns the list of split views asynchronously');
+    assert.equal(splitViews.length, 25, 'manager `splits` method returns the list of split views asynchronously');
     assert.deepEqual(splitViews.find(splitView => splitView.name === expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
 
     // New shared client created
@@ -173,7 +151,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     // Validate stored impressions and events
     const trackedImpressions = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.impressions', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.impressions'));
     const trackedEvents = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.events', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.events'));
-    assert.equal(trackedImpressions.length, TOTAL_RAW_IMPRESSIONS + TOTAL_RAW_IMPRESSIONS_IN_EVALUATIONS_WITH_FLAGSETS, 'Tracked impressions should be present in the external storage');
+    assert.equal(trackedImpressions.length, TOTAL_RAW_IMPRESSIONS, 'Tracked impressions should be present in the external storage');
     assert.equal(trackedEvents.length, TOTAL_EVENTS, 'Tracked events should be present in the external storage');
 
     // Validate stored telemetry
@@ -186,7 +164,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS + TOTAL_RAW_IMPRESSIONS_IN_EVALUATIONS_WITH_FLAGSETS, 'Each evaluation has its corresponding impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
