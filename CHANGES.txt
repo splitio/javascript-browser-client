@@ -1,6 +1,7 @@
 0.13.0 (December XX, 2023)
  - Added support for Flag Sets in "consumer" and "partial consumer" modes (pluggable storage).
- - Updated @splitsoftware/splitio-commons package to version 1.12.0 that includes flag sets support for "consumer" and "partial consumer" modes.
+ - Updated @splitsoftware/splitio-commons package to version 1.12.0 that includes flag sets support for "consumer" and "partial consumer" modes, and other improvements.
+ - Bugfixing - Fixed manager methods in consumer modes to return results in a promise when the SDK is not operational (not ready or destroyed).
 
 0.12.0 (November 3, 2023)
  - Added support for Flag Sets on the SDK, which enables grouping feature flags and interacting with the group rather than individually (more details in our documentation):
