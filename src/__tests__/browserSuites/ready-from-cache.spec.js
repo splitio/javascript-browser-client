@@ -254,7 +254,7 @@ export default function (fetchMock, assert) {
     t.plan(12 * 2 + 5);
 
     fetchMock.get(testUrls.sdk + '/splitChanges?since=25', function () {
-      t.equal(localStorage.getItem('readyFromCache_3.SPLITIO.split.always_on'), alwaysOnSplitInverted, 'splits must not be cleaned from cache');
+      t.equal(localStorage.getItem('readyFromCache_3.SPLITIO.split.always_on'), alwaysOnSplitInverted, 'feature flags must not be cleaned from cache');
       return new Promise(res => { setTimeout(() => res({ status: 200, body: { ...splitChangesMock1, since: 25 }, headers: {} }), 200); }); // 400ms is how long it'll take to reply with Splits, no SDK_READY should be emitted before that.
     });
     fetchMock.get(testUrls.sdk + '/splitChanges?since=1457552620999', { status: 200, body: splitChangesMock2 });
@@ -368,11 +368,11 @@ export default function (fetchMock, assert) {
       events: 'https://events.baseurl/readyFromCacheWithData4'
     };
     localStorage.clear();
-    t.plan(9 * 2 + 5);
 
     fetchMock.get(testUrls.sdk + '/splitChanges?since=-1', function () {
       t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
-      t.equal(localStorage.length, 1, 'split cache data must be cleaned from localStorage');
+      t.equal(localStorage.getItem('readyFromCache_4.SPLITIO.hash'), expectedHashNullFilter, 'storage hash must not be changed');
+      t.equal(localStorage.length, 2, 'feature flags cache data must be cleaned from localStorage');
       return { status: 200, body: splitChangesMock1 };
     });
     fetchMock.get(testUrls.sdk + '/splitChanges?since=1457552620999', { status: 200, body: splitChangesMock2 });
@@ -457,6 +457,8 @@ export default function (fetchMock, assert) {
           t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
           t.equal(localStorage.getItem('readyFromCache_4.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
           t.true(nearlyEqual(parseInt(localStorage.getItem('readyFromCache_4.SPLITIO.splits.lastUpdated')), Date.now() - 1000 /* 1000 ms between last Split and MySegments fetch */), 'lastUpdated must correspond to the timestamp of the last successfully fetched Splits');
+
+          t.end();
         });
       });
       t.true(Date.now() - startTime >= 1000, 'It should emit SDK_READY after syncing with the cloud.');
@@ -517,8 +519,8 @@ export default function (fetchMock, assert) {
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
         t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
-        t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'split declarations must be cached');
-        t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'split declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'feature flag declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'feature flag declarations must be cached');
         t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.hash'), expectedHashWithFilter, 'Storage hash must correspond to the one for the SDK key and feature flag filter query');
         t.equal(localStorage.getItem('readyFromCache_5.SPLITIO.splits.filterQuery'), null);
         t.end();
@@ -561,8 +563,8 @@ export default function (fetchMock, assert) {
 
       client.destroy().then(() => {
         t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
-        t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'split declarations must be cached');
-        t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'split declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'feature flag declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'feature flag declarations must be cached');
         t.equal(localStorage.getItem('readyFromCache_5B.SPLITIO.hash'), expectedHashWithFilter, 'Storage hash must correspond to the split filter query and SDK key');
         t.end();
       });
@@ -612,8 +614,8 @@ export default function (fetchMock, assert) {
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
         t.equal(localStorage.getItem('readyFromCache_6.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
-        t.equal(localStorage.getItem('readyFromCache_6.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'split declarations must be cached');
-        t.equal(localStorage.getItem('readyFromCache_6.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'split declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_6.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'feature flag declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_6.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'feature flag declarations must be cached');
         t.equal(localStorage.getItem('readyFromCache_6.SPLITIO.hash'), expectedHash, 'Storage hash must correspond to the split filter query and SDK key');
         t.end();
       });
@@ -664,8 +666,8 @@ export default function (fetchMock, assert) {
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
         t.equal(localStorage.getItem('readyFromCache_7.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
-        t.equal(localStorage.getItem('readyFromCache_7.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'split declarations must be cached');
-        t.equal(localStorage.getItem('readyFromCache_7.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'split declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_7.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'feature flag declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_7.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'feature flag declarations must be cached');
         t.equal(localStorage.getItem('readyFromCache_7.SPLITIO.hash'), expectedHash, 'Storage hash must correspond to the split filter query and SDK key');
         t.end();
       });
@@ -716,7 +718,7 @@ export default function (fetchMock, assert) {
         const manager = splitio.manager();
 
         client.once(client.Event.SDK_READY_FROM_CACHE, () => {
-          t.fail('It should not emit SDK_READY_FROM_CACHE because all splits were removed from cache since the filter query changed.');
+          t.fail('It should not emit SDK_READY_FROM_CACHE because all feature flags were removed from cache since the filter query changed.');
           t.end();
         });
 
@@ -726,9 +728,9 @@ export default function (fetchMock, assert) {
           client.destroy().then(() => {
             t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
             t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
-            t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'split declarations must be cached');
-            t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'split declarations must be cached');
-            t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.split.p3__split'), JSON.stringify(splitDeclarations.p3__split), 'split declarations must be cached');
+            t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.split.p1__split'), JSON.stringify(splitDeclarations.p1__split), 'feature flag declarations must be cached');
+            t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'feature flag declarations must be cached');
+            t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.split.p3__split'), JSON.stringify(splitDeclarations.p3__split), 'feature flag declarations must be cached');
             t.equal(localStorage.getItem('readyFromCache_8.SPLITIO.hash'), expectedHashNullFilter, 'Storage hash must correspond to the split filter query and SDK key');
             t.end();
           });
@@ -770,7 +772,7 @@ export default function (fetchMock, assert) {
     const manager = splitio.manager();
 
     client.once(client.Event.SDK_READY_FROM_CACHE, () => {
-      t.fail('It should not emit SDK_READY_FROM_CACHE because all splits were removed from cache since the filter query changed.');
+      t.fail('It should not emit SDK_READY_FROM_CACHE because all feature flags were removed from cache since the filter query changed.');
       t.end();
     });
 
@@ -780,8 +782,8 @@ export default function (fetchMock, assert) {
       client.destroy().then(() => {
         t.equal(localStorage.getItem('some_user_item'), 'user_item', 'user items at localStorage must not be changed');
         t.equal(localStorage.getItem('readyFromCache_9.SPLITIO.splits.till'), '1457552620999', 'splits.till must correspond to the till of the last successfully fetched Splits');
-        t.equal(localStorage.getItem('readyFromCache_9.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'split declarations must be cached');
-        t.equal(localStorage.getItem('readyFromCache_9.SPLITIO.split.p3__split'), JSON.stringify(splitDeclarations.p3__split), 'split declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_9.SPLITIO.split.p2__split'), JSON.stringify(splitDeclarations.p2__split), 'feature flag declarations must be cached');
+        t.equal(localStorage.getItem('readyFromCache_9.SPLITIO.split.p3__split'), JSON.stringify(splitDeclarations.p3__split), 'feature flag declarations must be cached');
         t.equal(localStorage.getItem('readyFromCache_9.SPLITIO.hash'), getStorageHash({ ...baseConfig, sync: { __splitFiltersValidation: { queryString: '&names=no%20exist%20trim,no_exist,p3__split&prefixes=no%20exist%20trim,p2' } } }), 'Storage hash must correspond to the split filter query and SDK key');
         t.end();
       });

@@ -1,4 +1,4 @@
-0.13.0 (December XX, 2023)
+0.13.0 (December 12, 2023)
  - Added support for Flag Sets in "consumer" and "partial consumer" modes (pluggable storage).
  - Updated SDK cache for browsers using localStorage, to clear cached feature flag definitions before initiating the synchronization process, if the cache was previously synchronized with a different SDK key (i.e., a different environment) or different Split Filter criteria.
  - Updated @splitsoftware/splitio-commons package to version 1.12.1 that includes flag sets support for "consumer" and "partial consumer" modes, and other improvements.
