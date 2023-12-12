@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { inMemoryWrapperFactory } from '@splitsoftware/splitio-commons/src/storages/pluggable/inMemoryWrapper';
 import { SDK_NOT_READY, EXCEPTION } from '@splitsoftware/splitio-commons/src/utils/labels';
 import { truncateTimeFrame } from '@splitsoftware/splitio-commons/src/utils/time';
-import { applyOperations } from './wrapper-commands';
+import { applyOperations, OPERATIONS_FLAG_SETS } from './wrapper-commands';
 import { nearlyEqual } from '../testUtils';
 import { version } from '../../../package.json';
 
@@ -62,25 +62,16 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     /** Evaluation, track and manager methods before SDK_READY */
 
-    const getTreatmentResult = client.getTreatment('UT_IN_SEGMENT');
-
-    const namesResult = manager.names();
-    const splitResult = manager.split(expectedSplitName);
-    const splitsResult = manager.splits();
-
-    assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
-    assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
     assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
     assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
 
-    const trackResult = otherClient.track('user', 'test.event', 18);
-    assert.equal(typeof trackResult.then, 'function', 'Track calls should always return a promise on Consumer mode.');
-    assert.true(await trackResult, 'If the wrapper operation success to queue the event, the promise will resolve to true');
+    client.getTreatment('UT_IN_SEGMENT').then(treatment => assert.equal(treatment, 'control', 'Evaluations using pluggable storage returns a promise that resolves to control if initiated before SDK_READY'));
+    otherClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track calls returns a promise on consumer mode, that resolves to true if the wrapper push operation success to queue the event'));
 
     // Manager methods
-    assert.deepEqual(await namesResult, [], 'manager `names` method returns an empty list of split names if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await splitResult, null, 'manager `split` method returns a null split view if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await splitsResult, [], 'manager `splits` method returns an empty list of split views if called before SDK_READY or wrapper operation fail');
+    manager.names().then(namesResult => assert.deepEqual(namesResult, [], 'manager `names` method returns a promise that resolved to an empty list of split names if called before SDK_READY or wrapper operation fail'));
+    manager.split(expectedSplitName).then(splitResult => assert.deepEqual(splitResult, null, 'manager `split` method returns a promise that resolved to a null split view if called before SDK_READY or wrapper operation fail'));
+    manager.splits().then(splitsResult => assert.deepEqual(splitsResult, [], 'manager `splits` method returns a promise that resolved to an empty list of split views if called before SDK_READY or wrapper operation fail'));
 
     /** Evaluation, track and manager methods on SDK_READY */
 
@@ -129,8 +120,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // Manager methods
     const splitNames = await manager.names();
@@ -173,7 +164,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -269,8 +260,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // New shared client created
     const newClient = sdk.client('other');
@@ -305,7 +296,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -401,8 +392,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // New shared client created
     const newClient = sdk.client('other');
@@ -459,7 +450,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -509,8 +500,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
       // some asserts to test regular usage
       assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'on', 'Evaluations using pluggable storage should be correct.');
       assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'off', 'Evaluations using pluggable storage should be correct.');
-      assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-      assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+      assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+      assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
       await client.destroy();
       assert.end();
@@ -550,7 +541,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, 2, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, 2, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[1].impression.label, EXCEPTION, 'The last impression is control with label "exception"');
 
       assert.end();
@@ -558,4 +549,77 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
   });
 
+  t.test('Getting treatments with flag sets', async assert => {
+    const wrapperInstance = inMemoryWrapperFactory();
+    await applyOperations(wrapperInstance, OPERATIONS_FLAG_SETS);
+
+    const sdk = SplitFactory({
+      ...config,
+      storage: PluggableStorage({
+        prefix: wrapperPrefix,
+        wrapper: wrapperInstance
+      })
+    });
+
+    const client = sdk.client();
+    const otherClient = sdk.client('emi@split');
+
+    client.getTreatmentsWithConfigByFlagSets('other', ['set_one']).then(result => assert.deepEqual(result, {}, 'Flag sets evaluations using pluggable storage should be empty until connection is ready.'));
+
+    await client.ready();
+    await otherClient.ready();
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSet('set_one'),
+      { 'always-on': 'on', 'always-off': 'off' },
+      'Evaluations using pluggable storage should be correct for a set.'
+    );
+
+    assert.deepEqual(
+      await otherClient.getTreatmentsWithConfigByFlagSet('set_one'),
+      { 'always-on': { treatment: 'on', config: null }, 'always-off': { treatment: 'off', config: null } },
+      'Evaluations with configs using pluggable storage should be correct for a set.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSet('set_two'),
+      { 'always-off': 'off', 'nico_not': 'off' },
+      'Evaluations using Redipluggables storage should be correct for a set.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSet('set_invalid'),
+      {},
+      'Evaluations using pluggable storage should properly handle all invalid sets.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSets(['set_two', 'set_one']),
+      { 'always-on': 'on', 'always-off': 'off', 'nico_not': 'off' },
+      'Evaluations using pluggable storage should be correct for multiple sets.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsWithConfigByFlagSets(['set_two', 'set_one']),
+      { 'always-on': { treatment: 'on', config: null }, 'always-off': { treatment: 'off', config: null }, 'nico_not': { treatment: 'off', config: '{"text":"Gallardiola"}' } },
+      'Evaluations with configs using pluggable storage should be correct for multiple sets.'
+    );
+
+    assert.deepEqual(
+      await client.getTreatmentsByFlagSets([243, null, 'set_two', 'set_one', 'invalid_set']),
+      { 'always-on': 'on', 'always-off': 'off', 'nico_not': 'off' },
+      'Evaluations using pluggable storage should be correct for multiple sets, discarding invalids.'
+    );
+
+    assert.deepEqual(
+      await otherClient.getTreatmentsByFlagSets([243, null, 'invalid_set']),
+      {},
+      'Evaluations using pluggable storage should properly handle all invalid sets.'
+    );
+
+    await otherClient.destroy();
+    await client.destroy();
+
+    assert.end();
+  });
 });

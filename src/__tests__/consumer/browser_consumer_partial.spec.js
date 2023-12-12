@@ -88,25 +88,16 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     /** Evaluation, track and manager methods before SDK_READY */
 
-    const getTreatmentResult = client.getTreatment('UT_IN_SEGMENT');
-
-    const namesResult = manager.names();
-    const splitResult = manager.split(expectedSplitName);
-    const splitsResult = manager.splits();
-
-    assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
-    assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
     assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
     assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
 
-    const trackResult = otherClient.track('user', 'test.event', 18);
-    assert.equal(typeof trackResult.then, 'function', 'Track calls should always return a promise on Consumer mode.');
-    assert.true(await trackResult, 'If the wrapper operation success to queue the event, the promise will resolve to true');
+    client.getTreatment('UT_IN_SEGMENT').then(treatment => assert.equal(treatment, 'control', 'Evaluations using pluggable storage returns a promise that resolves to control if initiated before SDK_READY'));
+    otherClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track calls returns a promise on consumer mode, that resolves to true if the wrapper push operation success to queue the event'));
 
     // Manager methods
-    assert.deepEqual(await namesResult, [], 'manager `names` method returns an empty list of split names if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await splitResult, null, 'manager `split` method returns a null split view if called before SDK_READY or wrapper operation fail');
-    assert.deepEqual(await splitsResult, [], 'manager `splits` method returns an empty list of split views if called before SDK_READY or wrapper operation fail');
+    manager.names().then(namesResult => assert.deepEqual(namesResult, [], 'manager `names` method returns an empty list of split names if called before SDK_READY or wrapper operation fail'));
+    manager.split(expectedSplitName).then(splitResult => assert.deepEqual(splitResult, null, 'manager `split` method returns a null split view if called before SDK_READY or wrapper operation fail'));
+    manager.splits().then(splitsResult => assert.deepEqual(splitsResult, [], 'manager `splits` method returns an empty list of split views if called before SDK_READY or wrapper operation fail'));
 
     /** Evaluation, track and manager methods on SDK_READY */
 
@@ -154,8 +145,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // Manager methods
     const splitNames = await manager.names();
@@ -187,7 +178,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -312,8 +303,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
-    assert.true(await client.track('user', 'test.event', 18), 'If the event was succesfully queued the promise will resolve to true');
-    assert.false(await client.track(), 'If the event was NOT succesfully queued the promise will resolve to false');
+    assert.true(await client.track('user', 'test.event', 18), 'If the event was successfully queued the promise will resolve to true');
+    assert.false(await client.track(), 'If the event was NOT successfully queued the promise will resolve to false');
 
     // New shared client created
     const newClient = sdk.client('other');
@@ -334,7 +325,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponting impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -342,6 +333,9 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
   });
 
   t.test('Wrapper connection error timeouts the SDK immediately', (assert) => {
+    fetchMock.postOnce(url(config, '/events/bulk'), 200);
+    fetchMock.postOnce(url(config, '/testImpressions/bulk'), 200);
+
     // Mock a wrapper connection error
     sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
     const getSpy = sinon.spy(wrapperInstance, 'get');
