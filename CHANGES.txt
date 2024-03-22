@@ -1,3 +1,6 @@
+0.13.2 (XXX XX, 2024)
+ - Updated some transitive dependencies for vulnerability fixes.
+
 0.13.1 (January 18, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.13.1 and some transitive dependencies for vulnerability fixes.
 
