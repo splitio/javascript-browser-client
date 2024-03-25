@@ -3,7 +3,7 @@ import terser from '@rollup/plugin-terser';
 
 export default env => {
 
-  const fileName = (outputSuffix) => `split-browser-${env.branch !== 'main' ? 'dev-' + VERSION : VERSION}${outputSuffix ? '.' + outputSuffix : ''}`;
+  const fileName = (outputSuffix, version) => `split-browser-${env.branch !== 'main' ? 'dev-' + version : version}${outputSuffix ? '.' + outputSuffix : ''}`;
 
   const createRollupConfig = (input, outputSuffix) => ({
     input,
@@ -12,13 +12,13 @@ export default env => {
       {
         format: 'umd', // works as `cjs`, `iife` and `amd` all in one
         name: 'splitio',
-        file: `umd/${fileName(outputSuffix)}.js`
+        file: `umd/${fileName(outputSuffix, VERSION)}.js`
       },
       // production build
       {
         format: 'umd',
         name: 'splitio',
-        file: `umd/${fileName(outputSuffix)}.min.js`,
+        file: `umd/${fileName(outputSuffix, VERSION)}.min.js`,
         plugins: [
           terser()
         ]
