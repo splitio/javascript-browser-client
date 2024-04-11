@@ -108,7 +108,7 @@ tape('## E2E CI Tests ##', function (assert) {
   /* Check events */
   assert.test('E2E / Events', withoutBindingTT.bind(null, fetchMock));
   // Next test only applies for the isomorphic JS SDK, that support clients with bound TT
-  // assert.test('E2E / Events with TT binded', bindingTT.bind(null, fetchMock));
+  // assert.test('E2E / Events with TT bound', bindingTT.bind(null, fetchMock));
   /* Check shared clients */
   assert.test('E2E / Shared instances', sharedInstantiationSuite.bind(null, false, true, fetchMock));
   // Next test only applies for the isomorphic JS SDK, that support clients with bound TT
