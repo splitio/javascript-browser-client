@@ -21,8 +21,8 @@ const config = {
 };
 
 export default async function telemetryBrowserSuite(fetchMock, assert) {
-  fetchMock.getOnce(baseUrls.sdk + '/splitChanges?since=-1', 500);
-  fetchMock.getOnce(baseUrls.sdk + '/splitChanges?since=-1', { status: 200, body: splitChangesMock1 });
+  fetchMock.getOnce(baseUrls.sdk + '/splitChanges?s=1.1&since=-1', 500);
+  fetchMock.getOnce(baseUrls.sdk + '/splitChanges?s=1.1&since=-1', { status: 200, body: splitChangesMock1 });
   fetchMock.getOnce(baseUrls.sdk + '/mySegments/user-key', 500);
   fetchMock.getOnce(baseUrls.sdk + '/mySegments/user-key', { status: 200, body: { 'mySegments': [ 'one_segment'] } });
 
