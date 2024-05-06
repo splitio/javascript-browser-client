@@ -24,9 +24,9 @@ export default function fetchSpecificSplits(fetchMock, assert) {
       const queryString = queryStrings[i] || '';
       let factory;
 
-      fetchMock.getOnce(urls.sdk + '/splitChanges?since=-1' + queryString, { status: 200, body: { splits: [], since: -1, till: 1457552620999 } });
-      fetchMock.getOnce(urls.sdk + '/splitChanges?since=1457552620999' + queryString, { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } });
-      fetchMock.getOnce(urls.sdk + '/splitChanges?since=1457552620999' + queryString, function () {
+      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.1&since=-1' + queryString, { status: 200, body: { splits: [], since: -1, till: 1457552620999 } });
+      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.1&since=1457552620999' + queryString, { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } });
+      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.1&since=1457552620999' + queryString, function () {
         factory.client().destroy().then(() => {
           assert.pass(`splitFilters #${i}`);
         });

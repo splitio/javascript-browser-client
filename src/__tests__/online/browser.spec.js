@@ -84,8 +84,8 @@ tape('## E2E CI Tests ##', function (assert) {
   //If we change the mocks, we need to clear localstorage. Cleaning up after testing ensures "fresh data".
   localStorage.clear();
 
-  fetchMock.get(url(settings, '/splitChanges?since=-1'), { status: 200, body: splitChangesMock1 });
-  fetchMock.get(url(settings, '/splitChanges?since=1457552620999'), { status: 200, body: splitChangesMock2 });
+  fetchMock.get(url(settings, '/splitChanges?s=1.1&since=-1'), { status: 200, body: splitChangesMock1 });
+  fetchMock.get(url(settings, '/splitChanges?s=1.1&since=1457552620999'), { status: 200, body: splitChangesMock2 });
   fetchMock.get(url(settings, '/mySegments/facundo%40split.io'), { status: 200, body: mySegmentsFacundo });
   fetchMock.get(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolas });
   fetchMock.get(url(settings, '/mySegments/marcio%40split.io'), { status: 200, body: mySegmentsMarcio });
@@ -108,7 +108,7 @@ tape('## E2E CI Tests ##', function (assert) {
   /* Check events */
   assert.test('E2E / Events', withoutBindingTT.bind(null, fetchMock));
   // Next test only applies for the isomorphic JS SDK, that support clients with bound TT
-  // assert.test('E2E / Events with TT binded', bindingTT.bind(null, fetchMock));
+  // assert.test('E2E / Events with TT bound', bindingTT.bind(null, fetchMock));
   /* Check shared clients */
   assert.test('E2E / Shared instances', sharedInstantiationSuite.bind(null, false, true, fetchMock));
   // Next test only applies for the isomorphic JS SDK, that support clients with bound TT
