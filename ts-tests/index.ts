@@ -200,7 +200,7 @@ const instantiatedSettingsCore: {
 } = SDK.settings.core;
 // const instantiatedSettingsMode: ('standalone' | 'consumer') = SDK.settings.mode;
 const instantiatedSettingsScheduler: { [key: string]: number } = SDK.settings.scheduler;
-const instantiatedSettingsStartup: { [key: string]: number } = SDK.settings.startup;
+const instantiatedSettingsStartup: { [key: string]: number | boolean } = SDK.settings.startup;
 const instantiatedStorage: SplitIO.StorageSync = SDK.settings.storage;
 const instantiatedSettingsUrls: { [key: string]: string } = SDK.settings.urls;
 const instantiatedSettingsVersion: string = SDK.settings.version;
@@ -557,6 +557,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     impressionsQueueSize: 1,
     telemetryRefreshRate: 1,
     segmentsRefreshRate: 1,
+    largeSegmentsRefreshRate: 1,
     offlineRefreshRate: 1,
     eventsPushRate: 1,
     eventsQueueSize: 1,
@@ -566,7 +567,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     readyTimeout: 1,
     requestTimeoutBeforeReady: 1,
     retriesOnFailureBeforeReady: 1,
-    eventsFirstPushWindow: 1
+    eventsFirstPushWindow: 1,
+    waitForLargeSegments: true,
   },
   urls: {
     sdk: 'https://asd.com/sdk',
@@ -589,7 +591,8 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     splitFilters: splitFilters,
     impressionsMode: 'DEBUG',
     localhostMode: LocalhostFromObject(),
-    enabled: true
+    enabled: true,
+    largeSegmentsEnabled: true,
   },
   userConsent: 'GRANTED'
 };

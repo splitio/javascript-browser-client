@@ -24,7 +24,7 @@ export default async function telemetryBrowserSuite(fetchMock, assert) {
   fetchMock.getOnce(baseUrls.sdk + '/splitChanges?s=1.1&since=-1', 500);
   fetchMock.getOnce(baseUrls.sdk + '/splitChanges?s=1.1&since=-1', { status: 200, body: splitChangesMock1 });
   fetchMock.getOnce(baseUrls.sdk + '/mySegments/user-key', 500);
-  fetchMock.getOnce(baseUrls.sdk + '/mySegments/user-key', { status: 200, body: { 'mySegments': [ 'one_segment'] } });
+  fetchMock.getOnce(baseUrls.sdk + '/mySegments/user-key', { status: 200, body: { 'mySegments': ['one_segment'] } });
 
   // We need to handle all requests properly
   fetchMock.postOnce(baseUrls.events + '/testImpressions/bulk', 200);
@@ -71,7 +71,7 @@ export default async function telemetryBrowserSuite(fetchMock, assert) {
 
     // @TODO check if iDe value is correct
     assert.deepEqual(data, {
-      mE: {}, hE: { sp: { 500: 1 }, ms: { 500: 1 } }, tR: 0, aR: 0, iQ: 4, iDe: 1, iDr: 0, spC: 31, seC: 1, skC: 1, eQ: 1, eD: 0, sE: [], t: [], ufs: { sp: 0, ms: 0 }
+      mE: {}, hE: { sp: { 500: 1 }, ms: { 500: 1 } }, tR: 0, aR: 0, iQ: 4, iDe: 1, iDr: 0, spC: 31, seC: 1, skC: 1, eQ: 1, eD: 0, sE: [], t: [], ufs: {}
     }, 'metrics/usage JSON payload should be the expected');
 
     finish.next();
@@ -91,7 +91,7 @@ export default async function telemetryBrowserSuite(fetchMock, assert) {
     // @TODO check if iDe value is correct
     assert.deepEqual(data, {
       mL: {}, mE: {}, hE: {}, hL: {}, // errors and latencies were popped
-      tR: 0, aR: 0, iQ: 4, iDe: 1, iDr: 0, spC: 31, seC: 1, skC: 1, eQ: 1, eD: 0, sE: [], t: [], ufs: { sp: 0, ms: 0 }
+      tR: 0, aR: 0, iQ: 4, iDe: 1, iDr: 0, spC: 31, seC: 1, skC: 1, eQ: 1, eD: 0, sE: [], t: [], ufs: {}
     }, '2nd metrics/usage JSON payload should be the expected');
     return 200;
   });
@@ -103,7 +103,7 @@ export default async function telemetryBrowserSuite(fetchMock, assert) {
     delete data.tR; // delete to validate other properties
 
     assert.deepEqual(data, {
-      oM: 0, st: 'memory', aF: 1, rF: 0, sE: false,
+      oM: 0, st: 'memory', aF: 1, rF: 0, sE: false, lE: false,
       rR: { sp: 99999, ms: 60, im: 300, ev: 60, te: 1 } /* override featuresRefreshRate */,
       uO: { s: true, e: true, a: false, st: false, t: true } /* override sdk, events and telemetry URLs */,
       iQ: 30000, eQ: 500, iM: 0, iL: false, hP: false, nR: 1 /* 1 non ready usage */, t: [], i: [], uC: 2 /* Default GRANTED */,

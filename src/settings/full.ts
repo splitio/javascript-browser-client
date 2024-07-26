@@ -6,6 +6,7 @@ import { validatePluggableIntegrations } from '@splitsoftware/splitio-commons/sr
 import { validateLogger } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/logger/pluggableLogger';
 import { validateLocalhostWithDefault } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/localhost/builtin';
 import { validateConsent } from '@splitsoftware/splitio-commons/src/utils/settingsValidation/consent';
+import { STANDALONE_MODE } from '@splitsoftware/splitio-commons/src/utils/constants';
 
 const params = {
   defaults,
@@ -19,5 +20,10 @@ const params = {
 };
 
 export function settingsFactory(config: any) {
-  return settingsValidation(config, params);
+  const settings = settingsValidation(config, params);
+
+  // @TODO remove when LS is supported in consumer modes
+  if (settings.mode !== STANDALONE_MODE) settings.sync.largeSegmentsEnabled = false;
+
+  return settings;
 }

@@ -2,7 +2,7 @@ import { LogLevels, isLogLevelString } from '@splitsoftware/splitio-commons/src/
 import { ConsentStatus, LogLevel } from '@splitsoftware/splitio-commons/src/types';
 import { CONSENT_GRANTED } from '@splitsoftware/splitio-commons/src/utils/constants';
 
-const packageVersion = '0.14.1';
+const packageVersion = '0.14.2-rc.0';
 
 /**
  * In browser, the default debug level, can be set via the `localStorage.splitio_debug` item.
@@ -30,7 +30,9 @@ export const defaults = {
     // Maximum amount of time used before notifies me a timeout.
     readyTimeout: 10,
     // Amount of time we will wait before the first push of events.
-    eventsFirstPushWindow: 10
+    eventsFirstPushWindow: 10,
+    // Wait for large segments to emit SDK_READY event.
+    waitForLargeSegments: true,
   },
 
   // Consent is considered granted by default
