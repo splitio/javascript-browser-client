@@ -28,14 +28,15 @@ const config = {
     prefix: wrapperPrefix,
     wrapper: wrapperInstance
   }),
-  // sync: {
-  //   impressionsMode: 'OPTIMIZED'
-  // },
   urls: {
     sdk: 'https://sdk.baseurl/impressionsSuite',
     events: 'https://events.baseurl/impressionsSuite',
     telemetry: 'https://telemetry.baseurl/impressionsSuite'
-  }
+  },
+  sync: {
+    // ignored
+    largeSegmentsEnabled: true,
+  },
 };
 
 tape('Browser Consumer Partial mode with pluggable storage', function (t) {

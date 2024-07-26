@@ -60,7 +60,11 @@ tape('Browser offline mode', function (assert) {
       eventsFirstPushWindow: 0,
       readyTimeout: 0.001
     },
-    features: originalFeaturesMap
+    features: originalFeaturesMap,
+    sync: {
+      // ignored
+      largeSegmentsEnabled: true,
+    }
   };
   const factory = SplitFactory(config);
   const manager = factory.manager();

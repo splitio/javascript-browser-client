@@ -31,7 +31,9 @@ const config = {
     wrapper: wrapperInstance
   }),
   sync: {
-    impressionsMode: 'DEBUG'
+    impressionsMode: 'DEBUG',
+    // ignored
+    largeSegmentsEnabled: true,
   },
 };
 
