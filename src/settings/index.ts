@@ -22,7 +22,7 @@ const params = {
 export function settingsFactory(config: any) {
   const settings = settingsValidation(config, params);
 
-  // @ts-ignore, Override in localhost and consumer modes to properly emit SDK_READY
+  // @ts-ignore, Override in localhost and consumer modes to emit SDK_READY event
   if (settings.mode !== STANDALONE_MODE) settings.sync.largeSegmentsEnabled = false;
 
   return settings;
