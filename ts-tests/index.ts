@@ -136,7 +136,7 @@ splitView = {
   configs: {
     off: '{"dimensions":"{\"height\":20,\"width\":40}"}'
   },
-  sets: ['set_a','set_b'],
+  sets: ['set_a', 'set_b'],
   defaultTreatment: 'off'
 };
 splitViews = [splitView];
@@ -589,7 +589,10 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
     splitFilters: splitFilters,
     impressionsMode: 'DEBUG',
     localhostMode: LocalhostFromObject(),
-    enabled: true
+    enabled: true,
+    requestOptions: {
+      getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
+    }
   },
   userConsent: 'GRANTED'
 };
@@ -636,7 +639,10 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   streamingEnabled: true,
   sync: {
     impressionsMode: 'DEBUG',
-    enabled: true
+    enabled: true,
+    requestOptions: {
+      getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
+    }
   },
   userConsent: 'GRANTED'
 };
