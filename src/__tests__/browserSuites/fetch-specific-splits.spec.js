@@ -32,7 +32,7 @@ export default function fetchSpecificSplits(fetchMock, assert) {
         });
         return { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } };
       });
-      fetchMock.get(urls.sdk + '/mySegments/nicolas%40split.io', { status: 200, body: { 'mySegments': [] } });
+      fetchMock.get(urls.sdk + '/memberships/nicolas%40split.io', { status: 200, body: { 'ms': {} } });
 
       factory = SplitFactory(config);
 

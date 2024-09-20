@@ -361,7 +361,13 @@ interface IBasicSDK {
    * User consent API.
    * @property UserConsent
    */
-  UserConsent: IUserConsentAPI
+  UserConsent: IUserConsentAPI,
+  /**
+   * Destroys all the clients created by this factory.
+   * @function destroy
+   * @returns {Promise<void>}
+   */
+  destroy(): Promise<void>
 }
 /****** Exposed namespace ******/
 /**
