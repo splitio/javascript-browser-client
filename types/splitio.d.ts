@@ -656,6 +656,35 @@ declare namespace SplitIO {
     (params: {}): (Integration | void)
   }
   /**
+   * A pair of user key and it's trafficType, required for tracking valid Split events.
+   * @typedef {Object} Identity
+   * @property {string} key The user key.
+   * @property {string} trafficType The key traffic type.
+   */
+  type Identity = {
+    key: string;
+    trafficType: string;
+  };
+  /**
+   * Object with information about a Split event.
+   * @typedef {Object} EventData
+   */
+  type EventData = {
+    eventTypeId: string;
+    value?: number;
+    properties?: Properties;
+    trafficTypeName?: string;
+    key?: string;
+    timestamp?: number;
+  };
+  /**
+   * Object representing the data sent by Split (events and impressions).
+   * @typedef {Object} IntegrationData
+   * @property {string} type The type of Split data, either 'IMPRESSION' or 'EVENT'.
+   * @property {ImpressionData | EventData} payload The data instance itself.
+   */
+  type IntegrationData = { type: 'IMPRESSION', payload: SplitIO.ImpressionData } | { type: 'EVENT', payload: SplitIO.EventData };
+  /**
    * Available URL settings for the SDKs.
    */
   type UrlSettings = {
