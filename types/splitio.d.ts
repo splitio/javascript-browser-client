@@ -2,8 +2,6 @@
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
-/// <reference types="google.analytics" />
-
 export as namespace SplitIO;
 export = SplitIO;
 
@@ -232,7 +230,7 @@ interface ISharedSettings {
      *
      * NOTE: this is only required if using the slim entry point of the library to init the SDK in localhost mode.
      *
-     * For more information @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+     * For more information see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
      *
      * Example:
      * ```typescript
@@ -302,9 +300,8 @@ interface IStatusInterface extends IEventEmitter {
    */
   Event: EventConsts,
   /**
-   * Returns a promise that resolves once the SDK has finished loading (SDK_READY event emitted) or rejected if the SDK has timedout (SDK_READY_TIMED_OUT event emitted).
-   * As it's meant to provide similar flexibility to the event approach, given that the SDK might be eventually ready after a timeout event, calling the `ready` method after the
-   * SDK had timed out will return a new promise that should eventually resolve if the SDK gets ready.
+   * Returns a promise that resolves once the SDK has finished loading (`SDK_READY` event emitted) or rejected if the SDK has timedout (`SDK_READY_TIMED_OUT` event emitted).
+   * As it's meant to provide similar flexibility to the event approach, given that the SDK might be eventually ready after a timeout event, the `ready` method will return a resolved promise once the SDK is ready.
    *
    * Caveats: the method was designed to avoid an unhandled Promise rejection if the rejection case is not handled, so that `onRejected` handler is optional when using promises.
    * However, when using async/await syntax, the rejection should be explicitly propagated like in the following example:
@@ -370,8 +367,7 @@ interface IBasicSDK {
 /****** Exposed namespace ******/
 /**
  * Types and interfaces for @splitsoftware/splitio-browserjs package for usage when integrating javascript browser sdk on typescript apps.
- * For the SDK package information
- * @see {@link https://www.npmjs.com/package/@splitsoftware/splitio-browserjs}
+ * For the SDK package information see {@link https://www.npmjs.com/package/@splitsoftware/splitio-browserjs}
  */
 declare namespace SplitIO {
   /**
@@ -660,152 +656,6 @@ declare namespace SplitIO {
     (params: {}): (Integration | void)
   }
   /**
-   * A pair of user key and it's trafficType, required for tracking valid Split events.
-   * @typedef {Object} Identity
-   * @property {string} key The user key.
-   * @property {string} trafficType The key traffic type.
-   */
-  type Identity = {
-    key: string;
-    trafficType: string;
-  };
-  /**
-   * Object with information about a Split event.
-   * @typedef {Object} EventData
-   */
-  type EventData = {
-    eventTypeId: string;
-    value?: number;
-    properties?: Properties;
-    trafficTypeName?: string;
-    key?: string;
-    timestamp?: number;
-  };
-  /**
-   * Configuration params for 'Google Analytics to Split' integration plugin, to track Google Analytics hits as Split events.
-   *
-   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#google-analytics-to-split}
-   */
-  interface GoogleAnalyticsToSplitOptions {
-    /**
-     * Optional flag to filter GA hits from being tracked as Split events.
-     * @property {boolean} hits
-     * @default true
-     */
-    hits?: boolean,
-    /**
-     * Optional predicate used to define a custom filter for tracking GA hits as Split events.
-     * For example, the following filter allows to track only 'event' hits:
-     *  `(model) => model.get('hitType') === 'event'`
-     * By default, all hits are tracked as Split events.
-     */
-    filter?: (model: UniversalAnalytics.Model) => boolean,
-    /**
-     * Optional function useful when you need to modify the Split event before tracking it.
-     * This function is invoked with two arguments:
-     * 1. the GA model object representing the hit.
-     * 2. the default format of the mapped Split event instance.
-     * The return value must be a Split event, that can be the second argument or a new object.
-     *
-     * For example, the following mapper adds a custom property to events:
-     *  `(model, defaultMapping) => {
-     *      defaultMapping.properties.someProperty = SOME_VALUE;
-     *      return defaultMapping;
-     *  }`
-     */
-    mapper?: (model: UniversalAnalytics.Model, defaultMapping: SplitIO.EventData) => SplitIO.EventData,
-    /**
-     * Optional prefix for EventTypeId, to prevent any kind of data collision between events.
-     * @property {string} prefix
-     * @default 'ga'
-     */
-    prefix?: string,
-    /**
-     * List of Split identities (key & traffic type pairs) used to track events.
-     * If not provided, events are sent using the key and traffic type provided at SDK config.
-     */
-    identities: Identity[],
-    /**
-     * Optional flag to log an error if the `auto-require` script is not detected.
-     * The auto-require script automatically requires the `splitTracker` plugin for created trackers,
-     * and should be placed right after your Google Analytics, Google Tag Manager or gtag.js script tag.
-     *
-     * @see {@link https://help.split.io/hc/en-us/articles/360040838752#set-up-with-gtm-and-gtag.js}
-     *
-     * @property {boolean} autoRequire
-     * @default false
-     */
-    autoRequire?: boolean,
-  }
-  /**
-   * Object representing the data sent by Split (events and impressions).
-   * @typedef {Object} IntegrationData
-   * @property {string} type The type of Split data, either 'IMPRESSION' or 'EVENT'.
-   * @property {ImpressionData | EventData} payload The data instance itself.
-   */
-  type IntegrationData = { type: 'IMPRESSION', payload: SplitIO.ImpressionData } | { type: 'EVENT', payload: SplitIO.EventData };
-  /**
-   * Configuration params for 'Split to Google Analytics' integration plugin, to track Split impressions and events as Google Analytics hits.
-   *
-   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#split-to-google-analytics}
-   */
-  interface SplitToGoogleAnalyticsOptions {
-    /**
-     * Optional flag to filter Split impressions from being tracked as GA hits.
-     * @property {boolean} impressions
-     * @default true
-     */
-    impressions?: boolean,
-    /**
-     * Optional flag to filter Split events from being tracked as GA hits.
-     * @property {boolean} events
-     * @default true
-     */
-    events?: boolean,
-    /**
-     * Optional predicate used to define a custom filter for tracking Split data (events and impressions) as GA hits.
-     * For example, the following filter allows to track only impressions, equivalent to setting events to false:
-     *  `(data) => data.type === 'IMPRESSION'`
-     */
-    filter?: (data: SplitIO.IntegrationData) => boolean,
-    /**
-     * Optional function useful when you need to modify the GA hit before sending it.
-     * This function is invoked with two arguments:
-     * 1. the input data (Split event or impression).
-     * 2. the default format of the mapped FieldsObject instance (GA hit).
-     * The return value must be a FieldsObject, that can be the second argument or a new object.
-     *
-     * For example, the following mapper adds a custom dimension to hits:
-     *  `(data, defaultMapping) => {
-     *      defaultMapping.dimension1 = SOME_VALUE;
-     *      return defaultMapping;
-     *  }`
-     *
-     * Default FieldsObject instance for data.type === 'IMPRESSION':
-     *  `{
-     *    hitType: 'event',
-     *    eventCategory: 'split-impression',
-     *    eventAction: 'Evaluate ' + data.payload.impression.feature,
-     *    eventLabel: 'Treatment: ' + data.payload.impression.treatment + '. Targeting rule: ' + data.payload.impression.label + '.',
-     *    nonInteraction: true,
-     *  }`
-     * Default FieldsObject instance for data.type === 'EVENT':
-     *  `{
-     *    hitType: 'event',
-     *    eventCategory: 'split-event',
-     *    eventAction: data.payload.eventTypeId,
-     *    eventValue: data.payload.value,
-     *    nonInteraction: true,
-     *  }`
-     */
-    mapper?: (data: SplitIO.IntegrationData, defaultMapping: UniversalAnalytics.FieldsObject) => UniversalAnalytics.FieldsObject,
-    /**
-     * List of tracker names to send the hit. An empty string represents the default tracker.
-     * If not provided, hits are only sent to default tracker.
-     */
-    trackerNames?: string[],
-  }
-  /**
    * Available URL settings for the SDKs.
    */
   type UrlSettings = {
@@ -894,12 +744,14 @@ declare namespace SplitIO {
      */
     core: {
       /**
-       * Your SDK key. More information: @see {@link https://help.split.io/hc/en-us/articles/360019916211-API-keys}
+       * Your SDK key.
+       * @see {@link https://help.split.io/hc/en-us/articles/360019916211-API-keys}
        * @property {string} authorizationKey
        */
       authorizationKey: string,
       /**
-       * Customer identifier. Whatever this means to you. @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
+       * Customer identifier. Whatever this means to you.
+       * @see {@link https://help.split.io/hc/en-us/articles/360019916311-Traffic-type}
        * @property {SplitKey} key
        */
       key: SplitKey,
@@ -919,13 +771,6 @@ declare namespace SplitIO {
     /**
      * Defines an optional list of factory functions used to instantiate SDK integrations.
      *
-     * Example:
-     * ```typescript
-     * SplitFactory({
-     *   ...
-     *   integrations: [SplitToGoogleAnalytics(), GoogleAnalyticsToSplit()]
-     * })
-     * ```
      * @property {Object} integrations
      */
     integrations?: IntegrationFactory[],
@@ -957,7 +802,7 @@ declare namespace SplitIO {
      */
     mode?: 'standalone',
     /**
-     * Mocked features map. For testing purposses only. For using this you should specify "localhost" as authorizationKey on core settings.
+     * Mocked features map. For testing purposes only. For using this you should specify "localhost" as authorizationKey on core settings.
      * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
      */
     features?: MockedFeaturesMap,
@@ -1057,7 +902,7 @@ declare namespace SplitIO {
       eventsQueueSize?: number,
       /**
        * For mocking/testing only. The SDK will refresh the features mocked data when mode is set to "localhost" by defining the key.
-       * For more information @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
+       * For more information see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}
        * @property {number} offlineRefreshRate
        * @default 15
        */

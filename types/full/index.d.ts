@@ -7,7 +7,7 @@ export = JsSdk;
 
 declare module JsSdk {
   /**
-   * Full version of the Split.io sdk factory function.
+   * Full version of the Split.io SDK factory function.
    *
    * Unlike the slim version, it doesn't require a 'fetch' polyfill to support old browsers @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#language-support}.
    * and includes localhost mode out-of-the-box @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode}.
@@ -31,20 +31,6 @@ declare module JsSdk {
    * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#sharing-state-with-a-pluggable-storage}
    */
    export function PluggableStorage(options: SplitIO.PluggableStorageOptions): SplitIO.StorageAsyncFactory;
-
-  /**
-   * Enable 'Google Analytics to Split' integration, to track Google Analytics hits as Split events.
-   *
-   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#google-analytics-to-split}
-   */
-  export function GoogleAnalyticsToSplit(options?: SplitIO.GoogleAnalyticsToSplitOptions): SplitIO.IntegrationFactory;
-
-  /**
-   * Enable 'Split to Google Analytics' integration, to track Split impressions and events as Google Analytics hits.
-   *
-   * @see {@link https://help.split.io/hc/en-us/articles/360040838752#split-to-google-analytics}
-   */
-  export function SplitToGoogleAnalytics(options?: SplitIO.SplitToGoogleAnalyticsOptions): SplitIO.IntegrationFactory;
 
   /**
    * Creates a logger instance that enables descriptive log messages with DEBUG log level when passed in the factory settings.

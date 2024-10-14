@@ -1,6 +1,6 @@
 {
   "name": "@splitsoftware/splitio-browserjs",
-  "version": "0.15.1-rc.0",
+  "version": "1.0.0-rc.0",
   "description": "Split SDK for JavaScript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -14,8 +14,7 @@
     "esm",
     "src",
     "types",
-    "full",
-    "scripts/ga-to-split-autorequire.js"
+    "full"
   ],
   "scripts": {
     "check": "npm run check:lint && npm run check:types && npm run check:version",
@@ -27,7 +26,6 @@
     "build:cjs": "rimraf cjs && tsc -outDir cjs -m CommonJS && ./scripts/build_cjs_replace_imports.sh",
     "build:umd-visualizer": "rimraf umd && rollup --config rollup.visualizer.config.js",
     "build:umd": "rimraf umd && rollup --config rollup.ci.config.js --branch=$BUILD_BRANCH",
-    "build:ga-to-split-autorequire": "terser ./node_modules/@splitsoftware/splitio-commons/src/integrations/ga/autoRequire.js --mangle --output ./scripts/ga-to-split-autorequire.js",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "npm run test:e2e-logger && npm run test:e2e-offline && npm run test:e2e-online && npm run test:e2e-destroy && npm run test:e2e-errorCatching && npm run test:e2e-push && npm run test:e2e-consumer",
@@ -37,7 +35,6 @@
     "test:e2e-destroy": "karma start karma/e2e.destroy.karma.conf.js",
     "test:e2e-errorCatching": "karma start karma/e2e.errorCatching.karma.conf.js",
     "test:e2e-push": "karma start karma/e2e.push.karma.conf.js",
-    "test:e2e-gaIntegration": "karma start karma/e2e.gaIntegration.karma.conf.js",
     "test:e2e-consumer": "karma start karma/e2e.consumer.karma.conf.js",
     "pretest-ts-decls": "npm run build:esm && npm run build:cjs && npm link",
     "test-ts-decls": "./scripts/ts-tests.sh",
@@ -64,8 +61,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "1.17.1-rc.1",
-    "@types/google.analytics": "0.0.40",
+    "@splitsoftware/splitio-commons": "2.0.0-rc.0",
     "tslib": "^2.3.1",
     "unfetch": "^4.2.0"
   },
