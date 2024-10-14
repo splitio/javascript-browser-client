@@ -31,8 +31,6 @@ export const defaults = {
     readyTimeout: 10,
     // Amount of time we will wait before the first push of events.
     eventsFirstPushWindow: 10,
-    // Wait for large segments to emit SDK_READY event.
-    waitForLargeSegments: true,
   },
 
   // Consent is considered granted by default
