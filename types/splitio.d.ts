@@ -800,6 +800,8 @@ declare namespace SplitIO {
     /**
      * Defines an optional list of factory functions used to instantiate SDK integrations.
      *
+     * NOTE: at the moment there are not integrations to plug in Browser SDK.
+     *
      * @property {Object} integrations
      */
     integrations?: IntegrationFactory[],
