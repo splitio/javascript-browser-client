@@ -11,14 +11,12 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject, PluggableStorage } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
+import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject, PluggableStorage } from '@splitsoftware/splitio-browserjs';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
 let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
-let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitFull;
-let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsFull;
 let pluggableStorage = PluggableStorage; pluggableStorage = PluggableStorageFull;
 
 let stringPromise: Promise<string>;
@@ -525,29 +523,6 @@ userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
 // Split filters
 let splitFilters: SplitIO.SplitFilter[] = [{ type: 'bySet', values: ['set_a', 'set_b'] }, { type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
 
-// Browser integrations
-let fieldsObjectSample: UniversalAnalytics.FieldsObject = { hitType: 'event', eventAction: 'action' };
-let eventDataSample: SplitIO.EventData = { eventTypeId: 'someEventTypeId', value: 10, properties: {} };
-
-let minimalGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = { identities: [{ key: 'user', trafficType: 'tt' }] };
-let emptySplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {};
-
-let customGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = {
-  hits: false,
-  filter: function (model: UniversalAnalytics.Model): boolean { return true; },
-  mapper: function (model: UniversalAnalytics.Model, defaultMapping: SplitIO.EventData): SplitIO.EventData { return eventDataSample; },
-  prefix: 'PREFIX',
-  identities: [{ key: 'key1', trafficType: 'tt1' }, { key: 'key2', trafficType: 'tt2' }],
-  autoRequire: true
-};
-let customSplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {
-  events: false,
-  impressions: true,
-  filter: function (model: SplitIO.IntegrationData): boolean { return true; },
-  mapper: function (model: SplitIO.IntegrationData, defaultMapping: UniversalAnalytics.FieldsObject): UniversalAnalytics.FieldsObject { return fieldsObjectSample; },
-  trackerNames: ['t0', 'myTracker'],
-}
-
 let fullBrowserSettings: SplitIO.IBrowserSettings = {
   core: {
     authorizationKey: 'asd',
@@ -583,11 +558,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   storage: syncStorageFactory,
   impressionListener: impressionListener,
   debug: true,
-  integrations: [
-    GoogleAnalyticsToSplit(), SplitToGoogleAnalytics(),
-    GoogleAnalyticsToSplit(minimalGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(emptySplitToGoogleAnalyticsConfig),
-    GoogleAnalyticsToSplit(customGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(customSplitToGoogleAnalyticsConfig)
-  ],
+  integrations: [],
   streamingEnabled: true,
   sync: {
     splitFilters: splitFilters,
@@ -635,11 +606,7 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   }),
   impressionListener: impressionListener,
   debug: true,
-  integrations: [
-    GoogleAnalyticsToSplit(), SplitToGoogleAnalytics(),
-    GoogleAnalyticsToSplit(minimalGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(emptySplitToGoogleAnalyticsConfig),
-    GoogleAnalyticsToSplit(customGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(customSplitToGoogleAnalyticsConfig)
-  ],
+  integrations: [],
   streamingEnabled: true,
   sync: {
     impressionsMode: 'DEBUG',
@@ -664,8 +631,6 @@ fullBrowserSettings.debug = DebugLoggerFull();
 fullBrowserSettings.debug = InfoLoggerFull();
 fullBrowserSettings.debug = WarnLoggerFull();
 fullBrowserSettings.debug = ErrorLoggerFull();
-
-// fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 
 // let fullNodeSettings: SplitIO.INodeSettings = {
 //   core: {
