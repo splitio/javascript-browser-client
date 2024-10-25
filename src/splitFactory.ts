@@ -6,7 +6,7 @@ import { getFetch } from './platform/getFetch';
 import { getEventSource } from './platform/getEventSource';
 import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
-import { IBrowserSettings } from '../types/splitio';
+import SplitIO from '@splitsoftware/splitio-commons/types/splitio';
 
 const platform = { getFetch, getEventSource, EventEmitter, now };
 
@@ -18,7 +18,7 @@ const platform = { getFetch, getEventSource, EventEmitter, now };
  * caution since, unlike `config`, this param is not validated neither considered part of the public API.
  * @throws Will throw an error if the provided config is invalid.
  */
-export function SplitFactory(config: IBrowserSettings, __updateModules?: (modules: ISdkFactoryParams) => void) {
+export function SplitFactory(config: SplitIO.IClientSideSettings, __updateModules?: (modules: ISdkFactoryParams) => void) {
   const settings = settingsFactory(config);
   const modules = getModules(settings, platform);
   if (__updateModules) __updateModules(modules);

@@ -10,11 +10,11 @@ declare module JsSdk {
   /**
    * Split.io SDK factory function.
    *
-   * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
+   * The settings parameter should be an object that complies with the SplitIO.IClientSideSettings or SplitIO.IClientSideAsyncSettings interfaces.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
-  export function SplitFactory(settings: SplitIO.IBrowserSettings): SplitIO.ISDK;
-  export function SplitFactory(settings: SplitIO.IBrowserAsyncSettings): SplitIO.IAsyncSDK;
+  export function SplitFactory(config: SplitIO.IClientSideSettings): SplitIO.ISDK;
+  export function SplitFactory(config: SplitIO.IClientSideAsyncSettings): SplitIO.IAsyncSDK;
 
   /**
    * Persistent storage based on the LocalStorage Web API for browsers.

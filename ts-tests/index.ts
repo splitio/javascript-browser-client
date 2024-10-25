@@ -32,8 +32,8 @@ let SDK: SplitIO.ISDK;
 // Settings interfaces
 // let nodeSettings: SplitIO.INodeSettings;
 // let asyncSettings: SplitIO.INodeAsyncSettings;
-let browserSettings: SplitIO.IBrowserSettings;
-let browserAsyncSettings: SplitIO.IBrowserAsyncSettings;
+let browserSettings: SplitIO.IClientSideSettings;
+let browserAsyncSettings: SplitIO.IClientSideAsyncSettings;
 // Client & Manager APIs
 // let client: SplitIO.IClient;
 let client: SplitIO.IClient;
@@ -518,7 +518,7 @@ userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
 // Split filters
 let splitFilters: SplitIO.SplitFilter[] = [{ type: 'bySet', values: ['set_a', 'set_b'] }, { type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
 
-let fullBrowserSettings: SplitIO.IBrowserSettings = {
+let fullBrowserSettings: SplitIO.IClientSideSettings = {
   core: {
     authorizationKey: 'asd',
     key: 'asd',
@@ -568,7 +568,7 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
 fullBrowserSettings.userConsent = 'DECLINED';
 fullBrowserSettings.userConsent = 'UNKNOWN';
 
-let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
+let fullBrowserAsyncSettings: SplitIO.IClientSideAsyncSettings = {
   mode: 'consumer',
   core: {
     authorizationKey: 'asd',
