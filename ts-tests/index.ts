@@ -11,7 +11,7 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, PluggableStorage } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, PluggableStorage } from '../types/index';
 
 
 let stringPromise: Promise<string>;

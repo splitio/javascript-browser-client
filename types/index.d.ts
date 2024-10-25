@@ -2,7 +2,8 @@
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
-/// <reference path="./splitio.d.ts" />
+import '@splitsoftware/splitio-commons';
+
 export = JsSdk;
 
 declare module JsSdk {

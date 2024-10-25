@@ -35,9 +35,7 @@
     "test:e2e-errorCatching": "karma start karma/e2e.errorCatching.karma.conf.js",
     "test:e2e-push": "karma start karma/e2e.push.karma.conf.js",
     "test:e2e-consumer": "karma start karma/e2e.consumer.karma.conf.js",
-    "pretest-ts-decls": "npm run build:esm && npm run build:cjs && npm link",
-    "test-ts-decls": "./scripts/ts-tests.sh",
-    "posttest-ts-decls": "npm rm --location=global @splitsoftware/splitio-browserjs && npm install",
+    "test-ts-decls": "tsc --build ts-tests",
     "all": "npm run check && npm run build && npm run test-ts-decls && npm run test",
     "publish:rc": "npm run check && npm run build && npm publish --tag rc",
     "publish:stable": "npm run check && npm run build && npm publish"
