@@ -11,13 +11,8 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
 import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, PluggableStorage } from '@splitsoftware/splitio-browserjs';
 
-// Entry points must export the same objects
-let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
-let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
-let pluggableStorage = PluggableStorage; pluggableStorage = PluggableStorageFull;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -626,10 +621,6 @@ fullBrowserSettings.debug = DebugLogger();
 fullBrowserSettings.debug = InfoLogger();
 fullBrowserSettings.debug = WarnLogger();
 fullBrowserSettings.debug = ErrorLogger();
-fullBrowserSettings.debug = DebugLoggerFull();
-fullBrowserSettings.debug = InfoLoggerFull();
-fullBrowserSettings.debug = WarnLoggerFull();
-fullBrowserSettings.debug = ErrorLoggerFull();
 
 // let fullNodeSettings: SplitIO.INodeSettings = {
 //   core: {

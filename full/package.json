@@ -1,6 +1,0 @@
-{
-  "main": "../cjs/full/index.js",
-  "module": "../esm/full/index.js",
-  "types": "../types/full/index.d.ts",
-  "sideEffects": false
-}

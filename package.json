@@ -13,8 +13,7 @@
     "cjs",
     "esm",
     "src",
-    "types",
-    "full"
+    "types"
   ],
   "scripts": {
     "check": "npm run check:lint && npm run check:types && npm run check:version",
@@ -62,8 +61,7 @@
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
     "@splitsoftware/splitio-commons": "2.0.0-rc.2",
-    "tslib": "^2.3.1",
-    "unfetch": "^4.2.0"
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",

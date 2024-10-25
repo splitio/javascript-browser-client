@@ -2,7 +2,7 @@ import { settingsFactory } from './settings';
 import { getModules } from './platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
-import { getFetch } from './platform/getFetchSlim';
+import { getFetch } from './platform/getFetch';
 import { getEventSource } from './platform/getEventSource';
 import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
@@ -11,8 +11,7 @@ import { IBrowserSettings } from '../types/splitio';
 const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
- * Slim SplitFactory with pluggable modules for Browser.
- * Doesn't include fetch ponyfill out-of-the-box.
+ * SplitFactory with pluggable modules for Browser.
  *
  * @param config configuration object used to instantiate the SDK
  * @param __updateModules optional function that lets redefine internal SDK modules. Use with
