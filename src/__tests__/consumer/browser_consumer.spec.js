@@ -32,8 +32,6 @@ const config = {
   }),
   sync: {
     impressionsMode: 'DEBUG',
-    // ignored
-    largeSegmentsEnabled: true,
   },
 };
 

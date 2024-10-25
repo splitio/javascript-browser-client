@@ -12,7 +12,7 @@ const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
  * Slim SplitFactory with pluggable modules for Browser.
- * Doesn't include localhost mode and fetch ponyfill out-of-the-box.
+ * Doesn't include fetch ponyfill out-of-the-box.
  *
  * @param config configuration object used to instantiate the SDK
  * @param __updateModules optional function that lets redefine internal SDK modules. Use with

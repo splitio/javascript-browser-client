@@ -12,7 +12,7 @@
  */
 
 import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
-import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject, PluggableStorage } from '@splitsoftware/splitio-browserjs';
+import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, PluggableStorage } from '@splitsoftware/splitio-browserjs';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
@@ -563,7 +563,6 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   sync: {
     splitFilters: splitFilters,
     impressionsMode: 'DEBUG',
-    localhostMode: LocalhostFromObject(),
     enabled: true,
     requestOptions: {
       getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
