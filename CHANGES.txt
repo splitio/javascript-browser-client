@@ -5,7 +5,7 @@
  - BREAKING CHANGES:
     - Removed internal ponyfills for the `Map` and `Set` global objects, dropping support for IE and other outdated browsers. The SDK now requires the runtime environment to support these features natively or provide a polyfill.
     - Removed the deprecated `GoogleAnalyticsToSplit` and `SplitToGoogleAnalytics` pluggable integration modules, along with the related interfaces in the TypeScript definitions.
-    - Removed the `LocalhostFromObject` export from the "slim" entrypoint (`import { LocalhostFromObject } from '@splitsoftware/splitio-browserjs'`). It is no longer necessary to manually import and configure it in the `sync.localhostMode` option to enable localhost mode.
+    - Removed the `LocalhostFromObject` export from the default import (`import { LocalhostFromObject } from '@splitsoftware/splitio-browserjs'`). It is no longer necessary to manually import and configure it in the `sync.localhostMode` option to enable localhost mode.
 
 0.15.0 (September 13, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.17.0 that includes minor updates:
@@ -71,7 +71,7 @@
 
 0.9.4 (May 4, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
- - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" entrypoint (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
+ - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" import (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
 
 0.9.3 (March 20, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.1 that includes minor improvements.
