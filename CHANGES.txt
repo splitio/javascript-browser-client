@@ -3,6 +3,7 @@
  - Added `factory.destroy()` method, which invokes the `destroy` method of all clients created by the factory.
  - Updated @splitsoftware/splitio-commons package to version 2.0.0 that includes major updates and updated some transitive dependencies for vulnerability fixes.
  - BREAKING CHANGES:
+    - Renamed some TypeScript definitions in the SplitIO namespace to avoid conflicts with other libraries: `SplitIO.IBrowserSettings` to `SplitIO.IClientSideSettings`, `SplitIO.IBrowserAsyncSettings` to `SplitIO.IClientSideAsyncSettings`.
     - Removed internal ponyfills for the `Map` and `Set` global objects, dropping support for IE and other outdated browsers. The SDK now requires the runtime environment to support these features natively or provide a polyfill.
     - Removed the deprecated `GoogleAnalyticsToSplit` and `SplitToGoogleAnalytics` pluggable integration modules, along with the related interfaces in the TypeScript definitions.
     - Removed the `LocalhostFromObject` export from the default import (`import { LocalhostFromObject } from '@splitsoftware/splitio-browserjs'`). It is no longer necessary to manually import and configure it in the `sync.localhostMode` option to enable localhost mode.
