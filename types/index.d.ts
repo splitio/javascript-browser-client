@@ -7,9 +7,7 @@ export = JsSdk;
 
 declare module JsSdk {
   /**
-   * Slim version of the Split.io SDK factory function.
-   *
-   * Recommended to use for bundle size reduction in production, since it doesn't include a 'fetch' polyfill out-of-the-box
+   * Split.io SDK factory function.
    *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}

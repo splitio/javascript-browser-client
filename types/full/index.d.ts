@@ -9,7 +9,7 @@ declare module JsSdk {
   /**
    * Full version of the Split.io SDK factory function.
    *
-   * Unlike the slim version, it doesn't require a 'fetch' polyfill to support old browsers @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#language-support}.
+   * It includes a `fetch` polyfill out-of-the-box. @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#language-support}.
    *
    * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}

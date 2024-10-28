@@ -12,7 +12,7 @@ const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
  * SplitFactory with pluggable modules for Browser.
- * Includes fetch polyfill out-of-the-box.
+ * It includes a `fetch` polyfill out-of-the-box.
  *
  * @param config configuration object used to instantiate the SDK
  * @param __updateModules optional function that lets redefine internal SDK modules. Use with
