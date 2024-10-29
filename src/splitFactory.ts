@@ -1,3 +1,4 @@
+import type SplitIO from '@splitsoftware/splitio-commons/types/splitio';
 import { settingsFactory } from './settings';
 import { getModules } from './platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
@@ -6,7 +7,6 @@ import { getFetch } from './platform/getFetch';
 import { getEventSource } from './platform/getEventSource';
 import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
-import SplitIO from '@splitsoftware/splitio-commons/types/splitio';
 
 const platform = { getFetch, getEventSource, EventEmitter, now };
 
