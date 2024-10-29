@@ -601,10 +601,8 @@ let fullBrowserAsyncSettings: SplitIO.IClientSideAsyncSettings = {
   impressionListener: impressionListener,
   debug: true,
   integrations: [],
-  streamingEnabled: true,
   sync: {
     impressionsMode: 'DEBUG',
-    enabled: true,
     requestOptions: {
       getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
     }

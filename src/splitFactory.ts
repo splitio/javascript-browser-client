@@ -13,8 +13,8 @@ const platform = { getFetch, getEventSource, EventEmitter, now };
 /**
  * SplitFactory with pluggable modules for Browser.
  *
- * @param config configuration object used to instantiate the SDK
- * @param __updateModules optional function that lets redefine internal SDK modules. Use with
+ * @param config - configuration object used to instantiate the SDK
+ * @param __updateModules - optional function that lets redefine internal SDK modules. Use with
  * caution since, unlike `config`, this param is not validated neither considered part of the public API.
  * @throws Will throw an error if the provided config is invalid.
  */
