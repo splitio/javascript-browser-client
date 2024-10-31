@@ -1,4 +1,4 @@
-import SplitIO from '@splitsoftware/splitio-commons/types/splitio';
+import type SplitIO from '@splitsoftware/splitio-commons/types/splitio';
 import { settingsFactory } from '../settings/full';
 import { getModules } from '../platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
