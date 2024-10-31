@@ -11,8 +11,7 @@ import { IBrowserSettings } from '../types/splitio';
 const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
- * Slim SplitFactory with pluggable modules for Browser.
- * Doesn't include localhost mode and fetch ponyfill out-of-the-box.
+ * SplitFactory with pluggable modules for Browser.
  *
  * @param config configuration object used to instantiate the SDK
  * @param __updateModules optional function that lets redefine internal SDK modules. Use with
