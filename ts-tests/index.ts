@@ -32,8 +32,8 @@ let trackPromise: Promise<boolean>;
 
 // Facade return interface
 // let SDK: SplitIO.ISDK;
-let AsyncSDK: SplitIO.IAsyncSDK;
-let SDK: SplitIO.ISDK;
+let AsyncSDK: SplitIO.IBrowserAsyncSDK;
+let SDK: SplitIO.IBrowserSDK;
 // Settings interfaces
 // let nodeSettings: SplitIO.INodeSettings;
 // let asyncSettings: SplitIO.INodeAsyncSettings;
@@ -41,9 +41,9 @@ let browserSettings: SplitIO.IClientSideSettings;
 let browserAsyncSettings: SplitIO.IClientSideAsyncSettings;
 // Client & Manager APIs
 // let client: SplitIO.IClient;
-let client: SplitIO.IClient;
+let client: SplitIO.IBrowserClient;
 let manager: SplitIO.IManager;
-let asyncClient: SplitIO.IAsyncClient;
+let asyncClient: SplitIO.IBrowserAsyncClient;
 let asyncManager: SplitIO.IAsyncManager;
 // Utility interfaces
 let impressionListener: SplitIO.IImpressionListener;
@@ -182,7 +182,7 @@ browserAsyncSettings = {
     wrapper: {}
   })
 };
-// With sync settings should return ISDK, if settings have async storage it should return IAsyncSDK
+// With sync settings should return IBrowserSDK, if settings have async storage it should return IBrowserAsyncSDK
 SDK = SplitFactory(browserSettings);
 AsyncSDK = SplitFactory(browserAsyncSettings);
 // SDK = SplitFactory(nodeSettings);
