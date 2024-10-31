@@ -2,7 +2,8 @@ import tape from 'tape-catch';
 import sinon from 'sinon';
 import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
-import { SplitFactory, InLocalStorage } from '../../index';
+import { SplitFactory, InLocalStorage } from '../../full';
+import { SplitFactory as SplitFactorySlim } from '../../';
 import { settingsFactory } from '../../settings';
 
 const settings = settingsFactory({ core: { key: 'facundo@split.io' } });
@@ -87,7 +88,10 @@ tape('Browser offline mode', function (assert) {
     sharedUpdateCount++;
   });
 
-  const factoryReadyFromCache = SplitFactory({ ...config, storage: InLocalStorage() });
+  const factoriesReadyFromCache = [
+    SplitFactory({ ...config, storage: InLocalStorage() }),
+    SplitFactorySlim({ ...config, storage: InLocalStorage() })
+  ];
   const configs = [
     { ...config, features: { ...config.features }, storage: InLocalStorage /* invalid */ },
     { ...config },
@@ -95,7 +99,7 @@ tape('Browser offline mode', function (assert) {
   ];
   const factories = [
     ...configs.map(config => SplitFactory(config)),
-    factoryReadyFromCache
+    ...factoriesReadyFromCache
   ];
 
   let readyCount = 0, updateCount = 0, readyFromCacheCount = 0;
@@ -357,7 +361,7 @@ tape('Browser offline mode', function (assert) {
           // SDK events on other factory clients
           assert.equal(readyCount, factories.length, 'Each factory client should have emitted SDK_READY event once');
           assert.equal(updateCount, factories.length - 1, 'Each factory client except one should have emitted SDK_UPDATE event once');
-          assert.equal(readyFromCacheCount, 2, 'The main and shared client of the factory with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
+          assert.equal(readyFromCacheCount, factoriesReadyFromCache.length * 2, 'The main and shared client of the factories with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
 
           assert.end();
         });

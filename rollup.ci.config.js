@@ -35,7 +35,7 @@ export default env => {
      *
      * Only https://www.npmjs.com/package/rollup-plugin-ts compiles from node_modules, and is used for tests.
      */
-    createRollupConfig('esm/umd-full.js', 'full'), // umd/split-browser-VERSION.full[.min].js
+    createRollupConfig('esm/full/umd.js', 'full'), // umd/split-browser-VERSION.full[.min].js
     createRollupConfig('esm/umd.js') // umd/split-browser-VERSION[.min].js
   ];
 };

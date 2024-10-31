@@ -1,10 +1,10 @@
 import SplitIO from '@splitsoftware/splitio-commons/types/splitio';
-import { settingsFactory } from './settings';
-import { getModules } from './platform/getModules';
+import { settingsFactory } from '../settings/full';
+import { getModules } from '../platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
-import { getFetch } from './platform/getFetchSlim';
-import { getEventSource } from './platform/getEventSource';
+import { getFetch } from '../platform/getFetchFull';
+import { getEventSource } from '../platform/getEventSource';
 import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
 import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
 
@@ -12,7 +12,7 @@ const platform = { getFetch, getEventSource, EventEmitter, now };
 
 /**
  * SplitFactory with pluggable modules for Browser.
- * Doesn't include fetch ponyfill out-of-the-box.
+ * Includes fetch polyfill out-of-the-box.
  *
  * @param config - configuration object used to instantiate the SDK
  * @param __updateModules - optional function that lets redefine internal SDK modules. Use with
