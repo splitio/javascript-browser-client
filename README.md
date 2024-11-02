@@ -10,7 +10,7 @@ This SDK is designed to work with Split, the platform for controlled rollouts, w
 ## Compatibility
 The JS Browser SDK is a library for Web browser environments.
 
-The library was build to support ES5 syntax and all major browsers. *However, there are a few polyfills that would be required when targeting old browsers that don't have native support for Promises and Fetch Web API. You should include a Promise polyfill like [es6-promise](https://github.com/stefanpenner/es6-promise), and a Fetch polyfill such as [whatwg-fetch](https://cdn.jsdelivr.net/npm/whatwg-fetch@3.5.0/dist/fetch.umd.min.js) or the lightweight [unfetch](https://unpkg.com/unfetch/polyfill).*
+The library was build to support ES5 syntax and all major browsers. *However, there are a few polyfills that would be required when targeting old browsers that don't have native support for Promises, Maps, Sets and Fetch Web API. You should include a polyfill, like [es6-promise](https://github.com/stefanpenner/es6-promise) for Promises, and [whatwg-fetch](https://cdn.jsdelivr.net/npm/whatwg-fetch@3.5.0/dist/fetch.umd.min.js) or the lightweight [unfetch](https://unpkg.com/unfetch/polyfill) for the Fetch API.*
 
 ## Getting started
 Below is a simple index.js example that describes the instantiation and most basic usage of our SDK:

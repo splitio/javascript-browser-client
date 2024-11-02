@@ -1,8 +1,12 @@
-0.16.0 (September XX, 2024)
- - Added `factory.destroy()` method, which invokes the `destroy` method on all SDK clients created by the factory.
- - Updated @splitsoftware/splitio-commons package to version 1.18.0 that includes minor updates:
-    - Added support for targeting rules based on large segments for browsers.
-    - Updated some transitive dependencies for vulnerability fixes.
+1.0.0 (November 1, 2024)
+ - Added support for targeting rules based on large segments for browsers.
+ - Added `factory.destroy()` method, which invokes the `destroy` method of all clients created by the factory.
+ - Updated @splitsoftware/splitio-commons package to version 2.0.0 that includes major updates and updated some transitive dependencies for vulnerability fixes.
+ - BREAKING CHANGES:
+    - Renamed some TypeScript definitions in the SplitIO namespace to avoid conflicts with other Split packages: `SplitIO.IBrowserSettings` to `SplitIO.IClientSideSettings`, `SplitIO.IBrowserAsyncSettings` to `SplitIO.IClientSideAsyncSettings`, `SplitIO.ISDK` to `SplitIO.IBrowserSDK`, and `SplitIO.IAsyncSDK` to `SplitIO.IBrowserAsyncSDK`.
+    - Removed internal ponyfills for the `Map` and `Set` global objects, dropping support for IE and other outdated browsers. The SDK now requires the runtime environment to support these features natively or provide a polyfill.
+    - Removed the deprecated `GoogleAnalyticsToSplit` and `SplitToGoogleAnalytics` pluggable integration modules, along with the related interfaces in the TypeScript definitions.
+    - Removed the `LocalhostFromObject` export from the default import (`import { LocalhostFromObject } from '@splitsoftware/splitio-browserjs'`). It is no longer necessary to manually import and configure it in the `sync.localhostMode` option to enable localhost mode.
 
 0.15.0 (September 13, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.17.0 that includes minor updates:
@@ -58,7 +62,7 @@
  - Updated some transitive dependencies for vulnerability fixes.
  - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
     - Updated SDK_READY_TIMED_OUT event to be emitted immediately when a connection error occurs using pluggable storage (i.e., when the wrapper `connect` promise is rejected) in consumer and partial consumer modes.
-    - Bugfixing - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviours when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
+    - Bugfixing - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviors when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
 
 0.9.5 (May 15, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
@@ -68,7 +72,7 @@
 
 0.9.4 (May 4, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
- - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" entrypoint (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
+ - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" import (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
 
 0.9.3 (March 20, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.1 that includes minor improvements.
