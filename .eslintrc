@@ -5,6 +5,7 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
+    "eslint-plugin-tsdoc",
     "import"
   ],
 
@@ -60,7 +61,14 @@
       "files": ["types/**"],
       "rules": {
         "no-use-before-define": "off",
-        "no-undef": "off" // turned off to avoid issue with triple-slash path directive
+        "no-undef": "off" // turned off to avoid issue with SplitIO namespace not defined
+      }
+    },
+    {
+      // Enable TSDoc rules for TypeScript files, allowing the use of JSDoc in JS files.
+      "files": ["**/*.ts"],
+      "rules": {
+        "tsdoc/syntax": "warn"
       }
     }
   ],

@@ -2,18 +2,19 @@
 // Project: http://www.split.io/
 // Definitions by: Nico Zelaya <https://github.com/NicoZelaya/>
 
-/// <reference path="./splitio.d.ts" />
+import '@splitsoftware/splitio-commons';
+
 export = JsSdk;
 
 declare module JsSdk {
   /**
    * Split.io SDK factory function.
    *
-   * The settings parameter should be an object that complies with the SplitIO.IBrowserSettings.
+   * The settings parameter should be an object that complies with the SplitIO.IClientSideSettings or SplitIO.IClientSideAsyncSettings interfaces.
    * For more information read the corresponding article: @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuration}
    */
-  export function SplitFactory(settings: SplitIO.IBrowserSettings): SplitIO.ISDK;
-  export function SplitFactory(settings: SplitIO.IBrowserAsyncSettings): SplitIO.IAsyncSDK;
+  export function SplitFactory(settings: SplitIO.IClientSideSettings): SplitIO.IBrowserSDK;
+  export function SplitFactory(settings: SplitIO.IClientSideAsyncSettings): SplitIO.IBrowserAsyncSDK;
 
   /**
    * Persistent storage based on the LocalStorage Web API for browsers.

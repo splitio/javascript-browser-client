@@ -1,8 +1,8 @@
+import type SplitIO from '@splitsoftware/splitio-commons/types/splitio';
 import { LogLevels, isLogLevelString } from '@splitsoftware/splitio-commons/src/logger/index';
-import { ConsentStatus, LogLevel } from '@splitsoftware/splitio-commons/src/types';
 import { CONSENT_GRANTED } from '@splitsoftware/splitio-commons/src/utils/constants';
 
-const packageVersion = '1.0.0-rc.0';
+const packageVersion = '1.0.0-rc.3';
 
 /**
  * In browser, the default debug level, can be set via the `localStorage.splitio_debug` item.
@@ -10,7 +10,7 @@ const packageVersion = '1.0.0-rc.0';
  * Other acceptable values are 'on', 'enable' and 'enabled', which are equivalent to 'DEBUG'.
  * Any other string value is equivalent to disable ('NONE').
  */
-let initialLogLevel: LogLevel | undefined;
+let initialLogLevel: SplitIO.LogLevel | undefined;
 
 const LS_KEY = 'splitio_debug';
 
@@ -34,7 +34,7 @@ export const defaults = {
   },
 
   // Consent is considered granted by default
-  userConsent: CONSENT_GRANTED as ConsentStatus,
+  userConsent: CONSENT_GRANTED as SplitIO.ConsentStatus,
 
   // Instance version.
   version: `browserjs-${packageVersion}`,
