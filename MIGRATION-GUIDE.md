@@ -5,7 +5,7 @@ JavaScript Browser SDK v1.0.0 has a few breaking changes that you should conside
 ## Renamed some TypeScript definitions in the `SplitIO` namespace to avoid conflicts with other Split packages
 
 The renamed types are:
-- `SplitIO.IBrowserSettings` --> `SplitIOBrowser.IClientSideSettings`
+- `SplitIO.IBrowserSettings` -> `SplitIOBrowser.IClientSideSettings`
 - `SplitIO.IBrowserAsyncSettings` -> `SplitIOBrowser.IClientSideAsyncSettings`
 - `SplitIO.ISDK` -> `SplitIOBrowser.IBrowserSDK`
 - `SplitIO.IAsyncSDK` -> `SplitIOBrowser.IBrowserAsyncSDK`

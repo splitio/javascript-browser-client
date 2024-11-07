@@ -1,5 +1,5 @@
 1.0.1 (November 8, 2024)
- - Bugfixing - Reverting removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
+ - Bugfixing - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
 
 1.0.0 (November 1, 2024)
  - Added support for targeting rules based on large segments.
