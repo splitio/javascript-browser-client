@@ -5,12 +5,12 @@ JavaScript Browser SDK v1.0.0 has a few breaking changes that you should conside
 ## Renamed some TypeScript definitions in the `SplitIO` namespace to avoid conflicts with other Split packages
 
 The renamed types are:
-- `SplitIO.IBrowserSettings` -> `SplitIOBrowser.IClientSideSettings`
-- `SplitIO.IBrowserAsyncSettings` -> `SplitIOBrowser.IClientSideAsyncSettings`
-- `SplitIO.ISDK` -> `SplitIOBrowser.IBrowserSDK`
-- `SplitIO.IAsyncSDK` -> `SplitIOBrowser.IBrowserAsyncSDK`
-- `SplitIO.IClient` -> `SplitIOBrowser.IBrowserClient`
-- `SplitIO.IAsyncClient` -> `SplitIOBrowser.IBrowserAsyncClient`
+- `SplitIO.IBrowserSettings` -> `SplitIO.IClientSideSettings`
+- `SplitIO.IBrowserAsyncSettings` -> `SplitIO.IClientSideAsyncSettings`
+- `SplitIO.ISDK` -> `SplitIO.IBrowserSDK`
+- `SplitIO.IAsyncSDK` -> `SplitIO.IBrowserAsyncSDK`
+- `SplitIO.IClient` -> `SplitIO.IBrowserClient`
+- `SplitIO.IAsyncClient` -> `SplitIO.IBrowserAsyncClient`
 
 For example, you should replace:
 
@@ -85,6 +85,6 @@ The Google Analytics integrations were removed since they integrate with the *Go
 The SDK no longer ships with internal implementations for the `Map` and `Set` global objects, which were used to support old browsers.
 If you need to target environments that do not support these features natively, you should provide a polyfill for them. For example, [es6-map](https://github.com/medikoo/es6-map) for `Map`, and [es6-set](https://github.com/medikoo/es6-set) for `Set`.
 
-## Dropped support for Split Proxy below version 5.9.0, when using in the browser (client-side API). The SDK now requires Split Proxy 5.9.0 or above
+## Dropped support for Split Proxy below version 5.9.0. The SDK now requires Split Proxy 5.9.0 or above
 
 If using the Split Proxy with the SDK in the browser, make sure to update it to version 5.9.0 or above. This is required due to the introduction of Large Segments matchers in the SDK on client-side, which uses a new HTTP endpoint to retrieve the segments data and is only supported by Split Proxy 5.9.0.
