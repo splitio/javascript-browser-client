@@ -11,6 +11,8 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
+import type * as SplitTypes from '../types/splitio';
+
 import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '../types/full';
 import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, PluggableStorage } from '../types/index';
 
@@ -18,6 +20,11 @@ import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, Erro
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
 let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
 let pluggableStorage = PluggableStorage; pluggableStorage = PluggableStorageFull;
+
+// Validate that the SplitIO namespace is available and matches the types when imported explicitly
+let ambientType: SplitIO.ISDK;
+let importedType: SplitTypes.ISDK;
+ambientType = importedType;
 
 /**** Interfaces ****/
 
@@ -72,7 +79,6 @@ AsyncSDK = SplitFactory(browserAsyncSettings);
 // Client and Manager
 client = SDK.client();
 client = SDK.client('a customer key');
-// client = SDK.client('a customer key', 'a traffic type'); // Not valid in Browser JS SDK
 manager = SDK.manager();
 asyncClient = AsyncSDK.client();
 asyncClient = AsyncSDK.client('a customer key');
