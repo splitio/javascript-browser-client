@@ -1,3 +1,9 @@
+1.1.0 (January XX, 2025)
+ - Added two new configuration options for the SDK's `InLocalStorage` module to control the behavior of the persisted rollout plan cache in the browser:
+    - `expirationDays` to specify the validity period of the rollout plan cache in days.
+    - `clearOnInit` to clear the rollout plan cache on SDK initialization.
+ - Updated @splitsoftware/splitio-commons package to version 2.1.0.
+
 1.0.1 (November 11, 2024)
  - Bugfixing - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
 
