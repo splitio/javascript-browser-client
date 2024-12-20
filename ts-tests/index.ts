@@ -110,7 +110,9 @@ let impressionData: SplitIO.ImpressionData;
 let syncStorage: SplitIO.StorageSync;
 let syncStorageFactory: SplitIO.StorageSyncFactory = InLocalStorage();
 let localStorageOptions: SplitIO.InLocalStorageOptions = {
-  prefix: 'PREFIX'
+  prefix: 'PREFIX',
+  expirationDays: 1,
+  clearOnInit: true
 };
 syncStorageFactory = InLocalStorage(localStorageOptions);
 
