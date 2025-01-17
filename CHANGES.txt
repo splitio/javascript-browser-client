@@ -1,3 +1,7 @@
+1.1.0 (January 17, 2025)
+ - Added support for the new impressions tracking toggle available on feature flags, both respecting the setting and including the new field being returned on `SplitView` type objects. Read more in our docs.
+ - Bugfixing - Updated @splitsoftware/splitio-commons package to version 2.1.0, which properly handles rejected promises when using targeting rules with segment matchers in consumer modes (e.g., Redis and Pluggable storages).
+
 1.0.1 (November 11, 2024)
  - Bugfixing - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
 
