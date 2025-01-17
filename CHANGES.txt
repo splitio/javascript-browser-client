@@ -1,8 +1,13 @@
-1.1.0 (January XX, 2025)
+1.2.0 (January XX, 2025)
  - Added two new configuration options for the SDK's `InLocalStorage` module to control the behavior of the persisted rollout plan cache in the browser:
     - `expirationDays` to specify the validity period of the rollout plan cache in days.
     - `clearOnInit` to clear the rollout plan cache on SDK initialization.
- - Updated @splitsoftware/splitio-commons package to version 2.1.0.
+ - Updated SDK_READY_FROM_CACHE event when using the `LOCALSTORAGE` storage type to be emitted alongside the SDK_READY event if it has not already been emitted.
+ - Updated @splitsoftware/splitio-commons package to version 2.2.0.
+
+1.1.0 (January 17, 2025)
+ - Added support for the new impressions tracking toggle available on feature flags, both respecting the setting and including the new field being returned on `SplitView` type objects. Read more in our docs.
+ - Bugfixing - Updated @splitsoftware/splitio-commons package to version 2.1.0, which properly handles rejected promises when using targeting rules with segment matchers in consumer modes (e.g., Redis and Pluggable storages).
 
 1.0.1 (November 11, 2024)
  - Bugfixing - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
