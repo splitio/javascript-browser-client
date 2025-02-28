@@ -10,7 +10,7 @@ This SDK is designed to work with Split, the platform for controlled rollouts, w
 ## Compatibility
 The JS Browser SDK is a library for Web browser environments.
 
-The library was build to support ES5 syntax and all major browsers. *However, there are a few polyfills that would be required when targeting old browsers that don't have native support for Promises and Fetch Web API. You should include a Promise polyfill like [es6-promise](https://github.com/stefanpenner/es6-promise), and a Fetch polyfill such as [whatwg-fetch](https://cdn.jsdelivr.net/npm/whatwg-fetch@3.5.0/dist/fetch.umd.min.js) or the lightweight [unfetch](https://unpkg.com/unfetch/polyfill).*
+The library was build to support ES5 syntax and all major browsers. *However, there are a few polyfills that would be required when targeting old browsers that don't have native support for Promises, Maps, Sets and Fetch Web API. You should include a polyfill, like [es6-promise](https://github.com/stefanpenner/es6-promise) for Promises, and [whatwg-fetch](https://cdn.jsdelivr.net/npm/whatwg-fetch@3.5.0/dist/fetch.umd.min.js) or the lightweight [unfetch](https://unpkg.com/unfetch/polyfill) for the Fetch API.*
 
 ## Getting started
 Below is a simple index.js example that describes the instantiation and most basic usage of our SDK:
@@ -64,13 +64,14 @@ Split has built and maintains SDKs for:
 * .NET [Github](https://github.com/splitio/dotnet-client) [Docs](https://help.split.io/hc/en-us/articles/360020240172--NET-SDK)
 * Android [Github](https://github.com/splitio/android-client) [Docs](https://help.split.io/hc/en-us/articles/360020343291-Android-SDK)
 * Angular [Github](https://github.com/splitio/angular-sdk-plugin) [Docs](https://help.split.io/hc/en-us/articles/6495326064397-Angular-utilities)
+* Elixir thin-client [Github](https://github.com/splitio/elixir-thin-client) [Docs](https://help.split.io/hc/en-us/articles/26988707417869-Elixir-Thin-Client-SDK)
 * Flutter [Github](https://github.com/splitio/flutter-sdk-plugin) [Docs](https://help.split.io/hc/en-us/articles/8096158017165-Flutter-plugin)
 * GO [Github](https://github.com/splitio/go-client) [Docs](https://help.split.io/hc/en-us/articles/360020093652-Go-SDK)
 * iOS [Github](https://github.com/splitio/ios-client) [Docs](https://help.split.io/hc/en-us/articles/360020401491-iOS-SDK)
 * Java [Github](https://github.com/splitio/java-client) [Docs](https://help.split.io/hc/en-us/articles/360020405151-Java-SDK)
 * JavaScript [Github](https://github.com/splitio/javascript-client) [Docs](https://help.split.io/hc/en-us/articles/360020448791-JavaScript-SDK)
 * JavaScript for Browser [Github](https://github.com/splitio/javascript-browser-client) [Docs](https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK)
-* Node [Github](https://github.com/splitio/javascript-client) [Docs](https://help.split.io/hc/en-us/articles/360020564931-Node-js-SDK)
+* Node.js [Github](https://github.com/splitio/javascript-client) [Docs](https://help.split.io/hc/en-us/articles/360020564931-Node-js-SDK)
 * PHP [Github](https://github.com/splitio/php-client) [Docs](https://help.split.io/hc/en-us/articles/360020350372-PHP-SDK)
 * PHP thin-client [Github](https://github.com/splitio/php-thin-client) [Docs](https://help.split.io/hc/en-us/articles/18305128673933-PHP-Thin-Client-SDK)
 * Python [Github](https://github.com/splitio/python-client) [Docs](https://help.split.io/hc/en-us/articles/360020359652-Python-SDK)

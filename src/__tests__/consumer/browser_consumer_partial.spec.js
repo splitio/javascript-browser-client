@@ -10,7 +10,7 @@ import { applyOperations } from './wrapper-commands';
 import { SplitFactory, PluggableStorage } from '../../';
 
 const expectedSplitName = 'hierarchical_splits_testing_on';
-const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {}, sets: [], defaultTreatment: 'off' };
+const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {}, sets: [], defaultTreatment: 'off', impressionsDisabled: false };
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory();
@@ -28,14 +28,11 @@ const config = {
     prefix: wrapperPrefix,
     wrapper: wrapperInstance
   }),
-  // sync: {
-  //   impressionsMode: 'OPTIMIZED'
-  // },
   urls: {
     sdk: 'https://sdk.baseurl/impressionsSuite',
     events: 'https://events.baseurl/impressionsSuite',
     telemetry: 'https://telemetry.baseurl/impressionsSuite'
-  }
+  },
 };
 
 tape('Browser Consumer Partial mode with pluggable storage', function (t) {
@@ -52,6 +49,19 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
       assert.equal(resp.reduce((prev, cur) => {
         return prev + cur.i.length;
       }, 0), TOTAL_RAW_IMPRESSIONS - 1, 'Impressions were deduped');
+      return 200;
+    });
+
+    fetchMock.postOnce(url(config, '/v1/keys/cs'), (url, req) => {
+      const data = JSON.parse(req.body);
+
+      assert.deepEqual(data, {
+        keys: [{
+          k: 'UT_Segment_member',
+          fs: ['always-on-impressions-disabled-true']
+        }]
+      }, 'Unique keys for the evaluation with impressions disabled true.');
+
       return 200;
     });
 
@@ -88,8 +98,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     /** Evaluation, track and manager methods before SDK_READY */
 
-    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
-    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
+    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
 
     client.getTreatment('UT_IN_SEGMENT').then(treatment => assert.equal(treatment, 'control', 'Evaluations using pluggable storage returns a promise that resolves to control if initiated before SDK_READY'));
     otherClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track calls returns a promise on consumer mode, that resolves to true if the wrapper push operation success to queue the event'));
@@ -136,11 +146,12 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     assert.equal(await client.getTreatment('always-on'), 'on', 'Evaluations using pluggable storage should be correct.');
 
-    // Below splits were added manually.
+    // Below feature flags were added manually.
     // They are all_keys (always evaluate to on) which depend from always-on split. the _on/off is what treatment they are expecting there.
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on'), 'on', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('hierarchical_splits_testing_off'), 'off', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on_negated'), 'off', 'Evaluations using pluggable storage should be correct.');
+    assert.equal(await client.getTreatment('always-on-impressions-disabled-true'), 'on', 'Evaluations using pluggable storage should be correct.');
 
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
@@ -150,11 +161,11 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // Manager methods
     const splitNames = await manager.names();
-    assert.equal(splitNames.length, 25, 'manager `names` method returns the list of split names asynchronously');
+    assert.equal(splitNames.length, 26, 'manager `names` method returns the list of split names asynchronously');
     assert.equal(splitNames.indexOf(expectedSplitName) > -1, true, 'list of split names should contain expected splits');
     assert.deepEqual(await manager.split(expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
     const splitViews = await manager.splits();
-    assert.equal(splitViews.length, 25, 'manager `splits` method returns the list of split views asynchronously');
+    assert.equal(splitViews.length, 26, 'manager `splits` method returns the list of split views asynchronously');
     assert.deepEqual(splitViews.find(splitView => splitView.name === expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
 
     // New shared client created
@@ -172,13 +183,13 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     assert.equal(fetchMock.calls().length, 1, 'fetch has been called once for posting telemetry config stats');
     await client.destroy();
-    assert.equal(fetchMock.calls().length, 5, 'fetch has been called 5 times after main client is destroyed, for posting events, impressions, impression counts, telemetry config and usage stats');
+    assert.equal(fetchMock.calls().length, 6, 'fetch has been called 6 times after main client is destroyed, for posting events, impressions, impression counts, unique keys, telemetry config and usage stats');
 
     assert.equal(disconnectSpy.callCount, 1, 'Wrapper disconnect method should be called only once, when the main client is destroyed');
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS, 'Each evaluation has its corresponding impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS + 1 /* One evaluation with impressionsDisabled true */, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();
@@ -250,8 +261,8 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
     assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
-    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational inmediatelly');
-    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational inmediatelly');
+    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
 
     const trackResult = otherClient.track('user', 'test.event', 18);
     assert.equal(typeof trackResult.then, 'function', 'Track calls should always return a promise on Consumer mode.');
@@ -294,7 +305,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     assert.equal(await client.getTreatment('always-on'), 'on', 'Evaluations using pluggable storage should be correct.');
 
-    // Below splits were added manually.
+    // Below feature flags were added manually.
     // They are all_keys (always evaluate to on) which depend from always-on split. the _on/off is what treatment they are expecting there.
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on'), 'on', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('hierarchical_splits_testing_off'), 'off', 'Evaluations using pluggable storage should be correct.');

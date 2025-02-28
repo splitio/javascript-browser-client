@@ -3,14 +3,14 @@ import sinon from 'sinon';
 import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import { SplitFactory, InLocalStorage } from '../../full';
-import { SplitFactory as SplitFactorySlim, LocalhostFromObject } from '../../';
+import { SplitFactory as SplitFactorySlim } from '../../';
 import { settingsFactory } from '../../settings';
 
 const settings = settingsFactory({ core: { key: 'facundo@split.io' } });
 
 const spySplitChanges = sinon.spy();
 const spySegmentChanges = sinon.spy();
-const spyMySegments = sinon.spy();
+const spyMemberships = sinon.spy();
 const spyEventsBulk = sinon.spy();
 const spyTestImpressionsBulk = sinon.spy();
 const spyTestImpressionsCount = sinon.spy();
@@ -28,7 +28,7 @@ const replySpy = spy => {
 const configMocks = () => {
   fetchMock.mock(new RegExp(`${url(settings, '/splitChanges/')}.*`), () => replySpy(spySplitChanges));
   fetchMock.mock(new RegExp(`${url(settings, '/segmentChanges/')}.*`), () => replySpy(spySegmentChanges));
-  fetchMock.mock(new RegExp(`${url(settings, '/mySegments/')}.*`), () => replySpy(spyMySegments));
+  fetchMock.mock(new RegExp(`${url(settings, '/memberships/')}.*`), () => replySpy(spyMemberships));
   fetchMock.mock(url(settings, '/events/bulk'), () => replySpy(spyEventsBulk));
   fetchMock.mock(url(settings, '/testImpressions/bulk'), () => replySpy(spyTestImpressionsBulk));
   fetchMock.mock(url(settings, '/testImpressions/count'), () => replySpy(spyTestImpressionsCount));
@@ -60,7 +60,7 @@ tape('Browser offline mode', function (assert) {
       eventsFirstPushWindow: 0,
       readyTimeout: 0.001
     },
-    features: originalFeaturesMap
+    features: originalFeaturesMap,
   };
   const factory = SplitFactory(config);
   const manager = factory.manager();
@@ -90,24 +90,19 @@ tape('Browser offline mode', function (assert) {
 
   const factoriesReadyFromCache = [
     SplitFactory({ ...config, storage: InLocalStorage() }),
-    SplitFactorySlim({ ...config, storage: InLocalStorage(), sync: { localhostMode: LocalhostFromObject() } }) // slim factory requires localhostFromObject module
+    SplitFactorySlim({ ...config, storage: InLocalStorage() })
   ];
   const configs = [
-    { ...config, features: { ...config.features }, storage: InLocalStorage /* invalid */, sync: { localhostMode: LocalhostFromObject /* invalid */ } },
+    { ...config, features: { ...config.features }, storage: InLocalStorage /* invalid */ },
     { ...config },
     config,
   ];
-  const factoriesReady = [
+  const factories = [
     ...configs.map(config => SplitFactory(config)),
     ...factoriesReadyFromCache
   ];
-  const factoriesTimeout = [ // slim factory without a valid localhostFromObject module will timeout
-    SplitFactorySlim(config),
-    SplitFactorySlim({ ...config, sync: { localhostMode: LocalhostFromObject /* invalid */ } }),
-  ];
-  const factories = [...factoriesReady, ...factoriesTimeout];
 
-  let readyCount = 0, updateCount = 0, readyFromCacheCount = 0, timeoutCount = 0;
+  let readyCount = 0, updateCount = 0, readyFromCacheCount = 0;
 
   for (let i = 0; i < factories.length; i++) {
     const factory = factories[i], client = factory.client(), manager = factory.manager(), client2 = factory.client('other');
@@ -123,8 +118,7 @@ tape('Browser offline mode', function (assert) {
       updateCount++;
     });
     client.on(client.Event.SDK_READY_TIMED_OUT, () => {
-      assert.equal(factory.settings.sync.localhostMode, undefined);
-      timeoutCount++;
+      assert.fail('Should not emit SDK_READY_TIMED_OUT event');
     });
 
     const sdkReadyFromCache = (client) => () => {
@@ -184,10 +178,10 @@ tape('Browser offline mode', function (assert) {
 
     // Manager tests
     const expectedSplitView1 = {
-      name: 'testing_split', trafficType: 'localhost', killed: false, changeNumber: 0, treatments: ['on'], configs: {}, sets: [], defaultTreatment: 'control'
+      name: 'testing_split', trafficType: 'localhost', killed: false, changeNumber: 0, treatments: ['on'], configs: {}, sets: [], defaultTreatment: 'control', impressionsDisabled: false
     };
     const expectedSplitView2 = {
-      name: 'testing_split_with_config', trafficType: 'localhost', killed: false, changeNumber: 0, treatments: ['off'], configs: { off: '{ "color": "blue" }' }, sets: [], defaultTreatment: 'control'
+      name: 'testing_split_with_config', trafficType: 'localhost', killed: false, changeNumber: 0, treatments: ['off'], configs: { off: '{ "color": "blue" }' }, sets: [], defaultTreatment: 'control', impressionsDisabled: false
     };
     assert.deepEqual(manager.names(), ['testing_split', 'testing_split_with_config']);
     assert.deepEqual(manager.split('testing_split'), expectedSplitView1);
@@ -249,8 +243,8 @@ tape('Browser offline mode', function (assert) {
       };
 
       // Update the features in all remaining factories except the last one
-      for (let i = 1; i < factoriesReady.length - 1; i++) {
-        factoriesReady[i].settings.features = factory.settings.features;
+      for (let i = 1; i < factories.length - 1; i++) {
+        factories[i].settings.features = factory.settings.features;
       }
 
       // Assigning a new object to the features property in the config object doesn't trigger an update
@@ -298,7 +292,7 @@ tape('Browser offline mode', function (assert) {
 
       // Manager tests
       const expectedSplitView3 = {
-        name: 'testing_split_with_config', trafficType: 'localhost', killed: false, changeNumber: 0, treatments: ['nope'], configs: {}, sets: [], defaultTreatment: 'control'
+        name: 'testing_split_with_config', trafficType: 'localhost', killed: false, changeNumber: 0, treatments: ['nope'], configs: {}, sets: [], defaultTreatment: 'control', impressionsDisabled: false
       };
       assert.deepEqual(manager.names(), ['testing_split', 'testing_split_2', 'testing_split_3', 'testing_split_with_config']);
       assert.deepEqual(manager.split('testing_split'), expectedSplitView1);
@@ -352,7 +346,7 @@ tape('Browser offline mode', function (assert) {
           // We test the breakdown instead of just the misc because it's faster to spot where the issue is
           assert.notOk(spySplitChanges.called, 'On offline mode we should not call the splitChanges endpoint.');
           assert.notOk(spySegmentChanges.called, 'On offline mode we should not call the segmentChanges endpoint.');
-          assert.notOk(spyMySegments.called, 'On offline mode we should not call the mySegments endpoint.');
+          assert.notOk(spyMemberships.called, 'On offline mode we should not call the memberships endpoint.');
           assert.notOk(spyEventsBulk.called, 'On offline mode we should not call the events endpoint.');
           assert.notOk(spyTestImpressionsBulk.called, 'On offline mode we should not call the impressions endpoint.');
           assert.notOk(spyTestImpressionsCount.called, 'On offline mode we should not call the impressions count endpoint.');
@@ -365,10 +359,9 @@ tape('Browser offline mode', function (assert) {
           assert.equal(sharedUpdateCount, 1, 'Shared client should have emitted SDK_UPDATE event once');
 
           // SDK events on other factory clients
-          assert.equal(readyCount, factoriesReady.length, 'Each factory client should have emitted SDK_READY event once');
-          assert.equal(updateCount, factoriesReady.length - 1, 'Each factory client except one should have emitted SDK_UPDATE event once');
+          assert.equal(readyCount, factories.length, 'Each factory client should have emitted SDK_READY event once');
+          assert.equal(updateCount, factories.length - 1, 'Each factory client except one should have emitted SDK_UPDATE event once');
           assert.equal(readyFromCacheCount, factoriesReadyFromCache.length * 2, 'The main and shared client of the factories with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
-          assert.equal(timeoutCount, factoriesTimeout.length, 'The wrongly configured slim factories should have emitted SDK_READY_TIMED_OUT event');
 
           assert.end();
         });

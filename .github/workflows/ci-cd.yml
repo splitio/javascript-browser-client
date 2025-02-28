@@ -19,8 +19,7 @@ permissions:
 jobs:
   build:
     name: Build
-    # @TODO rollback to ubuntu-latest eventually. ATM, `npm run test-browser` fails when using ubuntu-latest (ubuntu-22.04) with "ERROR [launcher]: Cannot start ChromeHeadless"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -48,7 +47,7 @@ jobs:
 
       - name: Store assets
         if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           path: umd/
@@ -56,7 +55,7 @@ jobs:
 
   upload-stage:
     name: Upload assets
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: build
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/development' }}
     strategy:
@@ -74,7 +73,7 @@ jobs:
 
     steps:
       - name: Download assets
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4
         with:
           name: assets
           path: umd
@@ -84,7 +83,7 @@ jobs:
         working-directory: umd
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ matrix.account_id }}:role/gha-public-assets-role
           aws-region: us-east-1
@@ -99,7 +98,7 @@ jobs:
 
   upload-prod:
     name: Upload assets
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: build
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     strategy:
@@ -117,7 +116,7 @@ jobs:
 
     steps:
       - name: Download assets
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4
         with:
           name: assets
           path: umd
@@ -127,7 +126,7 @@ jobs:
         working-directory: umd
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ matrix.account_id }}:role/gha-public-assets-role
           aws-region: us-east-1

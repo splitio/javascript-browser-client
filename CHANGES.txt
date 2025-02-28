@@ -1,5 +1,27 @@
-0.14.2 (August XX, 2024)
- - Updated some transitive dependencies for vulnerability fixes.
+1.1.0 (January 17, 2025)
+ - Added support for the new impressions tracking toggle available on feature flags, both respecting the setting and including the new field being returned on `SplitView` type objects. Read more in our docs.
+ - Bugfixing - Updated @splitsoftware/splitio-commons package to version 2.1.0, which properly handles rejected promises when using targeting rules with segment matchers in consumer modes (e.g., Redis and Pluggable storages).
+
+1.0.1 (November 11, 2024)
+ - Bugfixing - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
+
+1.0.0 (November 1, 2024)
+ - Added support for targeting rules based on large segments.
+ - Added `factory.destroy()` method, which invokes the `destroy` method of all clients created by the factory.
+ - Updated @splitsoftware/splitio-commons package to version 2.0.0 that includes major updates and updated some transitive dependencies for vulnerability fixes.
+ - BREAKING CHANGES:
+    - NOTE: Refer to ./MIGRATION-GUIDE.md for instructions on how to migrate your codebase from version 0.x to 1.0.0.
+    - Dropped support for Split Proxy below version 5.9.0. The SDK now requires Split Proxy 5.9.0 or above.
+    - Renamed some TypeScript definitions in the `SplitIO` namespace to avoid conflicts with other Split packages: `IBrowserSettings`, `IBrowserAsyncSettings`, `ISDK`, `IAsyncSDK`, `IClient`, and `IAsyncClient` were renamed to `IClientSideSettings`, `IClientSideAsyncSettings`, `IBrowserSDK`, `IBrowserAsyncSDK`, `IBrowserClient` and `IBrowserAsyncClient` respectively.
+    - Removed TypeScript `SplitIO` namespace from `@splitsoftware/splitio-browserjs/types/splitio`. Reverted in 1.0.1.
+    - Removed internal ponyfills for the `Map` and `Set` global objects, dropping support for IE and other outdated browsers. The SDK now requires the runtime environment to support these features natively or provide a polyfill.
+    - Removed the deprecated `GoogleAnalyticsToSplit` and `SplitToGoogleAnalytics` pluggable integration modules, along with the related interfaces in the TypeScript definitions.
+    - Removed the `LocalhostFromObject` export from the default import (`import { LocalhostFromObject } from '@splitsoftware/splitio-browserjs'`). It is no longer necessary to manually import and configure it in the `sync.localhostMode` option to enable localhost mode.
+
+0.15.0 (September 13, 2024)
+ - Updated @splitsoftware/splitio-commons package to version 1.17.0 that includes minor updates:
+    - Added `sync.requestOptions.getHeaderOverrides` configuration option to enhance SDK HTTP request Headers for Authorization Frameworks.
+    - Updated some transitive dependencies for vulnerability fixes.
 
 0.14.1 (June 14, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.16.0 that includes some vulnerability and bug fixes.
@@ -50,7 +72,7 @@
  - Updated some transitive dependencies for vulnerability fixes.
  - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
     - Updated SDK_READY_TIMED_OUT event to be emitted immediately when a connection error occurs using pluggable storage (i.e., when the wrapper `connect` promise is rejected) in consumer and partial consumer modes.
-    - Bugfixing - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviours when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
+    - Bugfixing - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviors when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
 
 0.9.5 (May 15, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
@@ -60,7 +82,7 @@
 
 0.9.4 (May 4, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
- - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" entrypoint (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
+ - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" import (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
 
 0.9.3 (March 20, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.1 that includes minor improvements.

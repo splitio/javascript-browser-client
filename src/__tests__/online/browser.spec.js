@@ -22,10 +22,10 @@ import singleSync from '../browserSuites/single-sync.spec';
 import { settingsFactory } from '../../settings';
 import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
-import mySegmentsFacundo from '../mocks/mysegments.facundo@split.io.json';
-import mySegmentsNicolas from '../mocks/mysegments.nicolas@split.io.json';
-import mySegmentsMarcio from '../mocks/mysegments.marcio@split.io.json';
-import mySegmentsEmmanuel from '../mocks/mysegments.emmanuel@split.io.json';
+import membershipsFacundo from '../mocks/memberships.facundo@split.io.json';
+import membershipsNicolas from '../mocks/memberships.nicolas@split.io.json';
+import membershipsMarcio from '../mocks/memberships.marcio@split.io.json';
+import membershipsEmmanuel from '../mocks/memberships.emmanuel@split.io.json';
 import { InLocalStorage } from '../../index';
 
 const settings = settingsFactory({
@@ -84,12 +84,12 @@ tape('## E2E CI Tests ##', function (assert) {
   //If we change the mocks, we need to clear localstorage. Cleaning up after testing ensures "fresh data".
   localStorage.clear();
 
-  fetchMock.get(url(settings, '/splitChanges?s=1.1&since=-1'), { status: 200, body: splitChangesMock1 });
-  fetchMock.get(url(settings, '/splitChanges?s=1.1&since=1457552620999'), { status: 200, body: splitChangesMock2 });
-  fetchMock.get(url(settings, '/mySegments/facundo%40split.io'), { status: 200, body: mySegmentsFacundo });
-  fetchMock.get(url(settings, '/mySegments/nicolas%40split.io'), { status: 200, body: mySegmentsNicolas });
-  fetchMock.get(url(settings, '/mySegments/marcio%40split.io'), { status: 200, body: mySegmentsMarcio });
-  fetchMock.get(url(settings, '/mySegments/emmanuel%40split.io'), { status: 200, body: mySegmentsEmmanuel });
+  fetchMock.get(url(settings, '/splitChanges?s=1.2&since=-1'), { status: 200, body: splitChangesMock1 });
+  fetchMock.get(url(settings, '/splitChanges?s=1.2&since=1457552620999'), { status: 200, body: splitChangesMock2 });
+  fetchMock.get(url(settings, '/memberships/facundo%40split.io'), { status: 200, body: membershipsFacundo });
+  fetchMock.get(url(settings, '/memberships/nicolas%40split.io'), { status: 200, body: membershipsNicolas });
+  fetchMock.get(url(settings, '/memberships/marcio%40split.io'), { status: 200, body: membershipsMarcio });
+  fetchMock.get(url(settings, '/memberships/emmanuel%40split.io'), { status: 200, body: membershipsEmmanuel });
   fetchMock.post(url(settings, '/testImpressions/bulk'), 200);
   fetchMock.post(url(settings, '/testImpressions/count'), 200);
   Math.random = () => 0.5; // SDKs without telemetry
@@ -124,7 +124,7 @@ tape('## E2E CI Tests ##', function (assert) {
   /* Check that impressions and events are sended to backend via Beacon API or Fetch when pagehide/visibilitychange events are triggered. */
   assert.test('E2E / Use Beacon API (or Fetch if not available) to send remaining impressions and events when browser page is unload or hidden', useBeaconApiSuite.bind(null, fetchMock));
   assert.test('E2E / Use Beacon API DEBUG (or Fetch if not available) to send remaining impressions and events when browser page is unload or hidden', useBeaconDebugApiSuite.bind(null, fetchMock));
-  /* Validate ready from cache behaviour (might be merged into another suite if we end up having simple behavior around it as expected) */
+  /* Validate ready from cache behavior (might be merged into another suite if we end up having simple behavior around it as expected) */
   assert.test('E2E / Readiness from cache', readyFromCache.bind(null, fetchMock));
   /* Validate readiness with ready promises */
   assert.test('E2E / Ready promise', readyPromiseSuite.bind(null, fetchMock));

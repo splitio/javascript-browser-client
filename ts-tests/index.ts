@@ -11,15 +11,20 @@
  * @author Nico Zelaya <nicolas.zelaya@split.io>
  */
 
-import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, GoogleAnalyticsToSplit as GoogleAnalyticsToSplitFull, SplitToGoogleAnalytics as SplitToGoogleAnalyticsFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '@splitsoftware/splitio-browserjs/full';
-import { SplitFactory, InLocalStorage, GoogleAnalyticsToSplit, SplitToGoogleAnalytics, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, LocalhostFromObject, PluggableStorage } from '@splitsoftware/splitio-browserjs';
+import type * as SplitTypes from '../types/splitio';
+
+import { SplitFactory as SplitFactoryFull, InLocalStorage as InLocalStorageFull, DebugLogger as DebugLoggerFull, InfoLogger as InfoLoggerFull, WarnLogger as WarnLoggerFull, ErrorLogger as ErrorLoggerFull, PluggableStorage as PluggableStorageFull } from '../types/full';
+import { SplitFactory, InLocalStorage, DebugLogger, InfoLogger, WarnLogger, ErrorLogger, PluggableStorage } from '../types/index';
 
 // Entry points must export the same objects
 let splitFactory = SplitFactory; splitFactory = SplitFactoryFull;
 let inLocalStorage = InLocalStorage; inLocalStorage = InLocalStorageFull;
-let gaToSplit = GoogleAnalyticsToSplit; gaToSplit = GoogleAnalyticsToSplitFull;
-let splitToGa = SplitToGoogleAnalytics; splitToGa = SplitToGoogleAnalyticsFull;
 let pluggableStorage = PluggableStorage; pluggableStorage = PluggableStorageFull;
+
+// Validate that the SplitIO namespace is available and matches the types when imported explicitly
+let ambientType: SplitIO.ISDK;
+let importedType: SplitTypes.ISDK;
+ambientType = importedType;
 
 let stringPromise: Promise<string>;
 let splitNamesPromise: Promise<SplitIO.SplitNames>;
@@ -34,18 +39,18 @@ let trackPromise: Promise<boolean>;
 
 // Facade return interface
 // let SDK: SplitIO.ISDK;
-let AsyncSDK: SplitIO.IAsyncSDK;
-let SDK: SplitIO.ISDK;
+let AsyncSDK: SplitIO.IBrowserAsyncSDK;
+let SDK: SplitIO.IBrowserSDK;
 // Settings interfaces
 // let nodeSettings: SplitIO.INodeSettings;
 // let asyncSettings: SplitIO.INodeAsyncSettings;
-let browserSettings: SplitIO.IBrowserSettings;
-let browserAsyncSettings: SplitIO.IBrowserAsyncSettings;
+let browserSettings: SplitIO.IClientSideSettings;
+let browserAsyncSettings: SplitIO.IClientSideAsyncSettings;
 // Client & Manager APIs
 // let client: SplitIO.IClient;
-let client: SplitIO.IClient;
+let client: SplitIO.IBrowserClient;
 let manager: SplitIO.IManager;
-let asyncClient: SplitIO.IAsyncClient;
+let asyncClient: SplitIO.IBrowserAsyncClient;
 let asyncManager: SplitIO.IAsyncManager;
 // Utility interfaces
 let impressionListener: SplitIO.IImpressionListener;
@@ -136,8 +141,9 @@ splitView = {
   configs: {
     off: '{"dimensions":"{\"height\":20,\"width\":40}"}'
   },
-  sets: ['set_a','set_b'],
-  defaultTreatment: 'off'
+  sets: ['set_a', 'set_b'],
+  defaultTreatment: 'off',
+  impressionsDisabled: false
 };
 splitViews = [splitView];
 
@@ -151,13 +157,13 @@ splitKey = 'someKey';
 
 /**** Tests for ISDK interface ****/
 
-// // For node with sync storage
+// // For Node.js with sync storage
 // nodeSettings = {
 //   core: {
 //     authorizationKey: 'key'
 //   }
 // };
-// // For node with async storage
+// // For Node.js with async storage
 // asyncSettings = {
 //   core: {
 //     authorizationKey: 'key'
@@ -184,7 +190,7 @@ browserAsyncSettings = {
     wrapper: {}
   })
 };
-// With sync settings should return ISDK, if settings have async storage it should return IAsyncSDK
+// With sync settings should return IBrowserSDK, if settings have async storage it should return IBrowserAsyncSDK
 SDK = SplitFactory(browserSettings);
 AsyncSDK = SplitFactory(browserAsyncSettings);
 // SDK = SplitFactory(nodeSettings);
@@ -204,17 +210,15 @@ const instantiatedSettingsStartup: { [key: string]: number } = SDK.settings.star
 const instantiatedStorage: SplitIO.StorageSync = SDK.settings.storage;
 const instantiatedSettingsUrls: { [key: string]: string } = SDK.settings.urls;
 const instantiatedSettingsVersion: string = SDK.settings.version;
-let instantiatedSettingsFeatures = SDK.settings.features;
-// // We should be able to write on features prop. The rest are readonly props.
+let instantiatedSettingsFeatures = SDK.settings.features as SplitIO.MockedFeaturesMap;
+// We should be able to write on features prop. The rest are readonly props.
 instantiatedSettingsFeatures.something = 'something';
 SDK.settings.features = { 'split_x': 'on' };
 
 // Client and Manager
 client = SDK.client();
 client = SDK.client('a customer key');
-// client = SDK.client('a customer key', 'a traffic type'); // Not valid in Browser JS SDK
 manager = SDK.manager();
-// // Today async clients are only possible on Node. Shared client creation not available here.
 asyncClient = AsyncSDK.client();
 asyncManager = AsyncSDK.manager();
 
@@ -244,7 +248,7 @@ splitEvent = client.Event.SDK_READY_FROM_CACHE;
 splitEvent = client.Event.SDK_READY_TIMED_OUT;
 splitEvent = client.Event.SDK_UPDATE;
 
-// Client implements methods from IEventEmitter that is a subset of NodeJS.Events. Testing a few.
+// Client implements methods from IEventEmitter that is a subset of Node.js EventEmitter. Testing a few.
 client = client.on(splitEvent, () => { });
 const a: boolean = client.emit(splitEvent);
 client = client.removeAllListeners(splitEvent);
@@ -252,8 +256,11 @@ client = client.removeAllListeners();
 // const b: number = client.listenerCount(splitEvent); // Not part of IEventEmitter
 
 // Ready and destroy
-const readyPromise: Promise<void> = client.ready();
-const destroyPromise: Promise<void> = client.destroy();
+let promise: Promise<void> = client.ready();
+promise = client.destroy();
+promise = SDK.destroy();
+// @TODO not public yet
+// promise = client.flush();
 
 // We can call getTreatment without a key.
 // treatment = client.getTreatment(splitKey, 'mySplit');
@@ -333,7 +340,7 @@ splitEvent = asyncClient.Event.SDK_READY_FROM_CACHE;
 splitEvent = asyncClient.Event.SDK_READY_TIMED_OUT;
 splitEvent = asyncClient.Event.SDK_UPDATE;
 
-// Client implements methods from NodeJS.Events. (same as for sync client, just for interface checking)
+// Client implements methods from Node.js EventEmitter. (same as for sync client, just for interface checking)
 asyncClient = asyncClient.on(splitEvent, () => { });
 const a1: boolean = asyncClient.emit(splitEvent);
 asyncClient = asyncClient.removeAllListeners(splitEvent);
@@ -341,8 +348,9 @@ asyncClient = asyncClient.removeAllListeners();
 // const b1: number = asyncClient.listenerCount(splitEvent); // Not part of IEventEmitter
 
 // Ready and destroy (same as for sync client, just for interface checking)
-const readyPromise1: Promise<void> = asyncClient.ready();
-asyncClient.destroy();
+promise = asyncClient.ready();
+promise = asyncClient.destroy();
+promise = AsyncSDK.destroy();
 
 // We can call getTreatment
 asyncTreatment = asyncClient.getTreatment('mySplit');
@@ -417,9 +425,9 @@ splitView = manager.split('mySplit');
 splitViews = manager.splits();
 
 // Manager implements ready promise.
-const managerReadyPromise: Promise<void> = manager.ready();
+promise = manager.ready();
 
-// Manager implements methods from NodeJS.Events. Testing a few.
+// Manager implements methods from Node.js EventEmitter. Testing a few.
 manager = manager.on(splitEvent, () => { });
 const aa: boolean = manager.emit(splitEvent);
 manager = manager.removeAllListeners(splitEvent);
@@ -440,9 +448,9 @@ splitViewAsync = asyncManager.split('mySplit');
 splitViewsAsync = asyncManager.splits();
 
 // asyncManager implements ready promise.
-const asyncManagerReadyPromise: Promise<void> = asyncManager.ready();
+promise = asyncManager.ready();
 
-// asyncManager implements methods from NodeJS.Events. Testing a few.
+// asyncManager implements methods from Node.js EventEmitter. Testing a few.
 asyncManager = asyncManager.on(splitEvent, () => { });
 const aaa: boolean = asyncManager.emit(splitEvent);
 asyncManager = asyncManager.removeAllListeners(splitEvent);
@@ -521,30 +529,7 @@ userConsent = AsyncSDK.UserConsent.Status.UNKNOWN;
 // Split filters
 let splitFilters: SplitIO.SplitFilter[] = [{ type: 'bySet', values: ['set_a', 'set_b'] }, { type: 'byName', values: ['my_split_1', 'my_split_1'] }, { type: 'byPrefix', values: ['my_split', 'test_split_'] }]
 
-// Browser integrations
-let fieldsObjectSample: UniversalAnalytics.FieldsObject = { hitType: 'event', eventAction: 'action' };
-let eventDataSample: SplitIO.EventData = { eventTypeId: 'someEventTypeId', value: 10, properties: {} };
-
-let minimalGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = { identities: [{ key: 'user', trafficType: 'tt' }] };
-let emptySplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {};
-
-let customGoogleAnalyticsToSplitConfig: SplitIO.GoogleAnalyticsToSplitOptions = {
-  hits: false,
-  filter: function (model: UniversalAnalytics.Model): boolean { return true; },
-  mapper: function (model: UniversalAnalytics.Model, defaultMapping: SplitIO.EventData): SplitIO.EventData { return eventDataSample; },
-  prefix: 'PREFIX',
-  identities: [{ key: 'key1', trafficType: 'tt1' }, { key: 'key2', trafficType: 'tt2' }],
-  autoRequire: true
-};
-let customSplitToGoogleAnalyticsConfig: SplitIO.SplitToGoogleAnalyticsOptions = {
-  events: false,
-  impressions: true,
-  filter: function (model: SplitIO.IntegrationData): boolean { return true; },
-  mapper: function (model: SplitIO.IntegrationData, defaultMapping: UniversalAnalytics.FieldsObject): UniversalAnalytics.FieldsObject { return fieldsObjectSample; },
-  trackerNames: ['t0', 'myTracker'],
-}
-
-let fullBrowserSettings: SplitIO.IBrowserSettings = {
+let fullBrowserSettings: SplitIO.IClientSideSettings = {
   core: {
     authorizationKey: 'asd',
     key: 'asd',
@@ -579,24 +564,22 @@ let fullBrowserSettings: SplitIO.IBrowserSettings = {
   storage: syncStorageFactory,
   impressionListener: impressionListener,
   debug: true,
-  integrations: [
-    GoogleAnalyticsToSplit(), SplitToGoogleAnalytics(),
-    GoogleAnalyticsToSplit(minimalGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(emptySplitToGoogleAnalyticsConfig),
-    GoogleAnalyticsToSplit(customGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(customSplitToGoogleAnalyticsConfig)
-  ],
+  integrations: [],
   streamingEnabled: true,
   sync: {
     splitFilters: splitFilters,
     impressionsMode: 'DEBUG',
-    localhostMode: LocalhostFromObject(),
-    enabled: true
+    enabled: true,
+    requestOptions: {
+      getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
+    }
   },
   userConsent: 'GRANTED'
 };
 fullBrowserSettings.userConsent = 'DECLINED';
 fullBrowserSettings.userConsent = 'UNKNOWN';
 
-let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
+let fullBrowserAsyncSettings: SplitIO.IClientSideAsyncSettings = {
   mode: 'consumer',
   core: {
     authorizationKey: 'asd',
@@ -628,15 +611,12 @@ let fullBrowserAsyncSettings: SplitIO.IBrowserAsyncSettings = {
   }),
   impressionListener: impressionListener,
   debug: true,
-  integrations: [
-    GoogleAnalyticsToSplit(), SplitToGoogleAnalytics(),
-    GoogleAnalyticsToSplit(minimalGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(emptySplitToGoogleAnalyticsConfig),
-    GoogleAnalyticsToSplit(customGoogleAnalyticsToSplitConfig), SplitToGoogleAnalytics(customSplitToGoogleAnalyticsConfig)
-  ],
-  streamingEnabled: true,
+  integrations: [],
   sync: {
     impressionsMode: 'DEBUG',
-    enabled: true
+    requestOptions: {
+      getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
+    }
   },
   userConsent: 'GRANTED'
 };
@@ -654,8 +634,6 @@ fullBrowserSettings.debug = DebugLoggerFull();
 fullBrowserSettings.debug = InfoLoggerFull();
 fullBrowserSettings.debug = WarnLoggerFull();
 fullBrowserSettings.debug = ErrorLoggerFull();
-
-// fullBrowserSettings.integrations[0].type = 'GOOGLE_ANALYTICS_TO_SPLIT';
 
 // let fullNodeSettings: SplitIO.INodeSettings = {
 //   core: {

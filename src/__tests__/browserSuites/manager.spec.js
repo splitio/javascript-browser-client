@@ -4,7 +4,7 @@ import map from 'lodash/map';
 import { url } from '../testUtils';
 
 export default async function (settings, fetchMock, assert) {
-  fetchMock.getOnce({ url: url(settings, '/splitChanges?s=1.1&since=-1'), overwriteRoutes: true }, { status: 200, body: splitChangesMockReal });
+  fetchMock.getOnce({ url: url(settings, '/splitChanges?s=1.2&since=-1'), overwriteRoutes: true }, { status: 200, body: splitChangesMockReal });
 
   const mockSplits = splitChangesMockReal;
 
@@ -41,7 +41,8 @@ export default async function (settings, fetchMock, assert) {
     'treatments': map(mockSplits.splits[index].conditions[0].partitions, partition => partition.treatment),
     'configs': mockSplits.splits[index].configurations || {},
     'sets': mockSplits.splits[index].sets,
-    'defaultTreatment': mockSplits.splits[index].defaultTreatment
+    'defaultTreatment': mockSplits.splits[index].defaultTreatment,
+    'impressionsDisabled': false
   });
 
   assert.equal(manager.split('non_existent'), null, 'Trying to get a manager.split() of a Split that does not exist returns null.');
