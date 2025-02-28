@@ -24,10 +24,15 @@ module.exports = {
     'tap'
   ],
 
-  // Run on Chrome Headless. Use 'Chrome' instead to run on full browser for debugging
-  browsers: [
-    'ChromeHeadless'
-  ],
+  // Run on Chrome Headless
+  customLaunchers: {
+    ChromeHeadlessNoSandbox: {
+      base: 'ChromeHeadless',
+      // Flags required to run in ubuntu-22.04 or above (https://chromium.googlesource.com/chromium/src/+/master/docs/linux/suid_sandbox_development.md)
+      flags: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
+  },
+  browsers: ['ChromeHeadlessNoSandbox'],
 
   // Continuous Integration mode
   // if true, it capture browsers, run tests and exit. Set false for debugging
