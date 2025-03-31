@@ -89,6 +89,14 @@ const attributes: SplitIO.Attributes = {
   attr6: [1, 2],
   attr7: true
 };
+const evaluationOptions: SplitIO.EvaluationOptions = {
+  properties: {
+    prop1: 1,
+    prop2: '2',
+    prop3: true,
+    prop4: null
+  }
+};
 // const splitKeyObj: SplitIO.SplitKeyObject = {
 //   matchingKey: 'matchingKey',
 //   bucketingKey: 'bucketingKey'
@@ -110,7 +118,9 @@ let impressionData: SplitIO.ImpressionData;
 let syncStorage: SplitIO.StorageSync;
 let syncStorageFactory: SplitIO.StorageSyncFactory = InLocalStorage();
 let localStorageOptions: SplitIO.InLocalStorageOptions = {
-  prefix: 'PREFIX'
+  prefix: 'PREFIX',
+  expirationDays: 1,
+  clearOnInit: true
 };
 syncStorageFactory = InLocalStorage(localStorageOptions);
 
@@ -265,58 +275,66 @@ promise = SDK.destroy();
 // We can call getTreatment without a key.
 // treatment = client.getTreatment(splitKey, 'mySplit');
 treatment = client.getTreatment('mySplit');
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatment = client.getTreatment(splitKey, 'mySplit', attributes);
 treatment = client.getTreatment('mySplit', attributes);
+treatment = client.getTreatment('mySplit', undefined, evaluationOptions);
 
 // We can call getTreatments without a key.
 // treatments = client.getTreatments(splitKey, ['mySplit']);
 treatments = client.getTreatments(['mySplit']);
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatments = client.getTreatments(splitKey, ['mySplit'], attributes);
 treatments = client.getTreatments(['mySplit'], attributes);
+treatments = client.getTreatments(['mySplit'], undefined, evaluationOptions);
 
 // We can call getTreatmentWithConfig without a key.
 // treatmentWithConfig = client.getTreatmentWithConfig(splitKey, 'mySplit');
 treatmentWithConfig = client.getTreatmentWithConfig('mySplit');
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatmentWithConfig = client.getTreatmentWithConfig(splitKey, 'mySplit', attributes);
 treatmentWithConfig = client.getTreatmentWithConfig('mySplit', attributes);
+treatmentWithConfig = client.getTreatmentWithConfig('mySplit', undefined, evaluationOptions);
 
 // We can call getTreatmentsWithConfig without a key.
 // treatmentsWithConfig = client.getTreatmentsWithConfig(splitKey, ['mySplit']);
 treatmentsWithConfig = client.getTreatmentsWithConfig(['mySplit']);
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatmentsWithConfig = client.getTreatmentsWithConfig(splitKey, ['mySplit'], attributes);
 treatmentsWithConfig = client.getTreatmentsWithConfig(['mySplit'], attributes);
+treatmentsWithConfig = client.getTreatmentsWithConfig(['mySplit'], undefined, evaluationOptions);
 
 // We can call getTreatmentsByFlagSet without a key.
 // treatments = client.getTreatmentsByFlagSet(splitKey, 'set_a');
 treatments = client.getTreatmentsByFlagSet('set_a');
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatments = client.getTreatmentsByFlagSet(splitKey, 'set_a', attributes);
 treatments = client.getTreatmentsByFlagSet('set_a', attributes);
+treatments = client.getTreatmentsByFlagSet('set_a', undefined, evaluationOptions);
 
 // We can call getTreatmentsByFlagSets without a key.
 // treatments = client.getTreatmentsByFlagSets(splitKey, ['set_a']);
 treatments = client.getTreatmentsByFlagSets(['set_a']);
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatments = client.getTreatmentsByFlagSets(splitKey, ['set_a'], attributes);
 treatments = client.getTreatmentsByFlagSets(['set_a'], attributes);
+treatments = client.getTreatmentsByFlagSets(['set_a'], undefined, evaluationOptions);
 
 // We can call getTreatmentsWithConfigByFlagSet without a key.
 // treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a');
 treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet('set_a');
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a', attributes);
 treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet('set_a', attributes);
+treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSet('set_a', undefined, evaluationOptions);
 
 // We can call getTreatmentsWithConfigByFlagSets without a key.
 // treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a']);
 treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(['set_a']);
-// Attributes parameter is optional.
+// Attributes and EvaluationOptions parameters are optional.
 // treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a'], attributes);
 treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(['set_a'], attributes);
+treatmentsWithConfig = client.getTreatmentsWithConfigByFlagSets(['set_a'], undefined, evaluationOptions);
 
 // We can call track without a key. Traffic type can also be binded to the client.
 // tracked = client.track(splitKey, 'myTrafficType', 'myEventType'); // all params
@@ -355,57 +373,65 @@ promise = AsyncSDK.destroy();
 // We can call getTreatment
 asyncTreatment = asyncClient.getTreatment('mySplit');
 // asyncTreatment = asyncClient.getTreatment(splitKey, 'mySplit');
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatment = asyncClient.getTreatment('mySplit', attributes);
+asyncTreatment = asyncClient.getTreatment('mySplit', undefined, evaluationOptions);
 // asyncTreatment = asyncClient.getTreatment(splitKey, 'mySplit', attributes);
 
 // We can call getTreatments
 asyncTreatments = asyncClient.getTreatments(['mySplit']);
 // asyncTreatments = asyncClient.getTreatments(splitKey, ['mySplit']);
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatments = asyncClient.getTreatments(['mySplit'], attributes);
+asyncTreatments = asyncClient.getTreatments(['mySplit'], undefined, evaluationOptions);
 // asyncTreatments = asyncClient.getTreatments(splitKey, ['mySplit'], attributes);
 
 // We can call getTreatmentWithConfig
 asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig('mySplit');
 // asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig(splitKey, 'mySplit');
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig('mySplit', attributes);
+asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig('mySplit', undefined, evaluationOptions);
 // asyncTreatmentWithConfig = asyncClient.getTreatmentWithConfig(splitKey, 'mySplit', attributes);
 
 // We can call getTreatments but always with a key.
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit']);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(splitKey, ['mySplit']);
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit'], attributes);
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(['mySplit'], undefined, evaluationOptions);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfig(splitKey, ['mySplit'], attributes);
 
 // We can call getTreatmentsByFlagSet
 asyncTreatments = asyncClient.getTreatmentsByFlagSet('set_a');
 // asyncTreatments = asyncClient.getTreatmentsByFlagSet(splitKey, 'set_a');
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatments = asyncClient.getTreatmentsByFlagSet('set_a', attributes);
+asyncTreatments = asyncClient.getTreatmentsByFlagSet('set_a', undefined, evaluationOptions);
 // asyncTreatments = asyncClient.getTreatmentsByFlagSet(splitKey, 'set_a', attributes);
 
 // We can call getTreatmentsByFlagSets
 asyncTreatments = asyncClient.getTreatmentsByFlagSets(['set_a']);
 // asyncTreatments = asyncClient.getTreatmentsByFlagSets(splitKey, ['set_a']);
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatments = asyncClient.getTreatmentsByFlagSets(['set_a'], attributes);
+asyncTreatments = asyncClient.getTreatmentsByFlagSets(['set_a'], undefined, evaluationOptions);
 // asyncTreatments = asyncClient.getTreatmentsByFlagSets(splitKey, ['set_a'], attributes);
 
 // We can call getTreatmentsWithConfigByFlagSet
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet('set_a');
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a');
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet('set_a', attributes);
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet('set_a', undefined, evaluationOptions);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSet(splitKey, 'set_a', attributes);
 
 // We can call getTreatmentsByFlagSets but always with a key.
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(['set_a']);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a']);
-// Attributes parameter is optional
+// Attributes and EvaluationOptions parameters are optional.
 asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(['set_a'], attributes);
+asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(['set_a'], undefined, evaluationOptions);
 // asyncTreatmentsWithConfig = asyncClient.getTreatmentsWithConfigByFlagSets(splitKey, ['set_a'], attributes);
 
 // We can call track.
