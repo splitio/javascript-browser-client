@@ -1,8 +1,9 @@
-1.2.0 (January XX, 2025)
+1.2.0 (March 31, 2025)
+ - Added a new optional argument to the client `getTreatment` methods to allow passing additional evaluation options, such as a map of properties to append to the generated impressions sent to Split backend. Read more in our docs.
  - Added two new configuration options for the SDK's `InLocalStorage` module to control the behavior of the persisted rollout plan cache in the browser:
     - `expirationDays` to specify the validity period of the rollout plan cache in days.
     - `clearOnInit` to clear the rollout plan cache on SDK initialization.
- - Updated SDK_READY_FROM_CACHE event when using `InLocalStorage` to be emitted alongside the SDK_READY event if it has not already been emitted.
+ - Updated SDK_READY_FROM_CACHE event when using `InLocalStorage` module to be emitted alongside the SDK_READY event if it has not already been emitted.
  - Updated @splitsoftware/splitio-commons package to version 2.2.0.
 
 1.1.0 (January 17, 2025)
