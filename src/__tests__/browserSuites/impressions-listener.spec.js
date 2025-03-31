@@ -72,7 +72,6 @@ export default function (assert) {
           bucketingKey: undefined,
           label: 'expected label',
           changeNumber: 2828282828,
-          pt: undefined,
           properties: '{"prop1":"prop-value"}'
         },
         attributes: undefined,
