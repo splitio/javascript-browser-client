@@ -10,7 +10,7 @@ import { version } from '../../../package.json';
 import { SplitFactory, PluggableStorage } from '../../';
 
 const expectedSplitName = 'hierarchical_splits_testing_on';
-const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {}, sets: [], defaultTreatment: 'off', impressionsDisabled: false };
+const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {}, sets: [], defaultTreatment: 'off', impressionsDisabled: false, prerequisites: [] };
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory();
@@ -118,6 +118,19 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on_negated'), 'off', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('always-on-impressions-disabled-true'), 'on', 'Evaluations using pluggable storage should be correct.');
 
+    // Evaluations with rule-based segments
+    const clientInRBS = sdk.client('bilal@split.io');
+    await clientInRBS.ready();
+
+    assert.equal(await otherClient.getTreatment('rbs_test_flag'), 'v2', 'key in excluded segment');
+    assert.equal(await clientInRBS.getTreatment('rbs_test_flag'), 'v1', 'key satisfies the rbs condition');
+    assert.equal(await client.getTreatment('rbs_test_flag'), 'v2', 'key not in segment');
+
+    assert.equal(await otherClient.getTreatment('rbs_test_flag_negated'), 'v1', 'key in excluded segment');
+    assert.equal(await clientInRBS.getTreatment('rbs_test_flag_negated'), 'v2', 'key satisfies the rbs condition');
+    assert.equal(await client.getTreatment('rbs_test_flag_negated'), 'v1', 'key not in segment');
+
+    // Track calls
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
 
@@ -126,11 +139,11 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Manager methods
     const splitNames = await manager.names();
-    assert.equal(splitNames.length, 26, 'manager `names` method returns the list of split names asynchronously');
+    assert.equal(splitNames.length, 28, 'manager `names` method returns the list of split names asynchronously');
     assert.equal(splitNames.indexOf(expectedSplitName) > -1, true, 'list of split names should contain expected splits');
     assert.deepEqual(await manager.split(expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
     const splitViews = await manager.splits();
-    assert.equal(splitViews.length, 26, 'manager `splits` method returns the list of split views asynchronously');
+    assert.equal(splitViews.length, 28, 'manager `splits` method returns the list of split views asynchronously');
     assert.deepEqual(splitViews.find(splitView => splitView.name === expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
 
     // New shared client created
@@ -143,16 +156,14 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
     assert.equal((await newClient.getTreatment('UT_IN_SEGMENT')), 'off', '`getTreatment` evaluation using pluggable storage should be correct.');
 
     await client.ready(); // promise already resolved
-    await newClient.destroy();
-    await otherClient.destroy();
-    await client.destroy();
+    await sdk.destroy();
 
     assert.equal(disconnectSpy.callCount, 1, 'Wrapper disconnect method should be called only once, when the main client is destroyed');
 
     // Validate stored impressions and events
     const trackedImpressions = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.impressions', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.impressions'));
     const trackedEvents = await wrapperInstance.popItems('PLUGGABLE_STORAGE_UT.SPLITIO.events', await wrapperInstance.getItemsCount('PLUGGABLE_STORAGE_UT.SPLITIO.events'));
-    assert.equal(trackedImpressions.length, TOTAL_RAW_IMPRESSIONS, 'Tracked impressions should be present in the external storage');
+    assert.equal(trackedImpressions.length, TOTAL_RAW_IMPRESSIONS + 6 /* evaluations with rule-based segments */, 'Tracked impressions should be present in the external storage');
     assert.equal(trackedEvents.length, TOTAL_EVENTS, 'Tracked events should be present in the external storage');
 
     // Validate stored telemetry
@@ -165,7 +176,7 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     // Assert impressionsListener
     setTimeout(() => {
-      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS + 1 /* One evaluation with impressionsDisabled true */, 'Each evaluation has its corresponding impression');
+      assert.equal(impressions.length, TOTAL_RAW_IMPRESSIONS + 6 /* evaluations with rule-based segments */ + 1 /* One evaluation with impressionsDisabled true */, 'Each evaluation has its corresponding impression');
       assert.equal(impressions[0].impression.label, SDK_NOT_READY, 'The first impression is control with label "sdk not ready"');
 
       assert.end();

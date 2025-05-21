@@ -24,13 +24,13 @@ export default function fetchSpecificSplits(fetchMock, assert) {
       const queryString = queryStrings[i] || '';
       let factory;
 
-      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.2&since=-1' + queryString, { status: 200, body: { splits: [], since: -1, till: 1457552620999 } });
-      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.2&since=1457552620999' + queryString, { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } });
-      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.2&since=1457552620999' + queryString, function () {
+      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.3&since=-1&rbSince=-1' + queryString, { status: 200, body: { splits: [], since: -1, till: 1457552620999 } });
+      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.3&since=1457552620999&rbSince=-1' + queryString, { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } });
+      fetchMock.getOnce(urls.sdk + '/splitChanges?s=1.3&since=1457552620999&rbSince=-1' + queryString, function () {
         factory.client().destroy().then(() => {
           assert.pass(`splitFilters #${i}`);
         });
-        return { status: 200, body: { splits: [], since: 1457552620999, till: 1457552620999 } };
+        return { status: 200, body: { ff: { d: [], s: 1457552620999, t: 1457552620999 } } };
       });
       fetchMock.get(urls.sdk + '/memberships/nicolas%40split.io', { status: 200, body: { 'ms': {} } });
 

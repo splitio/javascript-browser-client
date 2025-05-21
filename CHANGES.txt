@@ -1,3 +1,8 @@
+1.3.0 (May 21, 2025)
+ - Added support for targeting rules based on rule-based segments.
+ - Added support for feature flag prerequisites.
+ - Updated @splitsoftware/splitio-commons package to version 2.4.0.
+
 1.2.0 (March 31, 2025)
  - Added a new optional argument to the client `getTreatment` methods to allow passing additional evaluation options, such as a map of properties to append to the generated impressions sent to Split backend. Read more in our docs.
  - Added two new configuration options for the SDK's `InLocalStorage` module to control the behavior of the persisted rollout plan cache in the browser:
