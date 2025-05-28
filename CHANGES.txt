@@ -1,3 +1,8 @@
+1.3.0 (May 28, 2025)
+ - Added support for rule-based segments. These segments determine membership at runtime by evaluating their configured rules against the user attributes provided to the SDK.
+ - Added support for feature flag prerequisites. This allows customers to define dependency conditions between flags, which are evaluated before any allowlists or targeting rules.
+ - Updated @splitsoftware/splitio-commons package to version 2.4.0.
+
 1.2.0 (March 31, 2025)
  - Added a new optional argument to the client `getTreatment` methods to allow passing additional evaluation options, such as a map of properties to append to the generated impressions sent to Split backend. Read more in our docs.
  - Added two new configuration options for the SDK's `InLocalStorage` module to control the behavior of the persisted rollout plan cache in the browser:
@@ -8,10 +13,10 @@
 
 1.1.0 (January 17, 2025)
  - Added support for the new impressions tracking toggle available on feature flags, both respecting the setting and including the new field being returned on `SplitView` type objects. Read more in our docs.
- - Bugfixing - Updated @splitsoftware/splitio-commons package to version 2.1.0, which properly handles rejected promises when using targeting rules with segment matchers in consumer modes (e.g., Redis and Pluggable storages).
+ - Bugfix - Updated @splitsoftware/splitio-commons package to version 2.1.0, which properly handles rejected promises when using targeting rules with segment matchers in consumer modes (e.g., Redis and Pluggable storages).
 
 1.0.1 (November 11, 2024)
- - Bugfixing - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
+ - Bugfix - Revert removal of TypeScript `SplitIO` namespace at `/types/splitio.d.ts` to allow explicit imports of types from the Browser SDK package. E.g., `import type { IClientSideSettings } from '@splitsoftware/splitio-browserjs/types/splitio';`.
 
 1.0.0 (November 1, 2024)
  - Added support for targeting rules based on large segments.
@@ -33,8 +38,8 @@
 
 0.14.1 (June 14, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.16.0 that includes some vulnerability and bug fixes.
- - Bugfixing - Restored some input validation error logs that were removed in version 0.12.0. The logs inform the user when the `getTreatment(s)` methods are called with an invalid value as feature flag name or flag set name.
- - Bugfixing - Fixed localhost mode to emit SDK_UPDATE when mocked feature flags are updated in the `features` object map of the config object (Related to issue https://github.com/splitio/javascript-browser-client/issues/119).
+ - Bugfix - Restored some input validation error logs that were removed in version 0.12.0. The logs inform the user when the `getTreatment(s)` methods are called with an invalid value as feature flag name or flag set name.
+ - Bugfix - Fixed localhost mode to emit SDK_UPDATE when mocked feature flags are updated in the `features` object map of the config object (Related to issue https://github.com/splitio/javascript-browser-client/issues/119).
 
 0.14.0 (May 6, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.14.0 that includes minor updates:
@@ -44,7 +49,7 @@
 
 0.13.2 (March 26, 2024)
  - Updated some transitive dependencies for vulnerability fixes.
- - Bugfixing - Added tslib as an explicit dependency to avoid issues with some package managers that don't resolve it automatically as a transitive dependency from @splitsoftware/splitio-commons (Related to issue https://github.com/splitio/javascript-client/issues/795).
+ - Bugfix - Added tslib as an explicit dependency to avoid issues with some package managers that don't resolve it automatically as a transitive dependency from @splitsoftware/splitio-commons (Related to issue https://github.com/splitio/javascript-client/issues/795).
 
 0.13.1 (January 18, 2024)
  - Updated @splitsoftware/splitio-commons package to version 1.13.1 and some transitive dependencies for vulnerability fixes.
@@ -53,7 +58,7 @@
  - Added support for Flag Sets in "consumer" and "partial consumer" modes (pluggable storage).
  - Updated SDK cache for browsers using localStorage, to clear cached feature flag definitions before initiating the synchronization process if the cache was previously synchronized with a different SDK key (i.e., a different environment) or different Split Filter criteria, to avoid using invalid cached data when the SDK is ready from cache.
  - Updated @splitsoftware/splitio-commons package to version 1.12.1 that includes flag sets support for consumer modes, and other improvements.
- - Bugfixing - Fixed manager methods in consumer modes to return results in a promise when the SDK is not operational (not ready or destroyed).
+ - Bugfix - Fixed manager methods in consumer modes to return results in a promise when the SDK is not operational (not ready or destroyed).
 
 0.12.0 (November 3, 2023)
  - Added support for Flag Sets on the SDK, which enables grouping feature flags and interacting with the group rather than individually (more details in our documentation):
@@ -80,7 +85,7 @@
  - Updated some transitive dependencies for vulnerability fixes.
  - Updated @splitsoftware/splitio-commons package to version 1.8.3 that includes:
     - Updated SDK_READY_TIMED_OUT event to be emitted immediately when a connection error occurs using pluggable storage (i.e., when the wrapper `connect` promise is rejected) in consumer and partial consumer modes.
-    - Bugfixing - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviors when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
+    - Bugfix - The `destroy` method has been updated to immediately flag the SDK client as destroyed, to prevent unexpected behaviors when `getTreatment` and `track` methods are called synchronously after `destroy` method is called.
 
 0.9.5 (May 15, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.2 that includes minor improvements.
@@ -90,7 +95,7 @@
 
 0.9.4 (May 4, 2023)
  - Updated some transitive dependencies for vulnerability fixes.
- - Bugfixing - Updated `unfetch` package as a runtime dependency, required when using the "full" import (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
+ - Bugfix - Updated `unfetch` package as a runtime dependency, required when using the "full" import (`import { SplitFactory } from '@splitsoftware/splitio-browserjs/full'`).
 
 0.9.3 (March 20, 2023)
  - Updated @splitsoftware/splitio-commons package to version 1.8.1 that includes minor improvements.
@@ -98,10 +103,10 @@
 
 0.9.2 (December 16, 2022)
  - Updated some transitive dependencies for vulnerability fixes.
- - Bugfixing - Upgrade @splitsoftware/splitio-commons package to version 1.7.3 which includes a memory leak fix for localhost mode (Related to issue https://github.com/splitio/javascript-commons/issues/181) among other improvements.
+ - Bugfix - Upgrade @splitsoftware/splitio-commons package to version 1.7.3 which includes a memory leak fix for localhost mode (Related to issue https://github.com/splitio/javascript-commons/issues/181) among other improvements.
 
 0.9.1 (October 14, 2022)
- - Bugfixing - Upgrade @splitsoftware/splitio-commons package to version 1.7.2, that handles `Navigator.sendBeacon` API exceptions in the browser, and fallback to regular Fetch/XHR transport in case of error.
+ - Bugfix - Upgrade @splitsoftware/splitio-commons package to version 1.7.2, that handles `Navigator.sendBeacon` API exceptions in the browser, and fallback to regular Fetch/XHR transport in case of error.
 
 0.9.0 (October 5, 2022)
  - Added a new impressions mode for the SDK called NONE, to be used in factory when there is no desire to capture impressions on an SDK factory to feed Split's analytics engine. Running NONE mode, the SDK will only capture unique keys evaluated for a particular feature flag instead of full blown impressions.
@@ -118,23 +123,23 @@
  - Added a new config option to control the tasks that listen or poll for updates on feature flags and segments, via the new config `sync.enabled`. Running online, Split will always pull the most recent updates upon initialization, this only affects updates fetching on a running instance. Useful when a consistent session experience is a must or to save resources when updates are not being used.
  - Updated telemetry logic to track the anonymous config for user consent flag set to declined or unknown.
  - Updated submitters logic, to avoid duplicating the post of impressions to Split cloud when the SDK is destroyed while its periodic post of impressions is running.
- - Bugfixing - Updated submitters logic, to avoid dropping impressions and events that are being tracked while POST request is pending.
+ - Bugfix - Updated submitters logic, to avoid dropping impressions and events that are being tracked while POST request is pending.
 
 0.6.0 (May 24, 2022)
  - Added `scheduler.telemetryRefreshRate` property to SDK configuration.
  - Updated SDK telemetry storage, metrics and updater to be more effective and send less often.
- - Bugfixing - Updated default values for `scheduler.impressionsRefreshRate` config parameter: 300s for OPTIMIZED impression mode and 60s for DEBUG impression mode (previously it was 60s for both).
+ - Bugfix - Updated default values for `scheduler.impressionsRefreshRate` config parameter: 300s for OPTIMIZED impression mode and 60s for DEBUG impression mode (previously it was 60s for both).
 
 0.5.0 (April 7, 2022)
  - Added user consent feature to allow delaying or disabling the data tracking from SDK until user consent is explicitly granted or declined. Read more in our docs.
  - Added `scheduler.impressionsQueueSize` property to SDK configuration to limit the amount of impressions tracked in memory. Read more in our docs.
  - Updated format for MySegments keys in LocalStorage, keeping backwards compatibility (issue https://github.com/splitio/javascript-client/issues/638).
  - Updated some dependencies for vulnerability fixes.
- - Bugfixing - Updated internal isObject utility function, to avoid unexpected behaviors on frameworks and libraries that uses multiple VM contexts, like NuxtJS dev server.
- - Bugfixing - Fixed validation of `core.key` SDK configuration param, to parse it into a string and log a warning when passing a number (Related to issue https://github.com/splitio/react-native-client/issues/19).
- - Bugfixing - Fixed validation of `sync.impressionsMode` SDK configuration param, to avoid an exception on SplitFactory instantiation when passing a non-string value.
- - Bugfixing - Fixed streaming synchronization issue when using multiple clients.
- - Bugfixing - Fixed issue with internal Map ponyfill that results in logger not working properly on IE11 browser.
+ - Bugfix - Updated internal isObject utility function, to avoid unexpected behaviors on frameworks and libraries that uses multiple VM contexts, like NuxtJS dev server.
+ - Bugfix - Fixed validation of `core.key` SDK configuration param, to parse it into a string and log a warning when passing a number (Related to issue https://github.com/splitio/react-native-client/issues/19).
+ - Bugfix - Fixed validation of `sync.impressionsMode` SDK configuration param, to avoid an exception on SplitFactory instantiation when passing a non-string value.
+ - Bugfix - Fixed streaming synchronization issue when using multiple clients.
+ - Bugfix - Fixed issue with internal Map ponyfill that results in logger not working properly on IE11 browser.
 
 0.4.1 (February 22, 2022)
  - Updated karma and some transitive dependencies for vulnerability fixes.
@@ -150,7 +155,7 @@
  - Updated @splitsoftware/splitio-commons dependency to version 1.1.0, which includes:
       - Updated multiple modules due to general polishing and improvements, including the replacement of default exports with named exports,
       to avoid runtime errors with some particular configurations of Webpack projects.
-      - Bugfixing - Fixed issue returning dynamic configs if treatment name contains a dot (".").
+      - Bugfix - Fixed issue returning dynamic configs if treatment name contains a dot (".").
 
 0.2.0 (October 20, 2021)
  - Added localhost mode support (Read more in our docs here: https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#localhost-mode).

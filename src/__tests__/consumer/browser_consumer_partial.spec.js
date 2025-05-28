@@ -10,7 +10,7 @@ import { applyOperations } from './wrapper-commands';
 import { SplitFactory, PluggableStorage } from '../../';
 
 const expectedSplitName = 'hierarchical_splits_testing_on';
-const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {}, sets: [], defaultTreatment: 'off', impressionsDisabled: false };
+const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType: 'user', killed: false, changeNumber: 1487277320548, treatments: ['on', 'off'], configs: {}, sets: [], defaultTreatment: 'off', impressionsDisabled: false, prerequisites: [] };
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory();
@@ -161,11 +161,11 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
 
     // Manager methods
     const splitNames = await manager.names();
-    assert.equal(splitNames.length, 26, 'manager `names` method returns the list of split names asynchronously');
+    assert.equal(splitNames.length, 28, 'manager `names` method returns the list of split names asynchronously');
     assert.equal(splitNames.indexOf(expectedSplitName) > -1, true, 'list of split names should contain expected splits');
     assert.deepEqual(await manager.split(expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
     const splitViews = await manager.splits();
-    assert.equal(splitViews.length, 26, 'manager `splits` method returns the list of split views asynchronously');
+    assert.equal(splitViews.length, 28, 'manager `splits` method returns the list of split views asynchronously');
     assert.deepEqual(splitViews.find(splitView => splitView.name === expectedSplitName), expectedSplitView, 'manager `split` method returns the split view of the given split name asynchronously');
 
     // New shared client created

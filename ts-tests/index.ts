@@ -153,7 +153,8 @@ splitView = {
   },
   sets: ['set_a', 'set_b'],
   defaultTreatment: 'off',
-  impressionsDisabled: false
+  impressionsDisabled: false,
+  prerequisites: [{ flagName: 'flag1', treatments: ['on'] }]
 };
 splitViews = [splitView];
 
