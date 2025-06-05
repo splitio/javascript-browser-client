@@ -184,7 +184,7 @@ export function testSynchronizationRetries(fetchMock, assert) {
     return { status: 200, body: { ff: { d: [], s: 1457552649999, t: 1457552649999 } } }; // returning old state
   });
   // first fetch retry for SPLIT_KILL event, due to previous unexpected response (response till minor than SPLIT_KILL changeNumber)
-  fetchMock.getOnce(url(settings, '/splitChanges?s=1.3&since=1457552649999&rbSince=100'), { throws: new TypeError('Network error') });
+  fetchMock.getOnce(url(settings, '/splitChanges?s=1.3&since=1457552649999&rbSince=100'), { status: 500, body: 'server error' });
   // second fetch retry for SPLIT_KILL event
   fetchMock.getOnce(url(settings, '/splitChanges?s=1.3&since=1457552649999&rbSince=100'), { status: 200, body: '{ "since": 1457552620999, "til' }); // invalid JSON response
   // third fetch retry for SPLIT_KILL event
