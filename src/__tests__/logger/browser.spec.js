@@ -21,47 +21,47 @@ tape('## E2E Logger Tests ##', assert => {
 
   const logSpy = sinon.spy(console, 'log');
 
-  assert.test('debug settings: false', (t) => {
+  assert.test('debug settings: false', async (t) => {
     const factory = SplitFactory({ ...minConfig, debug: false });
-    factory.client().destroy().then(() => {
-      t.false(logSpy.calledWithMatch('splitio => '), 'shouldn\'t log split messages');
+    await factory.client().destroy();
+    t.false(logSpy.calledWithMatch('splitio => '), 'shouldn\'t log split messages');
 
-      logSpy.resetHistory();
-      t.end();
-    });
+    logSpy.resetHistory();
+    t.end();
   });
 
-  assert.test('debug settings: Logger object', (t) => {
+  assert.test('debug settings: Logger object', async (t) => {
     const factory = SplitFactory({ ...minConfig, debug: ErrorLogger() });
-    factory.client().destroy().then(() => {
-      t.false(logSpy.calledWithMatch('[WARN]'), 'shouldn\'t log messages with level WARN');
-      t.true(logSpy.calledWithMatch('[ERROR]'), 'should log messages with level ERROR');
+    await Promise.resolve();
 
-      logSpy.resetHistory();
-      localStorage.clear();
-      t.end();
-    });
+    await factory.client().destroy();
+    t.false(logSpy.calledWithMatch('[WARN]'), 'shouldn\'t log messages with level WARN');
+    t.true(logSpy.calledWithMatch('[ERROR]'), 'should log messages with level ERROR');
+
+    logSpy.resetHistory();
+    localStorage.clear();
+    t.end();
   });
 
-  assert.test('debug settings: log level', (t) => {
+  assert.test('debug settings: log level', async (t) => {
     const factory = SplitFactory({ ...minConfig, debug: 'INFO' });
-    factory.client().destroy().then(() => {
-      t.false(logSpy.calledWithMatch('[DEBUG]'), 'shouldn\'t log messages with level DEBUG');
-      t.true(logSpy.calledWithMatch('[INFO]'), 'should log messages with level INFO');
+    await Promise.resolve();
+    await factory.client().destroy();
+    t.false(logSpy.calledWithMatch('[DEBUG]'), 'shouldn\'t log messages with level DEBUG');
+    t.true(logSpy.calledWithMatch('[INFO]'), 'should log messages with level INFO');
 
-      logSpy.resetHistory();
-      t.end();
-    });
+    logSpy.resetHistory();
+    t.end();
   });
 
-  assert.test('debug settings: localStorage.splitio_debug = "enable"', (t) => {
+  assert.test('debug settings: localStorage.splitio_debug = "enable"', async (t) => {
     const factory = SplitFactory(minConfig);
-    factory.client().destroy().then(() => {
-      t.true(logSpy.calledWithMatch('[' + initialLogLevel + ']'), 'should log messages with level' + initialLogLevel);
+    await Promise.resolve();
+    await factory.client().destroy();
+    t.true(logSpy.calledWithMatch('[' + initialLogLevel + ']'), 'should log messages with level' + initialLogLevel);
 
-      logSpy.resetHistory();
-      t.end();
-    });
+    logSpy.resetHistory();
+    t.end();
   });
 
   assert.test('Logger API', (t) => {

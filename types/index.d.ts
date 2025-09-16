@@ -17,9 +17,9 @@ declare module JsSdk {
   export function SplitFactory(settings: SplitIO.IClientSideAsyncSettings): SplitIO.IBrowserAsyncSDK;
 
   /**
-   * Persistent storage based on the LocalStorage Web API for browsers.
+   * Persistent storage. By default, it uses the browser's LocalStorage API.
    *
-   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#storage}
+   * @see {@link https://help.split.io/hc/en-us/articles/360058730852-Browser-SDK#configuring-localstorage-cache-for-the-sdk}
    */
   export function InLocalStorage(options?: SplitIO.InLocalStorageOptions): SplitIO.StorageSyncFactory;
 

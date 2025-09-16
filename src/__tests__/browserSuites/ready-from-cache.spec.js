@@ -7,9 +7,9 @@ import splitChangesMock1 from '../mocks/splitchanges.since.-1.json';
 import splitChangesMock2 from '../mocks/splitchanges.since.1457552620999.json';
 import membershipsNicolas from '../mocks/memberships.nicolas@split.io.json';
 
-const DEFAULT_CACHE_EXPIRATION_IN_MILLIS = 864000000; // 10 days
+export const DEFAULT_CACHE_EXPIRATION_IN_MILLIS = 864000000; // 10 days
 
-const alwaysOnSplitInverted = JSON.stringify({
+export const alwaysOnSplitInverted = JSON.stringify({
   'environment': null,
   'trafficTypeId': null,
   'trafficTypeName': null,
@@ -19,6 +19,25 @@ const alwaysOnSplitInverted = JSON.stringify({
   'killed': false,
   'defaultTreatment': 'off',
   'conditions': [
+    {
+      'matcherGroup': {
+        'combiner': 'AND',
+        'matchers': [
+          {
+            'matcherType': 'IN_SEGMENT',
+            'userDefinedSegmentMatcherData': {
+              'segmentName': 'employees'
+            },
+          }
+        ]
+      },
+      'partitions': [
+        {
+          'treatment': 'on',
+          'size': 100
+        }
+      ]
+    },
     {
       'matcherGroup': {
         'combiner': 'AND',
@@ -47,7 +66,7 @@ const alwaysOnSplitInverted = JSON.stringify({
   ]
 });
 
-const splitDeclarations = {
+export const splitDeclarations = {
   p1__split: {
     'name': 'p1__split',
     'status': 'ACTIVE',
@@ -65,7 +84,7 @@ const splitDeclarations = {
   },
 };
 
-const baseConfig = {
+export const baseConfig = {
   core: {
     authorizationKey: '<fake-token-rfc>',
     key: 'nicolas@split.io'
@@ -83,8 +102,8 @@ const baseConfig = {
   streamingEnabled: false
 };
 
-const expectedHashNullFilter = '193e6f3f'; // for SDK key '<fake-token-rfc>', filter query null, and flags spec version '1.3'
-const expectedHashWithFilter = '2ce5cc38'; // for SDK key '<fake-token-rfc>', filter query '&names=p1__split,p2__split', and flags spec version '1.3'
+export const expectedHashNullFilter = '193e6f3f'; // for SDK key '<fake-token-rfc>', filter query null, and flags spec version '1.3'
+export const expectedHashWithFilter = '2ce5cc38'; // for SDK key '<fake-token-rfc>', filter query '&names=p1__split,p2__split', and flags spec version '1.3'
 
 export default function (fetchMock, assert) {
 
@@ -467,6 +486,68 @@ export default function (fetchMock, assert) {
     });
   });
 
+  assert.test(t => { // Testing when we start with initial rollout plan data and sync storage type (is ready from cache immediately)
+    const testUrls = {
+      sdk: 'https://sdk.baseurl/readyFromCacheWithInitialRolloutPlan',
+      events: 'https://events.baseurl/readyFromCacheWithInitialRolloutPlan'
+    };
+
+    t.plan(5);
+
+    fetchMock.getOnce(testUrls.sdk + '/splitChanges?s=1.3&since=25&rbSince=-1', { status: 200, body: { ff: { ...splitChangesMock1.ff, s: 25 } } });
+    fetchMock.getOnce(testUrls.sdk + '/memberships/nicolas%40split.io', { status: 200, body: membershipsNicolas });
+    fetchMock.getOnce(testUrls.sdk + '/memberships/emi%40split.io', { status: 200, body: { 'ms': {} } });
+
+    fetchMock.postOnce(testUrls.events + '/testImpressions/bulk', 200);
+    fetchMock.postOnce(testUrls.events + '/testImpressions/count', 200);
+
+    const splitio = SplitFactory({
+      ...baseConfig,
+      // InLocalStorage is supported too
+      urls: testUrls,
+      initialRolloutPlan: {
+        splitChanges: {
+          ff: {
+            t: 25,
+            d: [JSON.parse(alwaysOnSplitInverted)]
+          }
+        },
+        memberships: {
+          'emi@split.io': { ms: { k: [{ n: 'employees' }] } }
+        }
+      }
+    });
+
+    const client = splitio.client();
+    const client2 = splitio.client('emi@split.io');
+
+    t.equal(client.__getStatus().isReadyFromCache, true, 'Client is ready from cache');
+
+    t.equal(client.getTreatment('always_on'), 'off', 'It should evaluate treatments with data from cache. Key without memberships');
+    t.equal(client2.getTreatment('always_on'), 'on', 'It should evaluate treatments with data from cache. Key with memberships');
+
+    client.on(client.Event.SDK_READY_TIMED_OUT, () => {
+      t.fail('It should not timeout in this scenario.');
+      t.end();
+    });
+
+    client.on(client.Event.SDK_READY_FROM_CACHE, () => {
+      t.fail('SDK is ready from cache immediately. SDK_READY_FROM_CACHE not emitted.');
+      t.end();
+    });
+
+    client.on(client.Event.SDK_READY, () => {
+      t.equal(client.getTreatment('always_on'), 'on', 'It should evaluate treatments with updated data after syncing with the cloud.');
+    });
+    client2.on(client2.Event.SDK_READY, () => {
+      t.equal(client2.getTreatment('always_on'), 'on', 'It should evaluate treatments with updated data after syncing with the cloud.');
+
+      splitio.destroy().then(() => {
+        t.end();
+      });
+    });
+  });
+
   /** Fetch specific splits **/
 
   assert.test(t => { // Testing when we start with cached data but without storage hash (JS SDK <=v10.24.0 and Browser SDK <=v0.12.0), and a valid split filter config
@@ -804,13 +885,14 @@ export default function (fetchMock, assert) {
     let client = splitio.client();
     let manager = splitio.manager();
 
-    t.true(console.log.calledWithMatch('clearOnInit was set and cache was not cleared in the last 24 hours. Cleaning up cache'), 'It should log a message about cleaning up cache');
-
     client.once(client.Event.SDK_READY_FROM_CACHE, () => {
       t.true(client.__getStatus().isReady, 'Client should emit SDK_READY_FROM_CACHE alongside SDK_READY, because clearOnInit is true');
     });
 
     await client.ready();
+
+    t.true(console.log.calledWithMatch('clearOnInit was set and cache was not cleared in the last 24 hours. Cleaning up cache'), 'It should log a message about cleaning up cache');
+
     t.equal(manager.names().sort().length, 36, 'active splits should be present for evaluation');
 
     await splitio.destroy();

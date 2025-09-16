@@ -120,8 +120,15 @@ let syncStorageFactory: SplitIO.StorageSyncFactory = InLocalStorage();
 let localStorageOptions: SplitIO.InLocalStorageOptions = {
   prefix: 'PREFIX',
   expirationDays: 1,
-  clearOnInit: true
+  clearOnInit: true,
+  wrapper: window.localStorage
 };
+let customStorage: SplitIO.StorageWrapper = {
+  getItem(key: string) { return Promise.resolve('value'); },
+  setItem(key: string, value: string) { return Promise.resolve(); },
+  removeItem(key: string) { return Promise.resolve(); },
+};
+localStorageOptions.wrapper = customStorage;
 syncStorageFactory = InLocalStorage(localStorageOptions);
 
 // mockedFeaturesPath = 'path/to/file';
@@ -661,6 +668,10 @@ fullBrowserSettings.debug = DebugLoggerFull();
 fullBrowserSettings.debug = InfoLoggerFull();
 fullBrowserSettings.debug = WarnLoggerFull();
 fullBrowserSettings.debug = ErrorLoggerFull();
+
+// Preload rollout plan
+let rolloutPlanSnapshot: SplitIO.RolloutPlan = {};
+fullBrowserSettings.initialRolloutPlan = rolloutPlanSnapshot;
 
 // let fullNodeSettings: SplitIO.INodeSettings = {
 //   core: {
