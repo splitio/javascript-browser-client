@@ -1,4 +1,4 @@
-1.4.0 (September 19, 2025)
+1.4.0 (September 18, 2025)
  - Added the `wrapper` option to the SDK's `InLocalStorage` module, to allow passing a custom storage for persisting the SDK rollout plan. The default is `window.localStorage`.
  - Added the `initialRolloutPlan` configuration option for the SDK in standalone mode, to allow preloading the SDK storage with a snapshot of the rollout plan.
  - Updated @splitsoftware/splitio-commons package to version 2.6.0.
