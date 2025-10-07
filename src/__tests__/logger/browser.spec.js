@@ -54,6 +54,26 @@ tape('## E2E Logger Tests ##', assert => {
     t.end();
   });
 
+  assert.test('debug settings: custom logger', async (t) => {
+    const customLogger = {
+      debug: sinon.spy(),
+      info: sinon.spy(),
+      warn: sinon.spy(),
+      error: sinon.spy()
+    };
+
+    const factory = SplitFactory({ ...minConfig, debug: 'INFO', logger: customLogger });
+
+    t.equal(factory.settings.log.options.logLevel, 'DEBUG', 'When combined with the `logger` option, any log level other than `NONE` (false) will be set to `DEBUG` (true)');
+
+    await factory.client().destroy();
+    t.true(customLogger.debug.calledWithMatch('splitio => '), 'should log messages with level DEBUG');
+    t.true(customLogger.info.calledWithMatch('splitio => '), 'should log messages with level INFO');
+
+    logSpy.resetHistory();
+    t.end();
+  });
+
   assert.test('debug settings: localStorage.splitio_debug = "enable"', async (t) => {
     const factory = SplitFactory(minConfig);
     await Promise.resolve();
@@ -78,6 +98,18 @@ tape('## E2E Logger Tests ##', assert => {
 
       factory.Logger.setLogLevel('invalid');
       t.equal(factory.settings.log.options.logLevel, 'WARN');
+
+      // attempt to set invalid logger
+      factory.Logger.setLogger('invalid logger');
+      t.equal(factory.settings.log.logger, undefined);
+
+      // set logger
+      factory.Logger.setLogger(console);
+      t.equal(factory.settings.log.logger, console);
+
+      // unset logger
+      factory.Logger.setLogger(undefined);
+      t.equal(factory.settings.log.logger, undefined);
 
       factory.client().destroy();
     }

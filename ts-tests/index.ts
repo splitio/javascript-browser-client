@@ -54,6 +54,7 @@ let asyncClient: SplitIO.IBrowserAsyncClient;
 let asyncManager: SplitIO.IAsyncManager;
 // Utility interfaces
 let impressionListener: SplitIO.IImpressionListener;
+let MyLogger: SplitIO.Logger = console;
 
 /**** Custom Types ****/
 
@@ -248,6 +249,7 @@ SDK.Logger.setLogLevel(SDK.Logger.LogLevel.WARN);
 SDK.Logger.setLogLevel(SDK.Logger.LogLevel.ERROR);
 SDK.Logger.setLogLevel(SDK.Logger.LogLevel.NONE);
 SDK.Logger.disable();
+SDK.Logger.setLogger(MyLogger);
 
 AsyncSDK.Logger.enable();
 AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.DEBUG);
@@ -256,6 +258,7 @@ AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.WARN);
 AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.ERROR);
 AsyncSDK.Logger.setLogLevel(AsyncSDK.Logger.LogLevel.NONE);
 AsyncSDK.Logger.disable();
+AsyncSDK.Logger.setLogger(MyLogger);
 
 /**** Tests for IClient interface ****/
 
@@ -598,6 +601,7 @@ let fullBrowserSettings: SplitIO.IClientSideSettings = {
   storage: syncStorageFactory,
   impressionListener: impressionListener,
   debug: true,
+  logger: MyLogger,
   integrations: [],
   streamingEnabled: true,
   sync: {
@@ -645,6 +649,7 @@ let fullBrowserAsyncSettings: SplitIO.IClientSideAsyncSettings = {
   }),
   impressionListener: impressionListener,
   debug: true,
+  logger: MyLogger,
   integrations: [],
   sync: {
     impressionsMode: 'DEBUG',
