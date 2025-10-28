@@ -5,18 +5,7 @@ const listener = {
   logImpression: sinon.stub()
 };
 
-const baseConfig = {
-  core: {
-    authorizationKey: '<fake-token>',
-    key: 'facundo@split.io'
-  },
-  sync: {
-    impressionsMode: 'DEBUG'
-  },
-  streamingEnabled: false
-};
-
-export default async function (fetchMock, assert) {
+export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Split factory with no fallbackTreatment defined', async t => {
 
@@ -122,7 +111,7 @@ export default async function (fetchMock, assert) {
 
   });
 
-  assert.test('FallbackTreatment / Impressions correctness with fallback when client is not whenReady', async t => {
+  assert.test('FallbackTreatment / Impressions correctness with fallback when client is not ready', async t => {
 
     const config = Object.assign({}, baseConfig);
     config.urls = {
@@ -136,8 +125,8 @@ export default async function (fetchMock, assert) {
     const splitio = SplitFactory(config);
     const client = splitio.client();
 
-    t.equal(client.getTreatment('any_flag'), 'OFF_FALLBACK', 'The evaluation will return the fallbackTreatment if the client is not whenReady yet');
-    t.equal(client.getTreatment('user_account_in_whitelist'), 'control', 'The evaluation will return the fallbackTreatment if the client is not whenReady yet');
+    t.equal(client.getTreatment('any_flag'), 'OFF_FALLBACK', 'The evaluation will return the fallbackTreatment if the client is not ready yet');
+    t.equal(client.getTreatment('user_account_in_whitelist'), 'control', 'The evaluation will return the fallbackTreatment if the client is not ready yet');
 
     await client.whenReady();
 
@@ -151,8 +140,8 @@ export default async function (fetchMock, assert) {
         t.equal(impressions[0].r, expectedLabel, `${featureFlagName} impression with label ${expectedLabel}`);
       }
 
-      validateImpressionData('any_flag', 'fallback - not whenReady');
-      validateImpressionData('user_account_in_whitelist', 'not whenReady');
+      validateImpressionData('any_flag', 'fallback - not ready');
+      validateImpressionData('user_account_in_whitelist', 'not ready');
       t.end();
 
       return 200;
@@ -206,7 +195,7 @@ export default async function (fetchMock, assert) {
     t.deepEqual(client.getTreatmentWithConfig('my_flag'), { treatment: 'ON_FALLBACK', config: '{"flag": true}' }, 'The evaluation will propagate the config along with the treatment from the fallbackTreatment');
     t.deepEqual(client.getTreatmentWithConfig('non_existent_flag'), { treatment: 'OFF_FALLBACK', config: '{"global": true}' }, 'The evaluation will propagate the config along with the treatment from the fallbackTreatment');
 
-    let POSTED_IMPRESSIONS_COUNT;
+    let POSTED_IMPRESSIONS_COUNT = 0;
 
     fetchMock.postOnce(config.urls.events + '/testImpressions/bulk', (_, opts) => {
 
