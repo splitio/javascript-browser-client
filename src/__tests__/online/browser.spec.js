@@ -28,6 +28,7 @@ import membershipsNicolas from '../mocks/memberships.nicolas@split.io.json';
 import membershipsMarcio from '../mocks/memberships.marcio@split.io.json';
 import membershipsEmmanuel from '../mocks/memberships.emmanuel@split.io.json';
 import { InLocalStorage } from '../../index';
+import evaluationsFallbackSuite from '../browserSuites/evaluations-fallback.spec';
 
 const settings = settingsFactory({
   core: {
@@ -97,6 +98,7 @@ tape('## E2E CI Tests ##', function (assert) {
 
   /* Check client evaluations. */
   assert.test('E2E / In Memory', evaluationsSuite.bind(null, configInMemory, fetchMock));
+  assert.test('E2E / In Memory Fallback', evaluationsFallbackSuite.bind(null, configInMemory, fetchMock));
   assert.test('E2E / In Memory with Bucketing Key', evaluationsSuite.bind(null, configInMemoryWithBucketingKey, fetchMock));
   assert.test('E2E / In LocalStorage with In Memory Fallback', evaluationsSuite.bind(null, configInLocalStorage, fetchMock));
   /* Check impressions */
