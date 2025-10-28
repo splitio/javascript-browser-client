@@ -100,14 +100,14 @@ export default async function telemetryBrowserSuite(fetchMock, assert) {
     const data = JSON.parse(opts.body);
 
     assert.true(data.tR > 0, 'timeUntilReady is larger than 0');
-    delete data.tR; // delete to validate other properties
+    assert.true(data.tC > 0, 'timeUntilReadyFromCache is larger than 0');
 
     assert.deepEqual(data, {
       oM: 0, st: 'memory', aF: 1, rF: 0, sE: false,
       rR: { sp: 99999, ms: 60, im: 300, ev: 60, te: 1 } /* override featuresRefreshRate */,
       uO: { s: true, e: true, a: false, st: false, t: true } /* override sdk, events and telemetry URLs */,
       iQ: 30000, eQ: 500, iM: 0, iL: false, hP: false, nR: 1 /* 1 non ready usage */, t: [], i: [], uC: 2 /* Default GRANTED */,
-      fsT: 0, fsI: 0 /* Flag sets */
+      fsT: 0, fsI: 0 /* Flag sets */, tR: data.tR, tC: data.tC
     }, 'metrics/config JSON payload should be the expected');
 
     finish.next();
