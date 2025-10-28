@@ -207,7 +207,7 @@ export default function (configInMemory, configInLocalStorage, fetchMock, assert
 
   });
 
-    assert.test('FallbackTreatment / Fallback dynamic config propagation - inLocalStorage', async t => {
+  assert.test('FallbackTreatment / Fallback dynamic config propagation - inLocalStorage', async t => {
 
     const config = {
       ...configInLocalStorage,
