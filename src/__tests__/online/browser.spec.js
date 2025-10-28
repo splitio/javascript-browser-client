@@ -98,7 +98,7 @@ tape('## E2E CI Tests ##', function (assert) {
 
   /* Check client evaluations. */
   assert.test('E2E / In Memory', evaluationsSuite.bind(null, configInMemory, fetchMock));
-  assert.test('E2E / In Memory Fallback', evaluationsFallbackSuite.bind(null, configInMemory, fetchMock));
+  assert.test('E2E / In Memory Fallback', evaluationsFallbackSuite.bind(null, configInMemory, configInLocalStorage, fetchMock));
   assert.test('E2E / In Memory with Bucketing Key', evaluationsSuite.bind(null, configInMemoryWithBucketingKey, fetchMock));
   assert.test('E2E / In LocalStorage with In Memory Fallback', evaluationsSuite.bind(null, configInLocalStorage, fetchMock));
   /* Check impressions */

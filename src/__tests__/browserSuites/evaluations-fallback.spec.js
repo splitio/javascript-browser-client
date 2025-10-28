@@ -5,11 +5,11 @@ const listener = {
   logImpression: sinon.stub()
 };
 
-export default function (baseConfig, fetchMock, assert) {
+export default function (configInMemory, configInLocalStorage, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Split factory with no fallbackTreatment defined', async t => {
 
-    const splitio = SplitFactory(baseConfig);
+    const splitio = SplitFactory(configInMemory);
     const client = splitio.client();
 
     await client.whenReady();
@@ -24,9 +24,11 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Split factory with global fallbackTreatment defined', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.fallbackTreatments = {
-      global: 'FALLBACK_TREATMENT'
+    const config = {
+      ...configInMemory,
+      fallbackTreatments: {
+        global: 'FALLBACK_TREATMENT'
+      }
     };
     const splitio = SplitFactory(config);
     const client = splitio.client();
@@ -44,10 +46,12 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Split factory with specific fallbackTreatment defined', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.fallbackTreatments = {
-      byFlag: {
-        'non_existent_flag': 'FALLBACK_TREATMENT',
+    const config = {
+      ...configInMemory,
+      fallbackTreatments: {
+        byFlag: {
+          'non_existent_flag': 'FALLBACK_TREATMENT',
+        }
       }
     };
     const splitio = SplitFactory(config);
@@ -69,11 +73,13 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / flag override beats global fallbackTreatment', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.fallbackTreatments = {
-      global: 'OFF_FALLBACK',
-      byFlag: {
-        'my_flag': 'ON_FALLBACK',
+    const config = {
+      ...configInMemory,
+      fallbackTreatments: {
+        global: 'OFF_FALLBACK',
+        byFlag: {
+          'my_flag': 'ON_FALLBACK',
+        }
       }
     };
     const splitio = SplitFactory(config);
@@ -94,9 +100,33 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / override applies only when original is control', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.fallbackTreatments = {
-      global: 'OFF_FALLBACK'
+    const config = {
+      ...configInMemory,
+      fallbackTreatments: {
+        global: 'OFF_FALLBACK'
+      }
+    };
+    const splitio = SplitFactory(config);
+    const client = splitio.client();
+
+    await client.whenReady();
+
+    t.equal(client.getTreatment('user_account_in_whitelist'), 'off', 'The evaluation will return the treatment defined in the flag if it exists');
+    t.equal(client.getTreatment('non_existent_flag'), 'OFF_FALLBACK', 'The evaluation will return `OFF_FALLBACK` if the flag does not exist and no fallbackTreatment is defined');
+
+    await client.destroy();
+    t.end();
+
+  });
+
+
+  assert.test('FallbackTreatment / override applies only when original is control - inLocalStorage', async t => {
+
+    const config = {
+      ...configInLocalStorage,
+      fallbackTreatments: {
+        global: 'OFF_FALLBACK'
+      }
     };
     const splitio = SplitFactory(config);
     const client = splitio.client();
@@ -113,13 +143,15 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Impressions correctness with fallback when client is not ready', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.urls = {
-      events: 'https://events.fallbacktreatment/api'
-    };
-    config.fallbackTreatments = {
-      byFlag: {
-        'any_flag': 'OFF_FALLBACK'
+    const config = {
+      ...configInMemory,
+      urls: {
+        events: 'https://events.fallbacktreatment/api'
+      },
+      fallbackTreatments: {
+        byFlag: {
+          'any_flag': 'OFF_FALLBACK'
+        }
       }
     };
     const splitio = SplitFactory(config);
@@ -153,11 +185,37 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Fallback dynamic config propagation', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.fallbackTreatments = {
-      global: { treatment: 'OFF_FALLBACK', config: '{"global": true}' },
-      byFlag: {
-        'my_flag': { treatment: 'ON_FALLBACK', config: '{"flag": true}' }
+    const config = {
+      ...configInMemory,
+      fallbackTreatments: {
+        global: { treatment: 'OFF_FALLBACK', config: '{"global": true}' },
+        byFlag: {
+          'my_flag': { treatment: 'ON_FALLBACK', config: '{"flag": true}' }
+        }
+      }
+    };
+    const splitio = SplitFactory(config);
+    const client = splitio.client();
+
+    await client.whenReady();
+
+    t.deepEqual(client.getTreatmentWithConfig('my_flag'), { treatment: 'ON_FALLBACK', config: '{"flag": true}' }, 'The evaluation will propagate the config along with the treatment from the fallbackTreatment');
+    t.deepEqual(client.getTreatmentWithConfig('non_existent_flag'), { treatment: 'OFF_FALLBACK', config: '{"global": true}' }, 'The evaluation will propagate the config along with the treatment from the fallbackTreatment');
+
+    await client.destroy();
+    t.end();
+
+  });
+
+    assert.test('FallbackTreatment / Fallback dynamic config propagation - inLocalStorage', async t => {
+
+    const config = {
+      ...configInLocalStorage,
+      fallbackTreatments: {
+        global: { treatment: 'OFF_FALLBACK', config: '{"global": true}' },
+        byFlag: {
+          'my_flag': { treatment: 'ON_FALLBACK', config: '{"flag": true}' }
+        }
       }
     };
     const splitio = SplitFactory(config);
@@ -175,14 +233,16 @@ export default function (baseConfig, fetchMock, assert) {
 
   assert.test('FallbackTreatment / Evaluations non existing flags with fallback do not generate impressions', async t => {
 
-    const config = Object.assign({}, baseConfig);
-    config.urls = {
-      events: 'https://events.fallbacktreatment/api'
-    };
-    config.fallbackTreatments = {
-      global: { treatment: 'OFF_FALLBACK', config: '{"global": true}' },
-      byFlag: {
-        'my_flag': { treatment: 'ON_FALLBACK', config: '{"flag": true}' }
+    const config = {
+      ...configInMemory,
+      urls: {
+        events: 'https://events.fallbacktreatment/api'
+      },
+      fallbackTreatments: {
+        global: { treatment: 'OFF_FALLBACK', config: '{"global": true}' },
+        byFlag: {
+          'my_flag': { treatment: 'ON_FALLBACK', config: '{"flag": true}' }
+        }
       }
     };
     config.impressionListener = listener;
@@ -229,9 +289,9 @@ export default function (baseConfig, fetchMock, assert) {
   assert.test('FallbackTreatment / LocalhostMode', async t => {
 
     const config = {
-      ...baseConfig,
+      ...configInMemory,
       core: {
-        ...baseConfig.core,
+        ...configInMemory.core,
         authorizationKey: 'localhost',
       },
       fallbackTreatments: {
