@@ -59,7 +59,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "2.7.9-rc.1",
+    "@splitsoftware/splitio-commons": "2.7.9-rc.2",
     "tslib": "^2.3.1",
     "unfetch": "^4.2.0"
   },

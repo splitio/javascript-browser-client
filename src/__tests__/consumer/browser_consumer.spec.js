@@ -62,8 +62,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     /** Evaluation, track and manager methods before SDK_READY */
 
-    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
-    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
 
     client.getTreatment('UT_IN_SEGMENT').then(treatment => assert.equal(treatment, 'control', 'Evaluations using pluggable storage returns a promise that resolves to control if initiated before SDK_READY'));
     otherClient.track('user', 'test.event', 18).then(result => assert.true(result, 'Track calls returns a promise on consumer mode, that resolves to true if the wrapper push operation success to queue the event'));
@@ -218,8 +218,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
     assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
-    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
-    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
 
     const trackResult = otherClient.track('user', 'test.event', 18);
     assert.equal(typeof trackResult.then, 'function', 'Track calls should always return a promise on Consumer mode.');
@@ -350,8 +350,8 @@ tape('Browser Consumer mode with pluggable storage', function (t) {
 
     assert.equal(typeof getTreatmentResult.then, 'function', 'GetTreatment calls should always return a promise on Consumer mode.');
     assert.equal(await getTreatmentResult, 'control', 'Evaluations using pluggable storage should be control if initiated before SDK_READY.');
-    assert.equal(client.__getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
-    assert.equal(client.__getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.getStatus().isReadyFromCache, false, 'SDK in consumer mode is not operational immediately');
+    assert.equal(client.getStatus().isReady, false, 'SDK in consumer mode is not operational immediately');
 
     const trackResult = otherClient.track('user', 'test.event', 18);
     assert.equal(typeof trackResult.then, 'function', 'Track calls should always return a promise on Consumer mode.');

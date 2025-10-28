@@ -19,7 +19,7 @@ declare module JsSdk {
   /**
    * Persistent storage. By default, it uses the browser's LocalStorage API if available.
    *
-   * @see {@link https://developer.harness.io/docs/feature-management-experimentation/sdks-and-infrastructure/client-side-sdks/browser-sdk/#configuring-cache}
+   * @see {@link https://developer.harness.io/docs/feature-management-experimentation/sdks-and-infrastructure/client-side-sdks/browser-sdk/#configure-cache-behavior}
    */
   export function InLocalStorage(options?: SplitIO.InLocalStorageOptions): SplitIO.StorageSyncFactory;
 
