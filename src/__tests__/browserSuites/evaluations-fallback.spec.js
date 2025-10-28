@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import { SplitFactory } from '../../';
-import { base } from '@splitsoftware/splitio-commons/src/utils/settingsValidation';
 
 const listener = {
   logImpression: sinon.stub()
