@@ -3,7 +3,6 @@ import sinon from 'sinon';
 import fetchMock from '../testUtils/fetchMock';
 import { url } from '../testUtils';
 import { SplitFactory, InLocalStorage } from '../../full';
-import { SplitFactory as SplitFactorySlim } from '../../';
 import { settingsFactory } from '../../settings';
 
 const settings = settingsFactory({ core: { key: 'facundo@split.io' } });
@@ -88,19 +87,13 @@ tape('Browser offline mode', function (assert) {
     sharedUpdateCount++;
   });
 
-  const factoriesReadyFromCache = [
-    SplitFactory({ ...config, storage: InLocalStorage() }),
-    SplitFactorySlim({ ...config, storage: InLocalStorage() })
-  ];
   const configs = [
     { ...config, features: { ...config.features }, storage: InLocalStorage /* invalid */ },
     { ...config },
     config,
+    { ...config, storage: InLocalStorage() }
   ];
-  const factories = [
-    ...configs.map(config => SplitFactory(config)),
-    ...factoriesReadyFromCache
-  ];
+  const factories = configs.map(config => SplitFactory(config));
 
   let readyCount = 0, updateCount = 0, readyFromCacheCount = 0;
 
@@ -124,23 +117,25 @@ tape('Browser offline mode', function (assert) {
     const sdkReadyFromCache = (client) => () => {
       assert.equal(factory.settings.storage.type, 'MEMORY', 'In localhost mode, storage must fallback to memory storage');
 
-      const clientStatus = client.__getStatus();
+      const clientStatus = client.getStatus();
       assert.equal(clientStatus.isReadyFromCache, true, 'If ready from cache, READY_FROM_CACHE status must be true');
-      assert.equal(clientStatus.isReady, false, 'READY status must not be set before READY_FROM_CACHE');
+      assert.equal(clientStatus.isReady, configs[i].storage && configs[i].storage.type === 'LOCALSTORAGE' ? false : true, 'When not using LOCALSTORAGE, READY status is set together with READY_FROM_CACHE');
+      if (!clientStatus.isReady) readyFromCacheCount++;
 
       assert.deepEqual(manager.names(), ['testing_split', 'testing_split_with_config']);
       assert.equal(client.getTreatment('testing_split_with_config'), 'off');
-      readyFromCacheCount++;
 
       client.on(client.Event.SDK_READY_FROM_CACHE, () => {
         assert.fail('It should not emit SDK_READY_FROM_CACHE again');
       });
 
-      const newClient = factory.client('another');
-      assert.equal(newClient.getTreatment('testing_split_with_config'), 'off', 'It should evaluate treatments with data from cache instead of control');
-      newClient.on(newClient.Event.SDK_READY_FROM_CACHE, () => {
-        assert.fail('It should not emit SDK_READY_FROM_CACHE if already done.');
-      });
+      if (configs[i].storage && configs[i].storage.type === 'LOCALSTORAGE') {
+        const newClient = factory.client('another');
+        assert.equal(newClient.getTreatment('testing_split_with_config'), 'off', 'It should evaluate treatments with data from cache instead of control');
+        newClient.on(newClient.Event.SDK_READY_FROM_CACHE, () => {
+          assert.fail('It should not emit SDK_READY_FROM_CACHE if already done.');
+        });
+      }
     };
 
     client.on(client.Event.SDK_READY_FROM_CACHE, sdkReadyFromCache(client));
@@ -361,7 +356,7 @@ tape('Browser offline mode', function (assert) {
           // SDK events on other factory clients
           assert.equal(readyCount, factories.length, 'Each factory client should have emitted SDK_READY event once');
           assert.equal(updateCount, factories.length - 1, 'Each factory client except one should have emitted SDK_UPDATE event once');
-          assert.equal(readyFromCacheCount, factoriesReadyFromCache.length * 2, 'The main and shared client of the factories with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
+          assert.equal(readyFromCacheCount, 2, 'The main and shared client of the factory with LOCALSTORAGE should have emitted SDK_READY_FROM_CACHE event');
 
           assert.end();
         });
