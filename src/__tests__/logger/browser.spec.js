@@ -64,10 +64,10 @@ tape('## E2E Logger Tests ##', assert => {
 
     const factory = SplitFactory({ ...minConfig, debug: 'INFO', logger: customLogger });
 
-    t.equal(factory.settings.log.options.logLevel, 'DEBUG', 'When combined with the `logger` option, any log level other than `NONE` (false) will be set to `DEBUG` (true)');
+    t.equal(factory.settings.log.options.logLevel, 'INFO');
 
     await factory.client().destroy();
-    t.true(customLogger.debug.calledWithMatch('splitio => '), 'should log messages with level DEBUG');
+    t.false(customLogger.debug.called, 'should not log messages with level DEBUG');
     t.true(customLogger.info.calledWithMatch('splitio => '), 'should log messages with level INFO');
 
     logSpy.resetHistory();

@@ -612,7 +612,14 @@ let fullBrowserSettings: SplitIO.IClientSideSettings = {
       getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
     }
   },
-  userConsent: 'GRANTED'
+  userConsent: 'GRANTED',
+  fallbackTreatments: {
+    global: { treatment: 'global-treatment', config: '{"global": true}' },
+    byFlag: {
+      'my_flag': { treatment: 'flag-treatment', config: '{"flag": true}' },
+      'my_other_flag': 'other-flag-treatment'
+    }
+  }
 };
 fullBrowserSettings.userConsent = 'DECLINED';
 fullBrowserSettings.userConsent = 'UNKNOWN';
@@ -657,7 +664,14 @@ let fullBrowserAsyncSettings: SplitIO.IClientSideAsyncSettings = {
       getHeaderOverrides(context) { return { ...context.headers, 'header': 'value' }; },
     }
   },
-  userConsent: 'GRANTED'
+  userConsent: 'GRANTED',
+  fallbackTreatments: {
+    global: 'global-treatment',
+    byFlag: {
+      'my_flag': { treatment: 'flag-treatment', config: '{"flag": true}' },
+      'my_other_flag': 'other-flag-treatment'
+    }
+  }
 };
 fullBrowserAsyncSettings.mode = 'consumer_partial';
 fullBrowserAsyncSettings.userConsent = 'DECLINED';
