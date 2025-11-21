@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -47,7 +47,7 @@ jobs:
 
       - name: Store assets
         if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: assets
           path: umd/
@@ -62,18 +62,14 @@ jobs:
       matrix:
         environment:
           - stage
-          # - stage-eu
         include:
           - environment: stage
             account_id: "079419646996"
             bucket: split-public-stage
-          # - environment: stage-eu
-            # account_id: "901851837056"
-            # bucket: split-public-stage-eu-west-1
 
     steps:
       - name: Download assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: assets
           path: umd
@@ -105,18 +101,14 @@ jobs:
       matrix:
         environment:
           - prod
-          # - prod-eu
         include:
           - environment: prod
             account_id: "825951051969"
             bucket: split-public
-          # - environment: prod-eu
-            # account_id: "842946900133"
-            # bucket: split-public-eu-west-1
 
     steps:
       - name: Download assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: assets
           path: umd
