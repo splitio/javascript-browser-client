@@ -62,6 +62,11 @@ export default function (fetchMock, assert) {
       }, {
         k: 'facundo@split.io', t: 'o.n', m: data[0].i[2].m, c: 828282828282, r: 'another expected label', pt: data[0].i[1].m
       }]
+    }, {
+      f: 'whitelist',
+      i: [{
+        k: 'facundo@split.io', t: 'allowed', m: data[1].i[0].m, r: 'default rule', properties: '{"prop1":"value2"}'
+      }]
     }]);
 
     client.destroy().then(() => {
@@ -73,7 +78,10 @@ export default function (fetchMock, assert) {
 
   fetchMock.postOnce(url(settings, '/testImpressions/count'), (url, opts) => {
     assert.deepEqual(JSON.parse(opts.body), {
-      pf: [{ f: 'always_on_impressions_disabled_true', m: truncatedTimeFrame, rc: 1 }]
+      pf: [
+        { f: 'always_on_impressions_disabled_true', m: truncatedTimeFrame, rc: 3 },
+        { f: 'whitelist', m: truncatedTimeFrame, rc: 3 }
+      ]
     }, 'We should generate impression count for the feature with track impressions disabled.');
 
     return 200;
@@ -81,7 +89,9 @@ export default function (fetchMock, assert) {
 
   fetchMock.postOnce(url(settings, '/v1/keys/cs'), (url, opts) => {
     assert.deepEqual(JSON.parse(opts.body), {
-      keys: [{ fs: ['always_on_impressions_disabled_true'], k: 'facundo@split.io' }]
+      keys: [
+        { k: 'facundo@split.io', fs: ['always_on_impressions_disabled_true', 'whitelist'] }
+      ]
     }, 'We should track unique keys for the feature with track impressions disabled.');
 
     return 200;
@@ -94,5 +104,19 @@ export default function (fetchMock, assert) {
     client.getTreatment('split_with_config');
     client.getTreatment('split_with_config');
     assert.equal(client.getTreatment('always_on_impressions_disabled_true'), 'on');
+
+    // impressions disabled
+    // Flags with impression enabled should generate:
+    // - 1 impression for whitelist
+    // - 3 impressions count for whitelist
+    // - 2 impressions unique keys for whitelist
+    assert.equal(client.getTreatment('whitelist', undefined, { impressionsDisabled: true, properties: { prop1: 'value1' } }), 'allowed');
+    assert.equal(client.getTreatments(['whitelist'], undefined, { properties: { prop1: 'value2' } }).whitelist, 'allowed');
+    assert.equal(client.getTreatmentWithConfig('whitelist', undefined, { impressionsDisabled: true, properties: { prop1: 'value3' } }).treatment, 'allowed');
+    assert.equal(client.getTreatmentsWithConfig(['whitelist'], undefined, { impressionsDisabled: true, properties: { prop1: 'value4' } }).whitelist.treatment, 'allowed');
+
+    // Flags with impression disabled should only generate impressions count and unique keys
+    assert.equal(client.getTreatment('always_on_impressions_disabled_true', undefined, { impressionsDisabled: true }), 'on');
+    assert.equal(client.getTreatment('always_on_impressions_disabled_true', undefined, { impressionsDisabled: false }), 'on');
   });
 }

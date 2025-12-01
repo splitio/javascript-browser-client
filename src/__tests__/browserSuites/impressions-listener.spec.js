@@ -50,6 +50,7 @@ export default function (assert) {
     client2.getTreatment('qc_team');
     client2.getTreatmentWithConfig('qc_team'); // Validate that the impression is the same.
     client3.getTreatment('qc_team', testAttrs);
+    client.getTreatment('whitelist', testAttrs, { impressionsDisabled: true });
 
     setTimeout(() => {
       const secondImpression = {
@@ -62,7 +63,7 @@ export default function (assert) {
         properties: undefined
       };
 
-      assert.equal(listener.logImpression.callCount, 4, 'Impression listener logImpression method should be called after we call client.getTreatment, once per each impression generated.');
+      assert.equal(listener.logImpression.callCount, 5, 'Impression listener logImpression method should be called after we call client.getTreatment, once per each impression generated.');
       assert.true(listener.logImpression.getCall(0).calledWithExactly({
         impression: {
           feature: 'hierarchical_splits_test',
@@ -92,6 +93,17 @@ export default function (assert) {
           feature: 'qc_team',
           keyName: 'facundo@split.io',
           treatment: 'no',
+          bucketingKey: undefined,
+          label: 'default rule',
+        },
+        attributes: testAttrs,
+        ...metaData
+      }));
+      assert.true(listener.logImpression.getCall(4).calledWithMatch({
+        impression: {
+          feature: 'whitelist',
+          keyName: 'nicolas@split.io',
+          treatment: 'not_allowed',
           bucketingKey: undefined,
           label: 'default rule',
         },

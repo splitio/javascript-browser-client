@@ -14,7 +14,7 @@ const expectedSplitView = { name: 'hierarchical_splits_testing_on', trafficType:
 
 const wrapperPrefix = 'PLUGGABLE_STORAGE_UT';
 const wrapperInstance = inMemoryWrapperFactory();
-const TOTAL_RAW_IMPRESSIONS = 17;
+const TOTAL_RAW_IMPRESSIONS = 21;
 const TOTAL_EVENTS = 5;
 
 /** @type SplitIO.IBrowserAsyncSettings */
@@ -48,7 +48,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
       const resp = JSON.parse(req.body);
       assert.equal(resp.reduce((prev, cur) => {
         return prev + cur.i.length;
-      }, 0), TOTAL_RAW_IMPRESSIONS - 1, 'Impressions were deduped');
+      }, 0), TOTAL_RAW_IMPRESSIONS - 5, 'Impressions were deduped');
       return 200;
     });
 
@@ -58,7 +58,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
       assert.deepEqual(data, {
         keys: [{
           k: 'UT_Segment_member',
-          fs: ['always-on-impressions-disabled-true']
+          fs: ['always-on-impressions-disabled-true', 'always-on']
         }]
       }, 'Unique keys for the evaluation with impressions disabled true.');
 
@@ -152,6 +152,12 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     assert.equal(await client.getTreatment('hierarchical_splits_testing_off'), 'off', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on_negated'), 'off', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('always-on-impressions-disabled-true'), 'on', 'Evaluations using pluggable storage should be correct.');
+
+    // Verify impressionsDisabled option
+    assert.deepEqual(await client.getTreatment('always-on', undefined, { impressionsDisabled: true }), 'on', 'Evaluations with impressionsDisabled: true should be correct.');
+    assert.deepEqual(await client.getTreatmentWithConfig('always-on', undefined, { impressionsDisabled: true }), { treatment: 'on', config: null }, 'Evaluations with impressionsDisabled: true should be correct.');
+    assert.deepEqual(await client.getTreatments(['always-on'], undefined, { impressionsDisabled: true }), { 'always-on': 'on' }, 'Evaluations with impressionsDisabled: true should be correct.');
+    assert.deepEqual(await client.getTreatmentsWithConfig(['always-on'], undefined, { impressionsDisabled: true }), { 'always-on': { treatment: 'on', config: null } }, 'Evaluations with impressionsDisabled: true should be correct.');
 
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');
@@ -310,6 +316,13 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on'), 'on', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('hierarchical_splits_testing_off'), 'off', 'Evaluations using pluggable storage should be correct.');
     assert.equal(await client.getTreatment('hierarchical_splits_testing_on_negated'), 'off', 'Evaluations using pluggable storage should be correct.');
+
+
+    // Verify impressionsDisabled option
+    assert.deepEqual(await client.getTreatment('always-on', undefined, { impressionsDisabled: true }), 'on', 'Evaluations with impressionsDisabled: true should be correct.');
+    assert.deepEqual(await client.getTreatmentWithConfig('always-on', undefined, { impressionsDisabled: true }), { treatment: 'on', config: null }, 'Evaluations with impressionsDisabled: true should be correct.');
+    assert.deepEqual(await client.getTreatments(['always-on'], undefined, { impressionsDisabled: true }), { 'always-on': 'on' }, 'Evaluations with impressionsDisabled: true should be correct.');
+    assert.deepEqual(await client.getTreatmentsWithConfig(['always-on'], undefined, { impressionsDisabled: true }), { 'always-on': { treatment: 'on', config: null } }, 'Evaluations with impressionsDisabled: true should be correct.');
 
     assert.equal(typeof client.track('user', 'test.event', 18).then, 'function', 'Track calls should always return a promise on Consumer mode.');
     assert.equal(typeof client.track().then, 'function', 'Track calls should always return a promise on Consumer mode, even when parameters are incorrect.');

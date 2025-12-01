@@ -29,6 +29,7 @@ import membershipsMarcio from '../mocks/memberships.marcio@split.io.json';
 import membershipsEmmanuel from '../mocks/memberships.emmanuel@split.io.json';
 import { InLocalStorage } from '../../index';
 import evaluationsFallbackSuite from '../browserSuites/evaluations-fallback.spec';
+import evaluationsImpressionsDisabledSuite from '../browserSuites/evaluations-impressionsDisabled.spec';
 
 const settings = settingsFactory({
   core: {
@@ -106,6 +107,8 @@ tape('## E2E CI Tests ##', function (assert) {
   assert.test('E2E / Impressions Debug Mode', impressionsSuiteDebug.bind(null, fetchMock));
   /* Check impression listener */
   assert.test('E2E / Impression listener', impressionsListenerSuite);
+  /* Check impressions disabled */
+  assert.test('E2E / Impressions Disabled', evaluationsImpressionsDisabledSuite.bind(null, configInMemory, configInLocalStorage, fetchMock));
   /* Check telemetry */
   assert.test('E2E / Telemetry', telemetrySuite.bind(null, fetchMock));
   /* Check events */
