@@ -351,7 +351,14 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
     sinon.stub(wrapperInstance, 'connect').callsFake(() => { Promise.reject(); });
     const getSpy = sinon.spy(wrapperInstance, 'get');
 
-    const sdk = SplitFactory(config);
+    const sdk = SplitFactory({
+      ...config,
+      fallbackTreatments: {
+        byFlag: {
+          'UT_IN_SEGMENT': 'fallback_treatment'
+        }
+      }
+    });
 
     const client = sdk.client();
 
@@ -366,7 +373,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
       assert.true(nearlyEqual(Date.now() - start, 0), 'SDK_READY_TIMED_OUT event is emitted immediately');
 
       // Client methods behave as if the SDK is not ready
-      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'control', 'treatment is control with label not ready.');
+      assert.equal(await client.getTreatment('UT_IN_SEGMENT'), 'fallback_treatment', 'treatment is fallback_treatment with label not ready.');
       assert.true(await client.track('user', 'test.event', 18), 'event is tracked in memory (partial consumer mode).');
 
       // Shared clients will also timeout immediately and behave as if the SDK is not ready
@@ -374,7 +381,7 @@ tape('Browser Consumer Partial mode with pluggable storage', function (t) {
       otherClient.on(otherClient.Event.SDK_READY_TIMED_OUT, async () => {
         assert.true(nearlyEqual(Date.now() - start, 0), 'SDK_READY_TIMED_OUT event is emitted immediately in shared client');
 
-        assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'control', 'treatment is control with label not ready.');
+        assert.equal(await otherClient.getTreatment('UT_IN_SEGMENT'), 'fallback_treatment', 'treatment is fallback_treatment with label not ready.');
         assert.true(await otherClient.track('user', 'test.event', 18), 'event is tracked in memory (partial consumer mode).');
 
         await client.destroy();

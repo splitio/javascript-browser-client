@@ -1,3 +1,8 @@
+1.6.1 (December 30, 2025)
+ - Updated @splitsoftware/splitio-commons package to version 2.10.1 and other transitive dependencies for vulnerability fixes.
+ - Updated the order of storage operations to prevent inconsistent states when using the `InLocalStorage` module and the browser’s `localStorage` fails due to quota limits.
+ - Bugfix - Handle `null` prerequisites properly.
+
 1.6.0 (October 30, 2025)
  - Added new configuration for Fallback Treatments, which allows setting a treatment value and optional config to be returned in place of "control", either globally or by flag. Read more in our docs.
  - Added `client.getStatus()` method to retrieve the client readiness status properties (`isReady`, `isReadyFromCache`, etc).
