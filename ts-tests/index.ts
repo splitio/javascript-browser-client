@@ -278,10 +278,24 @@ client = client.removeAllListeners();
 
 // Ready and destroy
 let promise: Promise<void> = client.ready();
+promise = client.whenReady();
 promise = client.destroy();
 promise = SDK.destroy();
 // @TODO not public yet
 // promise = client.flush();
+const promiseWhenReadyFromCache: Promise<boolean> = client.whenReadyFromCache();
+
+// Get readiness status
+let status: SplitIO.ReadinessStatus = client.getStatus();
+status = {
+  isReady: false,
+  isReadyFromCache: false,
+  isTimedout: false,
+  isDestroyed: false,
+  isOperational: false,
+  hasTimedout: false,
+  lastUpdate: 0
+};
 
 // We can call getTreatment without a key.
 // treatment = client.getTreatment(splitKey, 'mySplit');
