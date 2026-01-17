@@ -269,8 +269,42 @@ splitEvent = client.Event.SDK_READY_FROM_CACHE;
 splitEvent = client.Event.SDK_READY_TIMED_OUT;
 splitEvent = client.Event.SDK_UPDATE;
 
+// SDK Update Metadata Keys
+const flagsUpdate: SplitIO.SdkUpdateMetadataKeys = 'FLAGS_UPDATE' as SplitIO.SdkUpdateMetadataKeys;
+const segmentsUpdate: SplitIO.SdkUpdateMetadataKeys = 'SEGMENTS_UPDATE' as SplitIO.SdkUpdateMetadataKeys;
+
+// SDK Update Metadata
+let sdkUpdateMetadata: SplitIO.SdkUpdateMetadata = {
+  type: 'FLAGS_UPDATE' as SplitIO.SdkUpdateMetadataKeys.FLAGS_UPDATE,
+  names: ['flag1', 'flag2']
+};
+sdkUpdateMetadata = {
+  type: 'SEGMENTS_UPDATE' as SplitIO.SdkUpdateMetadataKeys.SEGMENTS_UPDATE,
+  names: ['segment1']
+};
+
+// SDK Ready Metadata
+let sdkReadyMetadata: SplitIO.SdkReadyMetadata = {
+  initialCacheLoad: true,
+  lastUpdateTimestamp: Date.now()
+};
+sdkReadyMetadata = {
+  initialCacheLoad: false,
+  lastUpdateTimestamp: 1234567890
+};
+
 // Client implements methods from IEventEmitter that is a subset of Node.js EventEmitter. Testing a few.
 client = client.on(splitEvent, () => { });
+// Event listeners with metadata
+client = client.on(client.Event.SDK_READY, (metadata: SplitIO.SdkReadyMetadata) => {
+  sdkReadyMetadata = metadata;
+});
+client = client.on(client.Event.SDK_READY_FROM_CACHE, (metadata: SplitIO.SdkReadyMetadata) => {
+  sdkReadyMetadata = metadata;
+});
+client = client.on(client.Event.SDK_UPDATE, (metadata: SplitIO.SdkUpdateMetadata) => {
+  sdkUpdateMetadata = metadata;
+});
 const a: boolean = client.emit(splitEvent);
 client = client.removeAllListeners(splitEvent);
 client = client.removeAllListeners();
@@ -385,6 +419,16 @@ splitEvent = asyncClient.Event.SDK_UPDATE;
 
 // Client implements methods from Node.js EventEmitter. (same as for sync client, just for interface checking)
 asyncClient = asyncClient.on(splitEvent, () => { });
+// Event listeners with metadata for async client
+asyncClient = asyncClient.on(asyncClient.Event.SDK_READY, (metadata: SplitIO.SdkReadyMetadata) => {
+  sdkReadyMetadata = metadata;
+});
+asyncClient = asyncClient.on(asyncClient.Event.SDK_READY_FROM_CACHE, (metadata: SplitIO.SdkReadyMetadata) => {
+  sdkReadyMetadata = metadata;
+});
+asyncClient = asyncClient.on(asyncClient.Event.SDK_UPDATE, (metadata: SplitIO.SdkUpdateMetadata) => {
+  sdkUpdateMetadata = metadata;
+});
 const a1: boolean = asyncClient.emit(splitEvent);
 asyncClient = asyncClient.removeAllListeners(splitEvent);
 asyncClient = asyncClient.removeAllListeners();
