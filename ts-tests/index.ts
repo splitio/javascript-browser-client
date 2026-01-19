@@ -270,16 +270,16 @@ splitEvent = client.Event.SDK_READY_TIMED_OUT;
 splitEvent = client.Event.SDK_UPDATE;
 
 // SDK Update Metadata Keys
-const flagsUpdate: SplitIO.SdkUpdateMetadataKeys = 'FLAGS_UPDATE' as SplitIO.SdkUpdateMetadataKeys;
-const segmentsUpdate: SplitIO.SdkUpdateMetadataKeys = 'SEGMENTS_UPDATE' as SplitIO.SdkUpdateMetadataKeys;
+const flagsUpdate: SplitIO.SdkUpdateMetadataKeys['FLAGS_UPDATE'] = 'FLAGS_UPDATE';
+const segmentsUpdate: SplitIO.SdkUpdateMetadataKeys['SEGMENTS_UPDATE'] = 'SEGMENTS_UPDATE';
 
 // SDK Update Metadata
 let sdkUpdateMetadata: SplitIO.SdkUpdateMetadata = {
-  type: 'FLAGS_UPDATE' as SplitIO.SdkUpdateMetadataKeys.FLAGS_UPDATE,
+  type: 'FLAGS_UPDATE',
   names: ['flag1', 'flag2']
 };
 sdkUpdateMetadata = {
-  type: 'SEGMENTS_UPDATE' as SplitIO.SdkUpdateMetadataKeys.SEGMENTS_UPDATE,
+  type: 'SEGMENTS_UPDATE',
   names: ['segment1']
 };
 
