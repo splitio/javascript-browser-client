@@ -378,7 +378,7 @@ tracked = client.track('myTrafficType', 'myEventType', null, { prop1: 1, prop2: 
 
 // Using addListener with typed metadata
 client.addListener(client.Event.SDK_UPDATE, (metadata: SplitIO.SdkUpdateMetadata) => {
-  const type: SplitIO.SdkUpdateMetadataKeys['FLAGS_UPDATE'] | SplitIO.SdkUpdateMetadataKeys['SEGMENTS_UPDATE'] = metadata.type;
+  const type: SplitIO.SdkUpdateMetadataType = metadata.type;
   const names: string[] = metadata.names;
 });
 client.addListener(client.Event.SDK_READY, (metadata: SplitIO.SdkReadyMetadata) => {
@@ -395,7 +395,7 @@ client.addListener(client.Event.SDK_READY_FROM_CACHE, () => { });
 
 // Using once with typed metadata
 client.once(client.Event.SDK_UPDATE, (metadata: SplitIO.SdkUpdateMetadata) => {
-  const type: SplitIO.SdkUpdateMetadataKeys['FLAGS_UPDATE'] | SplitIO.SdkUpdateMetadataKeys['SEGMENTS_UPDATE'] = metadata.type;
+  const type: SplitIO.SdkUpdateMetadataType = metadata.type;
   const names: string[] = metadata.names;
 });
 client.once(client.Event.SDK_READY, (metadata: SplitIO.SdkReadyMetadata) => {
@@ -424,7 +424,7 @@ client.on(client.Event.SDK_READY_FROM_CACHE, (metadata: SplitIO.SdkReadyMetadata
 
 // SDK_UPDATE event listener with metadata
 client.on(client.Event.SDK_UPDATE, (metadata: SplitIO.SdkUpdateMetadata) => {
-  const type: SplitIO.SdkUpdateMetadataKeys['FLAGS_UPDATE'] | SplitIO.SdkUpdateMetadataKeys['SEGMENTS_UPDATE'] = metadata.type;
+  const type: SplitIO.SdkUpdateMetadataType = metadata.type;
   const names: string[] = metadata.names;
 });
 client.on(client.Event.SDK_UPDATE, () => { });
