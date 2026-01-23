@@ -278,12 +278,12 @@ client = client.removeAllListeners();
 
 // Ready and destroy
 let promise: Promise<void> = client.ready();
-promise = client.whenReady();
 promise = client.destroy();
 promise = SDK.destroy();
 // @TODO not public yet
 // promise = client.flush();
-const promiseWhenReadyFromCache: Promise<boolean> = client.whenReadyFromCache();
+let promiseWithMetadata: Promise<SplitIO.SdkReadyMetadata> = client.whenReady();
+promiseWithMetadata = client.whenReadyFromCache();
 
 // Get readiness status
 let status: SplitIO.ReadinessStatus = client.getStatus();
