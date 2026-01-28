@@ -282,7 +282,7 @@ export default function (fetchMock, assert) {
       events: 'https://events.baseurl/readyFromCacheWithData3'
     };
     localStorage.clear();
-    t.plan(12 * 2 + 5);
+    t.plan(12 * 2 + 5 + 4); // +4 for SdkReadyMetadata assertions on SDK_READY_FROM_CACHE and SDK_READY
 
     fetchMock.get(testUrls.sdk + '/splitChanges?s=1.3&since=25&rbSince=-1', () => {
       t.equal(localStorage.getItem('readyFromCache_3.SPLITIO.split.always_on'), alwaysOnSplitInverted, 'feature flags must not be cleaned from cache');
@@ -330,9 +330,13 @@ export default function (fetchMock, assert) {
       t.end();
     });
 
-    client.on(client.Event.SDK_READY_FROM_CACHE, () => {
+    client.on(client.Event.SDK_READY_FROM_CACHE, (metadata) => {
       t.true(Date.now() - startTime < 400, 'It should emit SDK_READY_FROM_CACHE on every client if there was data in the cache and we subscribe on time. Should be considerably faster than actual readiness from the cloud.');
       t.equal(client.getTreatment('always_on'), 'off', 'It should evaluate treatments with data from cache instead of control due to Input Validation');
+      // SdkReadyMetadata: when ready from cache, initialCacheLoad is false; lastUpdateTimestamp is number or undefined
+      t.true(metadata != null && typeof metadata.initialCacheLoad === 'boolean', 'SDK_READY_FROM_CACHE must receive SdkReadyMetadata with initialCacheLoad');
+      t.true(metadata.initialCacheLoad === false, 'When ready from existing cache, initialCacheLoad must be false');
+      t.true(metadata.lastUpdateTimestamp === undefined || typeof metadata.lastUpdateTimestamp === 'number', 'SdkReadyMetadata.lastUpdateTimestamp must be number or undefined');
 
       const client4 = splitio.client('nicolas4@split.io');
       t.equal(client4.getTreatment('always_on'), 'off', 'It should evaluate treatments with data from cache instead of control');
@@ -350,9 +354,10 @@ export default function (fetchMock, assert) {
       t.equal(client3.getTreatment('always_on'), 'off', 'It should evaluate treatments with data from cache instead of control due to Input Validation');
     });
 
-    client.on(client.Event.SDK_READY, () => {
+    client.on(client.Event.SDK_READY, (metadata) => {
       t.true(Date.now() - startTime >= 400, 'It should emit SDK_READY too but after syncing with the cloud.');
       t.equal(client.getTreatment('always_on'), 'on', 'It should evaluate treatments with updated data after syncing with the cloud.');
+      t.true(metadata != null && typeof metadata.initialCacheLoad === 'boolean', 'SDK_READY must receive SdkReadyMetadata with initialCacheLoad');
     });
     client.ready().then(() => {
       t.true(Date.now() - startTime >= 400, 'It should resolve ready promise after syncing with the cloud.');

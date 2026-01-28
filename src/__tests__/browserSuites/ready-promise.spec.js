@@ -119,7 +119,9 @@ export default function readyPromiseAssertions(fetchMock, assert) {
     const manager = splitio.manager();
 
     manager.whenReady()
-      .then(() => {
+      .then((metadata) => {
+        t.true(metadata != null && typeof metadata.initialCacheLoad === 'boolean', 'whenReady must resolve with SdkReadyMetadata.initialCacheLoad');
+        t.true(metadata.lastUpdateTimestamp === undefined || typeof metadata.lastUpdateTimestamp === 'number', 'whenReady SdkReadyMetadata.lastUpdateTimestamp must be number or undefined');
         t.pass('### SDK IS READY - the retry request is under the limits.');
         assertGetTreatmentWhenReady(t, client);
 
@@ -521,7 +523,10 @@ export default function readyPromiseAssertions(fetchMock, assert) {
 
     consoleSpy.log.resetHistory();
     setTimeout(() => {
-      client.whenReadyFromCache().then((isReady) => t.true(isReady, 'SDK IS READY (& READY FROM CACHE) - Should resolve')).catch(() => t.fail('SDK TIMED OUT - Should not reject'));
+      client.whenReadyFromCache().then((metadata) => {
+        t.true(metadata != null && typeof metadata.initialCacheLoad === 'boolean', 'whenReadyFromCache must resolve with SdkReadyMetadata');
+        t.true(metadata.lastUpdateTimestamp === undefined || typeof metadata.lastUpdateTimestamp === 'number', 'whenReadyFromCache SdkReadyMetadata.lastUpdateTimestamp must be number or undefined');
+      }).catch(() => t.fail('SDK TIMED OUT - Should not reject'));
 
       assertGetTreatmentWhenReady(t, client);
 

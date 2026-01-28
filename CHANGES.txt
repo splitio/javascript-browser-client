@@ -1,3 +1,7 @@
+1.7.0 (January 28, 2026)
+ - Updated @splitsoftware/splitio-commons package to version 2.11.0, which:
+    - Added functionality to provide metadata alongside SDK update and READY events. Read more in our docs.
+
 1.6.1 (December 30, 2025)
  - Updated @splitsoftware/splitio-commons package to version 2.10.1 and other transitive dependencies for vulnerability fixes.
  - Updated the order of storage operations to prevent inconsistent states when using the `InLocalStorage` module and the browser’s `localStorage` fails due to quota limits.
