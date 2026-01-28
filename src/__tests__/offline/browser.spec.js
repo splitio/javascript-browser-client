@@ -100,14 +100,17 @@ tape('Browser offline mode', function (assert) {
   for (let i = 0; i < factories.length; i++) {
     const factory = factories[i], client = factory.client(), manager = factory.manager(), client2 = factory.client('other');
 
-    client.on(client.Event.SDK_READY, () => {
+    client.on(client.Event.SDK_READY, (metadata) => {
       assert.deepEqual(manager.names(), ['testing_split', 'testing_split_with_config']);
       assert.equal(client.getTreatment('testing_split_with_config'), 'off');
+      assert.true(metadata != null && typeof metadata.initialCacheLoad === 'boolean', 'SDK_READY must receive SdkReadyMetadata with initialCacheLoad');
       readyCount++;
     });
-    client.on(client.Event.SDK_UPDATE, () => {
+    client.on(client.Event.SDK_UPDATE, (metadata) => {
       assert.deepEqual(manager.names().sort(), ['testing_split', 'testing_split_2', 'testing_split_3', 'testing_split_with_config']);
       assert.equal(client.getTreatment('testing_split_with_config'), 'nope');
+      assert.true(metadata != null && typeof metadata.type === 'string' && ['FLAGS_UPDATE', 'SEGMENTS_UPDATE'].includes(metadata.type), 'SDK_UPDATE must receive SdkUpdateMetadata with type FLAGS_UPDATE or SEGMENTS_UPDATE');
+      assert.true(Array.isArray(metadata.names), 'SDK_UPDATE must receive SdkUpdateMetadata with names array');
       updateCount++;
     });
     client.on(client.Event.SDK_READY_TIMED_OUT, () => {
@@ -252,8 +255,10 @@ tape('Browser offline mode', function (assert) {
     setTimeout(() => { factory.settings.features = { testing_split: 'on', testing_split_with_config: { treatment: 'off', config: '{ "color": "blue" }' } }; }, 750);
 
     // once updated, test again.
-    client.once(client.Event.SDK_UPDATE, function () {
+    client.once(client.Event.SDK_UPDATE, function (metadata) {
       assert.true((Date.now() - readyTimestamp) > 1000, 'Should only emit SDK_UPDATE after a real update.');
+      assert.true(metadata != null && typeof metadata.type === 'string' && ['FLAGS_UPDATE', 'SEGMENTS_UPDATE'].includes(metadata.type), 'SDK_UPDATE must receive SdkUpdateMetadata with type');
+      assert.true(Array.isArray(metadata.names), 'SDK_UPDATE must receive SdkUpdateMetadata with names array');
 
       client.once(client.Event.SDK_UPDATE, function () { assert.fail('Should not emit a second SDK_UPDATE event'); });
 
