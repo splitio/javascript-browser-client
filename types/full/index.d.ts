@@ -6,7 +6,7 @@
 
 export = JsSdk;
 
-declare module JsSdk {
+declare namespace JsSdk {
   /**
    * Full version of the Split.io SDK factory function.
    *
