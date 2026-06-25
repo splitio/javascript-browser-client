@@ -33,6 +33,7 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     sdkManagerFactory,
 
+    // @ts-expect-error - To be fixed in commons
     sdkClientMethodFactory: sdkClientMethodCSFactory,
 
     SignalListener: BrowserSignalListener as ISdkFactoryParams['SignalListener'],
