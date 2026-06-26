@@ -287,7 +287,7 @@ export function testFallback(fetchMock, assert) {
   // Periodic fetch due to polling (memberships is not fetched due to smart pausing)
   fetchMock.getOnce(url(settings, '/splitChanges?s=1.3&since=1457552649999&rbSince=-1'), function () {
     const lapse = Date.now() - start;
-    assert.true(nearlyEqual(lapse, MILLIS_STREAMING_DISABLED_CONTROL + settings.scheduler.featuresRefreshRate), 'fetch due to fourth fallback to polling');
+    assert.true(nearlyEqual(lapse, MILLIS_STREAMING_DISABLED_CONTROL + settings.scheduler.featuresRefreshRate), 'fetch due to third fallback to polling');
     return { status: 200, body: splitChangesMockReal3 };
   });
   fetchMock.getOnce(url(settings, '/splitChanges?s=1.3&since=1457552669999&rbSince=-1'), function () {

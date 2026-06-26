@@ -888,7 +888,7 @@ export default function (fetchMock, assert) {
         clearOnInit: true
       }),
       urls: testUrls,
-      debug: true
+      debug: 'INFO'
     };
 
     // Start with cached data but without lastClear item (JS SDK below 11.1.0) -> cache cleanup
