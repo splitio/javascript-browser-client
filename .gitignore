@@ -116,4 +116,3 @@ dist
 /.idea
 
 .DS_Store
-/karma/bundle.js

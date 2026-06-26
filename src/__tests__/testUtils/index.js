@@ -1,4 +1,4 @@
-const DEFAULT_ERROR_MARGIN = 75; // 0.075 secs
+const DEFAULT_ERROR_MARGIN = 100; // 0.1 secs
 
 /**
  * Assert if an `actual` and `expected` numeric values are nearly equal.

@@ -1,4 +1,4 @@
-# JS Browser SDK
+# JavaScript Browser SDK
 
 ## What did you accomplish?
 
