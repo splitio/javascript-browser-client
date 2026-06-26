@@ -1,6 +1,6 @@
 {
   "name": "@splitsoftware/splitio-browserjs",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Split SDK for JavaScript on Browser",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -59,7 +59,7 @@
   "bugs": "https://github.com/splitio/javascript-browser-client/issues",
   "homepage": "https://github.com/splitio/javascript-browser-client#readme",
   "dependencies": {
-    "@splitsoftware/splitio-commons": "2.11.0",
+    "@splitsoftware/splitio-commons": "2.12.1",
     "tslib": "^2.3.1",
     "unfetch": "^4.2.0"
   },
@@ -67,7 +67,7 @@
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.0.6",
-    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-terser": "^1.0.0",
     "@types/jest": "^27.0.2",
     "@types/node-fetch": "^2.5.7",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
