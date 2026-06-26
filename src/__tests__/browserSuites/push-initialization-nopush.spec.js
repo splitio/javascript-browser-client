@@ -32,7 +32,7 @@ const config = {
     eventsFirstPushWindow: 3000
   },
   streamingEnabled: true,
-  debug: true,
+  // debug: true,
 };
 const settings = settingsFactory(config);
 

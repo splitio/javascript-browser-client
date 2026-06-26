@@ -1,5 +1,5 @@
-1.7.1 (June 25, 2026)
- - Updated TypeScript declaration to use `namespace` instead of `module` for compatibility with TypeScript 7 (Related to issue https://github.com/splitio/javascript-client/issues/920).
+1.7.1 (June 26, 2026)
+ - Updated TypeScript declaration to use `namespace` instead of `module` for compatibility with TypeScript 7 (Related to issue https://github.com/splitio/javascript-client/issues/920, and contributed by Matt Lewis (@mattlewis92) in https://github.com/splitio/javascript-browser-client/pull/173).
  - Updated @splitsoftware/splitio-commons package to version 2.12.1, which:
      - updates internal modules to handle `null` values from `/splitChanges` response.
      - updates some dependencies for vulnerability fixes.
