@@ -4,11 +4,9 @@ import { getModules } from '../platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
 import { getFetch } from '../platform/getFetchFull';
-import { getEventSource } from '../platform/getEventSource';
-import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
-import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
+import { platform } from '@splitsoftware/splitio-commons/src/platform/browser';
 
-const platform = { getFetch, getEventSource, EventEmitter, now };
+const platformWithFetchPolyfill = { ...platform, getFetch };
 
 /**
  * SplitFactory with pluggable modules for Browser.
@@ -21,7 +19,7 @@ const platform = { getFetch, getEventSource, EventEmitter, now };
  */
 export function SplitFactory(config: SplitIO.IClientSideSettings, __updateModules?: (modules: ISdkFactoryParams) => void) {
   const settings = settingsFactory(config);
-  const modules = getModules(settings, platform);
+  const modules = getModules(settings, platformWithFetchPolyfill);
   if (__updateModules) __updateModules(modules);
   return sdkFactory(modules);
 }
