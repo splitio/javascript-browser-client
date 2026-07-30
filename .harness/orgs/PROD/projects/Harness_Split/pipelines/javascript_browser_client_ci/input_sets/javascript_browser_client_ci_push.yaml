@@ -1,0 +1,14 @@
+inputSet:
+  identifier: javascript_browser_client_ci_push
+  name: javascript-browser-client-ci-push
+  orgIdentifier: PROD
+  projectIdentifier: Harness_Split
+  pipeline:
+    identifier: javascript_browser_client_ci
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>

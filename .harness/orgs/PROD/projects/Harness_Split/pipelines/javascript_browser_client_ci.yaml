@@ -1,0 +1,208 @@
+pipeline:
+  name: javascript-browser-client-ci
+  identifier: javascript_browser_client_ci
+  projectIdentifier: Harness_Split
+  orgIdentifier: PROD
+  tags:
+    fme-sdk: ""
+    team: SDK
+  properties:
+    ci:
+      codebase:
+        connectorRef: fmegithubharnessgitops
+        repoName: javascript-browser-client
+        build: <+input>
+        depth: 0
+  stages:
+    - stage:
+        name: Build and Test
+        identifier: Build_and_Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec:
+              size: flex
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Install Node
+                  identifier: Install_Node
+                  spec:
+                    shell: Bash
+                    command: |-
+                      curl https://mise.run | sh
+                      export PATH="$HOME/.local/bin:$PATH"
+                      mise use --global node@lts
+                      node --version
+                      npm --version
+              - step:
+                  type: Run
+                  name: Install Chrome
+                  identifier: Install_Chrome
+                  spec:
+                    shell: Bash
+                    # puppeteer e2e tests require a real Chrome binary; version pinned to match GHA (125)
+                    command: |-
+                      export PUPPETEER_SKIP_DOWNLOAD=true
+                      curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
+                      apt-get update -qq && apt-get install -y -qq /tmp/chrome.deb || true
+                      # Fallback: install via chromium if exact version not available
+                      which google-chrome-stable || apt-get install -y -qq chromium-browser
+                      CHROME_BIN=$(which google-chrome-stable || which chromium-browser || which chromium)
+                      echo "CHROME_BIN=$CHROME_BIN"
+                      export CHROME_BIN
+              - step:
+                  type: Run
+                  name: Install Dependencies
+                  identifier: Install_Dependencies
+                  spec:
+                    shell: Bash
+                    command: |-
+                      export PATH="$HOME/.local/bin:$PATH"
+                      eval "$(mise activate bash)"
+                      export PUPPETEER_SKIP_DOWNLOAD=true
+                      npm ci
+              - step:
+                  type: Run
+                  name: Check TypeScript Declarations
+                  identifier: Check_TypeScript_Declarations
+                  spec:
+                    shell: Bash
+                    command: |-
+                      export PATH="$HOME/.local/bin:$PATH"
+                      eval "$(mise activate bash)"
+                      npm run test-ts-decls
+              - step:
+                  type: Run
+                  name: Check Lint and Types
+                  identifier: Check_Lint_and_Types
+                  spec:
+                    shell: Bash
+                    command: |-
+                      export PATH="$HOME/.local/bin:$PATH"
+                      eval "$(mise activate bash)"
+                      npm run check
+              - step:
+                  type: Run
+                  name: Run Tests
+                  identifier: Run_Tests
+                  spec:
+                    shell: Bash
+                    command: |-
+                      export PATH="$HOME/.local/bin:$PATH"
+                      eval "$(mise activate bash)"
+                      CHROME_BIN=$(which google-chrome-stable || which chromium-browser || which chromium)
+                      export CHROME_BIN
+                      export PUPPETEER_SKIP_DOWNLOAD=true
+                      npm run test
+              - step:
+                  type: Run
+                  name: Build
+                  identifier: Build
+                  spec:
+                    shell: Bash
+                    command: |-
+                      export PATH="$HOME/.local/bin:$PATH"
+                      eval "$(mise activate bash)"
+                      BUILD_BRANCH=<+codebase.branch> npm run build
+              - step:
+                  type: Run
+                  name: SonarQube Scan
+                  identifier: SonarQube_Scan
+                  when:
+                    stageStatus: Success
+                  spec:
+                    shell: Sh
+                    command: |-
+                      export SONAR_SCANNER_VERSION=5.0.1.3006
+                      curl -sSLo sonar-scanner.zip \
+                        "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip"
+                      unzip -q sonar-scanner.zip
+                      export PATH="$PWD/sonar-scanner-${SONAR_SCANNER_VERSION}-linux/bin:$PATH"
+                      apt-get install -y openjdk-17-jdk -qq
+
+                      VERSION=$(node -e "console.log(require('./package.json').version)")
+
+                      if [ "<+codebase.build.type>" = "PR" ]; then
+                        sonar-scanner \
+                          -Dsonar.projectKey=javascript-browser-client \
+                          -Dsonar.projectName=javascript-browser-client \
+                          -Dsonar.sources=src \
+                          -Dsonar.host.url=https://sonar.harness.io \
+                          -Dsonar.token=<+secrets.getValue("sonarqube-token")> \
+                          -Dsonar.exclusions="**/node_modules/**,**/umd/**,**/cjs/**,**/esm/**" \
+                          -Dsonar.projectVersion="${VERSION}" \
+                          -Dsonar.pullrequest.key=<+codebase.prNumber> \
+                          -Dsonar.pullrequest.branch=<+codebase.branch> \
+                          -Dsonar.pullrequest.base=<+codebase.targetBranch>
+                      else
+                        sonar-scanner \
+                          -Dsonar.projectKey=javascript-browser-client \
+                          -Dsonar.projectName=javascript-browser-client \
+                          -Dsonar.sources=src \
+                          -Dsonar.host.url=https://sonar.harness.io \
+                          -Dsonar.token=<+secrets.getValue("sonarqube-token")> \
+                          -Dsonar.exclusions="**/node_modules/**,**/umd/**,**/cjs/**,**/esm/**" \
+                          -Dsonar.projectVersion="${VERSION}" \
+                          -Dsonar.branch.name=<+codebase.branch>
+                      fi
+              - step:
+                  type: Run
+                  name: Post Quality Gate
+                  identifier: Post_Quality_Gate
+                  when:
+                    stageStatus: Success
+                  spec:
+                    shell: Bash
+                    command: |-
+                      #!/bin/bash
+                      set -e
+
+                      SONAR_TOKEN="<+secrets.getValue("sonarqube-token")>"
+                      SONAR_URL="https://sonar.harness.io"
+                      SONAR_PROJECT_KEY="javascript-browser-client"
+                      GITHUB_TOKEN="<+secrets.getValue("github-devops-token")>"
+                      GITHUB_REPO="javascript-browser-client"
+                      COMMIT_SHA="<+codebase.commitSha>"
+
+                      STATUS_JSON=$(curl -sf \
+                        -H "Authorization: Bearer ${SONAR_TOKEN}" \
+                        "${SONAR_URL}/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY}")
+
+                      QG_STATUS=$(echo "$STATUS_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['projectStatus']['status'])")
+
+                      case "$QG_STATUS" in
+                        OK)    GH_STATE="success"; DESCRIPTION="Quality gate passed" ;;
+                        ERROR) GH_STATE="failure"; DESCRIPTION="Quality gate failed" ;;
+                        WARN)  GH_STATE="success"; DESCRIPTION="Quality gate passed with warnings" ;;
+                        *)     GH_STATE="pending"; DESCRIPTION="Quality gate status unknown" ;;
+                      esac
+
+                      TARGET_URL="${SONAR_URL}/dashboard?id=${SONAR_PROJECT_KEY}"
+
+                      curl -sf -X POST \
+                        -H "Authorization: token ${GITHUB_TOKEN}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        -H "Content-Type: application/json" \
+                        -d "{\"state\":\"${GH_STATE}\",\"description\":\"${DESCRIPTION}\",\"context\":\"sonarqube/quality-gate\",\"target_url\":\"${TARGET_URL}\"}" \
+                        "https://api.github.com/repos/splitio/${GITHUB_REPO}/statuses/${COMMIT_SHA}"
+
+                      echo "Posted SonarQube quality gate status: ${GH_STATE}"
+              # VERIFY: S3 upload steps require an AWS connector with write access to split-public-stage / split-public buckets.
+              # The GHA workflow used OIDC role assumption (arn:aws:iam::<account_id>:role/gha-public-assets-role).
+              # Check with the team whether an equivalent Harness AWS connector exists, or if S3 upload
+              # should remain in GitHub Actions / move to a separate CD pipeline.
+              # Once confirmed, add steps here:
+              #
+              # On push to development → upload umd/ to s3://split-public-stage/sdk/
+              # On push to main        → upload umd/ to s3://split-public/sdk/
