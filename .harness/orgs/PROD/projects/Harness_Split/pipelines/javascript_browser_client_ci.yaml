@@ -198,11 +198,107 @@ pipeline:
                         "https://api.github.com/repos/splitio/${GITHUB_REPO}/statuses/${COMMIT_SHA}"
 
                       echo "Posted SonarQube quality gate status: ${GH_STATE}"
-              # VERIFY: S3 upload steps require an AWS connector with write access to split-public-stage / split-public buckets.
-              # The GHA workflow used OIDC role assumption (arn:aws:iam::<account_id>:role/gha-public-assets-role).
-              # Check with the team whether an equivalent Harness AWS connector exists, or if S3 upload
-              # should remain in GitHub Actions / move to a separate CD pipeline.
-              # Once confirmed, add steps here:
-              #
-              # On push to development → upload umd/ to s3://split-public-stage/sdk/
-              # On push to main        → upload umd/ to s3://split-public/sdk/
+    - stage:
+        name: Deploy to S3 Stage
+        identifier: Deploy_to_S3_Stage
+        type: CI
+        spec:
+          cloneCodebase: true
+          buildIntelligence:
+            enabled: false
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Build UMD Assets
+                  identifier: Build_UMD_Assets
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: |-
+                      export PUPPETEER_SKIP_DOWNLOAD=true
+                      npm ci
+                      BUILD_BRANCH=<+codebase.branch> npm run build:umd
+              - step:
+                  type: Run
+                  name: Deploy to S3 Stage
+                  identifier: Deploy_to_S3_Stage
+                  spec:
+                    connectorRef: dockerhub
+                    image: amazon/aws-cli:2.31.5
+                    shell: Bash
+                    command: aws s3 sync $SOURCE_DIR s3://$BUCKET/$DEST_DIR $ARGS
+                    envVariables:
+                      BUCKET: split-public-stage
+                      SOURCE_DIR: ./umd
+                      DEST_DIR: sdk
+                      ARGS: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+                      AWS_DEFAULT_REGION: us-east-1
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: use1stage1cd
+              namespace: harness-delegate
+              # VERIFY: service account needs IRSA binding to the equivalent of arn:aws:iam::079419646996:role/gha-public-assets-role
+              serviceAccountName: use1-stage-1-javascript-browser-client-s3
+              automountServiceAccountToken: false
+              nodeSelector: {}
+              os: Linux
+        delegateSelectors:
+          - use1-stage-1-cd
+        when:
+          pipelineStatus: Success
+          condition: <+trigger.event> == "PUSH" && <+codebase.branch> == "development"
+    - stage:
+        name: Deploy to S3 Prod
+        identifier: Deploy_to_S3_Prod
+        type: CI
+        spec:
+          cloneCodebase: true
+          buildIntelligence:
+            enabled: false
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Build UMD Assets
+                  identifier: Build_UMD_Assets
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: |-
+                      export PUPPETEER_SKIP_DOWNLOAD=true
+                      npm ci
+                      BUILD_BRANCH=<+codebase.branch> npm run build:umd
+              - step:
+                  type: Run
+                  name: Deploy to S3 Prod
+                  identifier: Deploy_to_S3_Prod
+                  spec:
+                    connectorRef: dockerhub
+                    image: amazon/aws-cli:2.31.5
+                    shell: Bash
+                    command: aws s3 sync $SOURCE_DIR s3://$BUCKET/$DEST_DIR $ARGS
+                    envVariables:
+                      BUCKET: split-public
+                      SOURCE_DIR: ./umd
+                      DEST_DIR: sdk
+                      ARGS: --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+                      AWS_DEFAULT_REGION: us-east-1
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: use1prod1cd
+              namespace: harness-delegate
+              # VERIFY: service account needs IRSA binding to the equivalent of arn:aws:iam::825951051969:role/gha-public-assets-role
+              serviceAccountName: use1-prod-1-javascript-browser-client-s3
+              automountServiceAccountToken: false
+              nodeSelector: {}
+              os: Linux
+        delegateSelectors:
+          - use1-prod-1-cd
+        when:
+          pipelineStatus: Success
+          condition: <+trigger.event> == "PUSH" && <+codebase.branch> == "main"
