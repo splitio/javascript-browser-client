@@ -1,6 +1,6 @@
 inputSet:
   identifier: javascript_browser_client_ci_push
-  name: javascript-browser-client-ci-push
+  name: javascript_browser_client_ci_push
   orgIdentifier: PROD
   projectIdentifier: Harness_Split
   pipeline:
