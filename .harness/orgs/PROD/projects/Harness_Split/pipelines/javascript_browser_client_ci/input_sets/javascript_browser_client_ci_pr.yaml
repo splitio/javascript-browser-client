@@ -1,0 +1,14 @@
+inputSet:
+  identifier: javascript_browser_client_ci_pr
+  name: javascript_browser_client_ci_pr
+  orgIdentifier: PROD
+  projectIdentifier: Harness_Split
+  pipeline:
+    identifier: javascript_browser_client_ci
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>

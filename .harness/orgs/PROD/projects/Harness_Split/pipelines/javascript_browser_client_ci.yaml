@@ -1,0 +1,127 @@
+pipeline:
+  name: javascript-browser-client-ci
+  identifier: javascript_browser_client_ci
+  projectIdentifier: Harness_Split
+  orgIdentifier: PROD
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: fmegithubharnessgitops
+        repoName: javascript-browser-client
+        build: <+input>
+  stages:
+    - stage:
+        name: Check-Test-Build-Upload
+        identifier: Check_Test_Build_Upload
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+            paths: []
+          buildIntelligence:
+            enabled: false
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: npm ci
+                  identifier: npm_ci
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: npm ci
+                    envVariables:
+                      PUPPETEER_SKIP_DOWNLOAD: "true"
+              - step:
+                  type: Run
+                  name: npm run test-ts-decls
+                  identifier: npm_run_test_ts_decls
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: npm run test-ts-decls
+                    resources:
+                      limits:
+                        memory: 2Gi
+                        cpu: "1"
+              - step:
+                  type: Run
+                  name: npm run check
+                  identifier: npm_run_check
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: npm run check
+              - step:
+                  type: Run
+                  name: npm run test
+                  identifier: npm_run_test
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: |-
+                      apt-get update -qq && apt-get install -y -qq chromium
+                      export CHROME_BIN=$(command -v chromium)
+                      "$CHROME_BIN" --version
+                      npm run test
+                    resources:
+                      limits:
+                        memory: 8Gi
+                        cpu: "4"
+              - step:
+                  type: Run
+                  name: npm run build
+                  identifier: npm_run_build
+                  spec:
+                    connectorRef: dockerhub
+                    image: node:lts
+                    shell: Bash
+                    command: BUILD_BRANCH=<+codebase.branch> npm run build
+              - parallel:
+                  - step:
+                      type: Run
+                      name: upload dev assets to CDN
+                      identifier: upload_dev_assets_to_CDN
+                      spec:
+                        connectorRef: dockerhub
+                        image: amazon/aws-cli:2.31.5
+                        shell: Bash
+                        command: aws s3 sync ./umd s3://split-public-stage/sdk --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+                        envVariables:
+                          AWS_DEFAULT_REGION: us-east-1
+                      when:
+                        stageStatus: Success
+                        condition: <+trigger.event> == "PUSH" && <+trigger.branch> == "development"
+                  - step:
+                      type: Run
+                      name: upload prod assets to CDN
+                      identifier: upload_prod_assets_to_CDN
+                      spec:
+                        connectorRef: dockerhub
+                        image: amazon/aws-cli:2.31.5
+                        shell: Bash
+                        command: aws s3 sync ./umd s3://split-public/sdk --acl public-read --follow-symlinks --cache-control max-age=31536000,public
+                        envVariables:
+                          AWS_DEFAULT_REGION: us-east-1
+                      when:
+                        stageStatus: Success
+                        condition: <+trigger.event> == "PUSH" && <+trigger.branch> == "main"
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: "<+codebase.branch == \"main\" ? \"use1prod1cd\" : \"use1stage1cd\">"
+              namespace: harness-delegate
+              serviceAccountName: "<+codebase.branch == \"main\" ? \"use1-prod-1-public-assets\" : \"use1-stage-1-public-assets\">"
+              automountServiceAccountToken: false
+              nodeSelector: {}
+              os: Linux
+        delegateSelectors:
+          - "<+codebase.branch == \"main\" ? \"use1-prod-1-cd\" : \"use1-stage-1-cd\">"
