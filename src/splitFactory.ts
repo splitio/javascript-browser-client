@@ -3,12 +3,7 @@ import { settingsFactory } from './settings';
 import { getModules } from './platform/getModules';
 import { sdkFactory } from '@splitsoftware/splitio-commons/src/sdkFactory/index';
 import { ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
-import { getFetch } from './platform/getFetchSlim';
-import { getEventSource } from './platform/getEventSource';
-import { EventEmitter } from '@splitsoftware/splitio-commons/src/utils/MinEvents';
-import { now } from '@splitsoftware/splitio-commons/src/utils/timeTracker/now/browser';
-
-const platform = { getFetch, getEventSource, EventEmitter, now };
+import { platform } from '@splitsoftware/splitio-commons/src/platform/browser';
 
 /**
  * SplitFactory with pluggable modules for Browser.

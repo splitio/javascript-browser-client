@@ -4,7 +4,6 @@ import { pushManagerFactory } from '@splitsoftware/splitio-commons/src/sync/stre
 import { pollingManagerCSFactory } from '@splitsoftware/splitio-commons/src/sync/polling/pollingManagerCS';
 import { sdkManagerFactory } from '@splitsoftware/splitio-commons/src/sdkManager/index';
 import { sdkClientMethodCSFactory } from '@splitsoftware/splitio-commons/src/sdkClient/sdkClientMethodCS';
-import { BrowserSignalListener } from '@splitsoftware/splitio-commons/src/listeners/browser';
 import { impressionObserverCSFactory } from '@splitsoftware/splitio-commons/src/trackers/impressionObserver/impressionObserverCS';
 import { pluggableIntegrationsManagerFactory } from '@splitsoftware/splitio-commons/src/integrations/pluggable';
 import { IPlatform, ISdkFactoryParams } from '@splitsoftware/splitio-commons/src/sdkFactory/types';
@@ -27,16 +26,13 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
     storageFactory: settings.storage as ISdkFactoryParams['storageFactory'],
 
-    splitApiFactory,
+    serviceApiFactory: splitApiFactory,
 
     syncManagerFactory: syncManagerStandaloneFactory,
 
     sdkManagerFactory,
 
-    // @ts-expect-error - To be fixed in commons
     sdkClientMethodFactory: sdkClientMethodCSFactory,
-
-    SignalListener: BrowserSignalListener as ISdkFactoryParams['SignalListener'],
 
     integrationsManagerFactory: settings.integrations && settings.integrations.length > 0 ? pluggableIntegrationsManagerFactory.bind(null, settings.integrations) : undefined,
 
@@ -51,9 +47,8 @@ export function getModules(settings: ISettings, platform: IPlatform): ISdkFactor
 
   switch (settings.mode) {
     case LOCALHOST_MODE:
-      modules.splitApiFactory = undefined;
+      modules.serviceApiFactory = undefined;
       modules.syncManagerFactory = localhostFromObjectFactory;
-      modules.SignalListener = undefined;
       break;
     case CONSUMER_MODE:
       modules.syncManagerFactory = undefined;
