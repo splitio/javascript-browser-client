@@ -18,6 +18,8 @@ pipeline:
         type: CI
         spec:
           cloneCodebase: true
+          envVariables:
+            CI_ENABLE_HCLI_FOR_TESTS: "true"
           caching:
             enabled: true
             override: true
@@ -71,11 +73,27 @@ pipeline:
                       apt-get update -qq && apt-get install -y -qq chromium
                       export CHROME_BIN=$(command -v chromium)
                       "$CHROME_BIN" --version
-                      npm run test
+                      npm run test:unit -- --coverage --coverageReporters=lcov --coverageDirectory=coverage
+                      npm run test:e2e
                     resources:
                       limits:
                         memory: 8Gi
                         cpu: "4"
+              - step:
+                  name: harnessCoverage
+                  identifier: harnessCoverage
+                  template:
+                    templateRef: account.k8sharnessCoverage
+                    versionLabel: v1
+                    templateInputs:
+                      type: Run
+                      spec:
+                        envVariables:
+                          patch_coverage_percent: "80"
+                          file_path: "coverage/lcov.info"
+                          overall_coverage_percent: ""
+                          ignore_failure: "true"
+                          exclude: "**/node_modules/**,**/dist/**,**/build/**,**/*.spec.js,**/*.spec.ts,**/*.spec.tsx,**/*.test.js,**/*.test.ts,**/*.test.tsx,**/__tests__/**"
               - step:
                   type: Run
                   name: npm run build
